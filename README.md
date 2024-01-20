@@ -22,6 +22,8 @@ Output file _list.html.
 
 [GenerateHTML_Lists_OutFileDirName.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateHTML_Lists_OutFileDirName.ps1) creates .html file with current directory name.
 
+[Sample of created .HTML](https://gist.github.com/DemerNkardaz/740b68b522aa1b0cff3a37c4c9f496d1) from Dawn of War — Soulstorm attrib folder.
+
 ```html
 <li><span>ingame</span>
     <ul>
@@ -49,6 +51,8 @@ Output file _list.html.
 Output file _table.json.
 
 [GenerateJSON_Lists_OutFileDirName.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateJSON_Lists_OutFileDirName.ps1) creates .json file with current directory name.
+
+Partial [Sample of created .JSON](https://gist.github.com/DemerNkardaz/8d886bc88743c2bc2e841e83bc85279b) from Dawn of War — Soulstorm attrib folder.
 
 ```json
 {
