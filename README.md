@@ -14,7 +14,7 @@ I run it via context menu with command like «powershell.exe -ExecutionPolicy Re
 
 [CurrentFiles_WithoutFormat.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles_WithoutFormat.ps1) & [CurrentFiles_WithoutFormat_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles_WithoutFormat_Clip.ps1) works identically of above, but creating list without file extensions in names.
 
-[CurrentFolders.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFolders.ps1) & [CurrentFolders_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFolders_Clip.ps1) similar for current directory folder names, output file is _folders.txt.
+[CurrentFolders.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFolders.ps1) & [CurrentFolders_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFolders_Clip.ps1) similar of above for current directory folder names, output file is _folders.txt.
 
 [GenerateHTML_Lists.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateHTML_Lists.ps1) & [GenerateHTML_Lists_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateHTML_Lists_Clip.ps1) is for generate a deep HTML list with spans of current directory with structure like this without file extension in names:
 
