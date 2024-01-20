@@ -38,6 +38,7 @@ Output file _list.html.
     </li>
         <li><span>generic_icon</span></li>
     </ul>
+</li>
 ```
 
 [GenerateJSON_Lists.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateJSON_Lists.ps1) & [GenerateJSON_Lists_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/GenerateJSON_Lists_Clip.ps1) is for generate a deep JSON table similar of above with structure like this («link» is used for my some JS needs):
