@@ -19,8 +19,9 @@ function Get-DirectoryInfo($path) {
 
         if ($item.PSIsContainer) {
             $obj | Add-Member -MemberType NoteProperty -Name "link" -Value ""
-            $obj | Add-Member -MemberType NoteProperty -Name "childs" -Value (Get-DirectoryInfo $item.FullName)
-        } else {
+            $obj | Add-Member -MemberType NoteProperty -Name "childs" -Value @(Get-DirectoryInfo $item.FullName)
+        }
+        else {
             $obj | Add-Member -MemberType NoteProperty -Name "link" -Value ""
         }
 

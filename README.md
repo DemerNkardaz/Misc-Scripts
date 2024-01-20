@@ -4,7 +4,6 @@ Just some scripts for me.
 
 All scripts created with AI.
 
-
 ## PowerShell Lists Scripts
 
 This scripts I use to generate files and folder lists.
@@ -57,22 +56,28 @@ Output file _table.json.
                 {
                     "name": "eldar_icons",
                     "link": "",
-                    "childs": {
-                        "name": "avatar_icon",
-                        "link": ""
-                    }
+                    "childs": [
+                        {
+                            "name": "avatar_icon",
+                            "link": ""
+                        }
+                    ]
                 },
                 {
                     "name": "event_cue_icons",
                     "link": "",
-                    "childs": {
-                        "name": "custom",
-                        "link": "",
-                        "childs": {
-                            "name": "player_donation",
-                            "link": ""
+                    "childs": [
+                        {
+                            "name": "custom",
+                            "link": "",
+                            "childs": [
+                                {
+                                    "name": "player_donation",
+                                    "link": ""
+                                }
+                            ]
                         }
-                    }
+                    ]
                 },
                 {
                     "name": "generic_icon",
