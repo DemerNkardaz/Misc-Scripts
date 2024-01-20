@@ -1,6 +1,8 @@
 # Misc-Scripts
 
-Just some scripts for me
+Just some scripts for me.
+
+All scripts created with AI.
 
 
 ## PowerShell Lists Scripts
