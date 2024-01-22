@@ -8,7 +8,9 @@ All scripts created with AI.
 
 This scripts I use to generate files and folder lists.
 
-I run it via context menu with command like «powershell.exe -ExecutionPolicy RemoteSigned -File "(HERE SCRIPT PATH & NAME).ps1" "%V"»
+I run it via context menu with command like «pwsh.exe -ExecutionPolicy RemoteSigned -File "(HERE SCRIPT PATH & NAME).ps1" "%V"»
+
+[PowerShell 7](https://github.com/PowerShell/PowerShell) is a minimal recommended version.
 
 [CurrentFiles.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles.ps1) & [CurrentFiles_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles_Clip.ps1) gets current directory file names, first script creates _files.txt, second just copy list to clipboard (with creating and removing temporary _files.txt).
 
@@ -96,3 +98,11 @@ Partial [Sample of created .JSON](https://gist.github.com/DemerNkardaz/8d886bc88
     ]
 }
 ```
+
+[CreateFolders_by_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CreateFolders_by_Clip.ps1) & [CreateFolders_by_ClipJSON.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CreateFolders_by_ClipJSON.ps1) is generates a folders based on you clipboard content:
+
+First script generates folders based on strings in clipboard. Every new string = new folder.
+
+Second script generates a deep folders structure based on JSON structure of JSON-generate script in above.
+
+![1705929894168](image/README/1705929894168.png)![1705929666673](image/README/1705929666673.png)
