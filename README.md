@@ -8,6 +8,8 @@ All scripts created with AI.
 
 ## PowerShell Lists Scripts
 
+![1706100256822](image/README/1706100256822.png)
+
 This scripts I use to generate files and folder lists.
 
 I run it via context menu with command like «pwsh.exe -ExecutionPolicy RemoteSigned -File "(HERE SCRIPT PATH & NAME).ps1" "%V"»
