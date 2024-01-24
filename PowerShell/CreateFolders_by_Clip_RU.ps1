@@ -8,10 +8,10 @@ function IsSimpleText($line) {
 
 $simpleTextLines = $folderNames | Where-Object { IsSimpleText($_) }
 
-Write-Host "Will be created following folders: "
+Write-Host "Будут созданы следующие папки:"
 $simpleTextLines | ForEach-Object { Write-Host "$_" }
 
-$confirmation = Read-Host "Do you want to create these folders? (Y/N)"
+$confirmation = Read-Host "Хотите создать эти папки? (Y/N)"
 
 if ($confirmation -eq 'Y') {
     $currentDirectory = Get-Location
@@ -20,8 +20,8 @@ if ($confirmation -eq 'Y') {
         New-Item -Path $folderPath -ItemType Directory -Force
         Write-Host "Папка создана: $folderPath"
     }
-    Write-Host "Folders successfully created."
+    Write-Host "Папки успешно созданы."
 }
 else {
-    Write-Host "Creating aborted."
+    Write-Host "Создание отменено."
 }

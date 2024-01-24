@@ -1,8 +1,8 @@
-$jsonString = Get-Clipboard
+﻿$jsonString = Get-Clipboard
 $jsonData = $jsonString | ConvertFrom-Json
 
 if (-not $jsonData.root -is [array]) {
-    Write-Host "Error: root element does not exist or this is not an array."
+    Write-Host "Ошибка: элемент root не существует или не является массивом."
     exit
 }
 
@@ -20,10 +20,10 @@ function ShowFolders($parentPath, $folders) {
     }
 }
 
-Write-Host "Will be created following folders: "
+Write-Host "Будут созданы следующие папки: "
 ShowFolders $PWD $jsonData.root
 
-$confirmation = Read-Host "Do you want to create these folders? (Y/N)"
+$confirmation = Read-Host "Хотите создать эти папки? (Y/N)"
 
 if ($confirmation -eq 'Y' -or $confirmation -eq 'y') {
     function CreateFoldersRecursively($parentPath, $folders) {
@@ -40,8 +40,8 @@ if ($confirmation -eq 'Y' -or $confirmation -eq 'y') {
     }
 
     CreateFoldersRecursively $PWD $jsonData.root
-    Write-Host "Folders successfully created."
+    Write-Host "Папки успешно созданы."
 }
 else {
-    Write-Host "Creating aborted."
+    Write-Host "Создание отменено."
 }
