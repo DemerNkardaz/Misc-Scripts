@@ -50,7 +50,6 @@ DefaultDirName={commonpf64}\{#MSApplicationPath}
 DefaultGroupName={#MSApplicationTitle}
 OutputBaseFilename=DN_Misc_Scripts_Setup
 SetupIconFile=E:\OffWork\Misc-Scripts\Installers\appico\appico256.ico
-WizardSmallImageFile=E:\OffWork\Misc-Scripts\Installers\appico\appico300x310.bmp
 WizardImageFile=E:\OffWork\Misc-Scripts\Installers\SideImage.bmp
 Compression=lzma
 SolidCompression=yes
@@ -69,6 +68,7 @@ VersionInfoTextVersion=1.0.0
 VersionInfoProductName={#MSApplicationTitle}
 VersionInfoProductVersion={#ApplicationVER}
 VersionInfoProductTextVersion=DN Misc-Sripts
+WizardSmallImageFile=E:\OffWork\Misc-Scripts\Installers\PersonalMonPart.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
