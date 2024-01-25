@@ -57,6 +57,18 @@ SolidCompression=yes
 DisableDirPage=no
 DisableWelcomePage=False
 ShowTasksTreeLines=True
+WizardStyle=modern
+WizardResizable=True
+WizardSizePercent=110,150
+AlwaysShowGroupOnReadyPage=True
+AlwaysShowDirOnReadyPage=True
+AllowNoIcons=True
+VersionInfoVersion={#ApplicationVER}
+VersionInfoCompany={#PublisherTitle}
+VersionInfoTextVersion=1.0.0
+VersionInfoProductName={#MSApplicationTitle}
+VersionInfoProductVersion={#ApplicationVER}
+VersionInfoProductTextVersion=DN Misc-Sripts
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -200,7 +212,7 @@ Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSO
 
 
 [Types]
-Name: "Full"; Description: "Full"; Flags: iscustom
+Name: "Full"; Description: "PowerShell"; Flags: iscustom
 
 [Components]
 Name: "PowerShell"; Description: "PowerShell 7+ Scripts"; Types: Full; Languages: english
@@ -238,7 +250,19 @@ Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Глубокая JSON-т
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть README"; Languages: russian
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Open README"; Languages: english
 
+[Messages]
+WelcomeLabel1=[name/ver]
+english.WelcomeLabel2=This package includes a set of PowerShell scripts that will be installed on the computer and registered in the registry for use through the context menu.%n%nRequires PowerShell 7 or higher. The setup program will prompt you to download and install it if not detected on your device.%n%nGit-Repo:%nhttps://github.com/DemerNkardaz/Misc-Scripts
+russian.WelcomeLabel2=Данный пакет содержит в себе ряд скриптов PowerShell, которые будут установлены на компьютер и зарегистрированы в реестре для использования их через контекстное меню.%n%nТребуется версия PowerShell 7 и выше. Программа установки предложит вам скачать и установить её, если не обнаружит на устройстве.%n%nGit-Репозиторий:%nhttps://github.com/DemerNkardaz/Misc-Scripts
+russian.FinishedHeadingLabel=[name] установлены%n
+english.FinishedHeadingLabel=[name] installed%n
+russian.FinishedLabel=Выбранные скрипты были установлены на ваш компьютер. Они могут быть запущены через контекстное меню проводника.
+english.FinishedLabel=The selected scripts have been installed on your computer. They can be executed through the context menu of the file explorer.
+
 [Code]
+var
+  InstallerPath: String;
+  TempPath: String;
 function IsPowerShell7Installed: Boolean;
 var
   ResultCode: Integer;
@@ -251,36 +275,174 @@ begin
   
   Result := (ResultCode = 0);
 end;
+var
+  LogFileName: String;
+  LogForm: TForm;
+  LogMemo: TMemo;
+
+procedure ShowLogForm;
+begin
+  LogForm := TForm.Create(nil);
+  case ActiveLanguage of
+    'english': LogForm.Caption := 'Log of Downloading Progress';
+    'russian': LogForm.Caption := 'Журнал прогресса скачивания';
+  end;
+  LogForm.Width := 400;
+  LogForm.Height := 400;
+  LogForm.Color := clBlack;
+  LogMemo := TMemo.Create(LogForm);
+  LogMemo.Parent := LogForm;
+  LogMemo.Align := alClient;
+  LogMemo.ReadOnly := True;
+  LogMemo.Color := clBlack;
+  LogMemo.Font.Color := clLime;
+  LogForm.Show;
+end;
+
+function BytesToMegabytes(Bytes: Int64): Double;
+begin
+  Result := Bytes / 1024 / 1024;
+end;
 
 function InitializeSetup: Boolean;
 begin
+  LogFileName := ExpandConstant('{tmp}\install_log.txt');
+  SaveStringToFile(LogFileName, '', False);
   Result := True;
 end;
 
-function NextButtonClick(CurPageID: Integer): Boolean;
+function OnDownloadProgress(const Url, Filename: string; const Progress, ProgressMax: Int64): Boolean;
+var
+  LogMessage: String;
+  ProgressInMB: Double;
 begin
+  if not Assigned(LogForm) then
+    ShowLogForm;
+  if ProgressMax <> 0 then
+    ProgressInMB := BytesToMegabytes(ProgressMax)
+  else
+    ProgressInMB := 0;
+case ActiveLanguage of
+  'english': LogMessage := Format('Downloaded:'#8195''#9'%.2f'#9''#9'|'#9'%.2f MB', [BytesToMegabytes(Progress), ProgressInMB]);
+  'russian': LogMessage := Format('Скачано:'#8195''#9'%.2f'#9''#9'|'#9'%.2f МБ', [BytesToMegabytes(Progress), ProgressInMB]);
+end;
+
+  LogMemo.Lines.Add(LogMessage);
+  SaveStringToFile(LogFileName, LogMessage + #13#10, True); 
+  if BytesToMegabytes(Progress) = ProgressInMB then
+    LogForm.Close;
   Result := True;
-  if (CurPageID = wpSelectComponents) and IsComponentSelected('PowerShell') then
-  begin
-    if not IsPowerShell7Installed then
+end;
+
+function DownloadPS7: Boolean;
+var
+  ResultCode: Integer;
+begin
+  try
+    TempPath := ExpandConstant('{tmp}');
+    InstallerPath := TempPath + '\PShell750.msi';
+
+    if not FileExists(InstallerPath) then
+    begin
+      DownloadTemporaryFile('https://github.com/PowerShell/PowerShell/releases/download/v7.5.0-preview.1/PowerShell-7.5.0-preview.1-win-x64.msi', 'PShell750.msi', '', @OnDownloadProgress);
+    end;
+
+    if FileExists(InstallerPath) then
+    begin
+      if not ShellExec('', InstallerPath, '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      begin
+        case ActiveLanguage of
+          'english': MsgBox('Error installer launching: ' + IntToStr(ResultCode), mbError, MB_OK);
+          'russian': MsgBox('Ошибка запуска установщика: ' + IntToStr(ResultCode), mbError, MB_OK);
+        end;
+        Result := False;
+      end
+      else
+      begin
+        Result := True;
+      end;
+    end
+    else
     begin
       case ActiveLanguage of
         'english':
           MsgBox(
-            'PowerShell 7 or later is required for this installation.' + #13#10 +
-            'Please install PowerShell 7 and run the installer again.' + #13#10 + #13#10 +
-            'You can get it on: https://github.com/PowerShell/PowerShell',
+            'ERROR: PShell Installer was not found.',
             mbError, MB_OK
           );
         'russian':
           MsgBox(
-            'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
-            'Установите PowerShell 7 и запустите установщик снова.' + #13#10 + #13#10 +
-            'Вы можете скачать его по адресу: https://github.com/PowerShell/PowerShell',
+            'ОШИБКА: Установщик PShell не был найден.',
             mbError, MB_OK
           );
       end;
       Result := False;
     end;
+  except
+    Result := False;
   end;
 end;
+
+procedure DeinitializeSetup;
+var
+  ResultCode: Integer;
+begin
+  try
+    TempPath := ExpandConstant('{tmp}');
+    InstallerPath := TempPath + '\PShell750.msi';
+    if FileExists(InstallerPath) then
+      DeleteFile(InstallerPath);
+  except
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  TempPath := ExpandConstant('{tmp}');
+  InstallerPath := TempPath + '\PShell750.msi';
+  Result := True;
+  if (CurPageID = wpSelectComponents) and IsComponentSelected('PowerShell') then
+  begin
+    if not IsPowerShell7Installed then
+    begin
+        if not FileExists(InstallerPath) then
+        begin
+            case ActiveLanguage of
+              'english':
+                Result := MsgBox(
+                  'PowerShell 7 or later is required for this installation.' + #13#10 +
+                  'Do you want to install PowerShell 7.5.0-preview now?' + #13#10 + #13#10 +
+                  'The packe size is 104 MB, wait for it be dowloaded.' + #13#10,
+                  mbError, MB_YESNO) = IDYES;
+              'russian':
+                Result := MsgBox(
+                  'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
+                  'Установить PowerShell 7.5.0-preview прямо сейчас?' + #13#10 + #13#10 +
+                  'Размер пакета составляет 104 МБ, дожитесь окончания скачивания.' + #13#10,
+                  mbError, MB_YESNO) = IDYES;
+            end;
+        end
+        else
+        begin
+            case ActiveLanguage of
+              'english':
+                Result := MsgBox(
+                  'PowerShell 7 or later is required for this installation.' + #13#10 +
+                  'You already done the PowerShell 7.5.0-preview downloading, want to launch?' + #13#10,
+                  mbError, MB_YESNO) = IDYES;
+              'russian':
+                Result := MsgBox(
+                  'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
+                  'Вы уже загрузили установщик PowerShell 7.5.0-preview, хотите его запустить?' + #13#10,
+                  mbError, MB_YESNO) = IDYES;
+            end;
+        end;
+      if Result then
+      begin
+        Result := DownloadPS7;
+        Result := False;
+      end;
+    end;
+  end;
+end;
+
