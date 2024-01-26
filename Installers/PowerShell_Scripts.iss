@@ -33,6 +33,7 @@ Source: "..\icos\JSON.ico"; DestDir: "{app}\ics"
 Source: "..\icos\FolderAdd.ico"; DestDir: "{app}\ics"
 Source: "..\icos\Clip.ico"; DestDir: "{app}\ics"
 Source: "..\icos\ClipJSON.ico"; DestDir: "{app}\ics"
+Source: "..\checks\powershell5_ver.ps1"; DestDir: "{tmp}"; Flags: ignoreversion
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -263,6 +264,11 @@ english.FinishedLabel=The selected scripts have been installed on your computer.
 var
   InstallerPath: String;
   TempPath: String;
+  PShellCheckScript: String;
+  PSScriptContent: TStrings;
+  LatestPShellVer: String;
+  LatestPShellURL: String;
+  LatestPShellPackageSize: Integer;
 function IsPowerShell7Installed: Boolean;
 var
   ResultCode: Integer;
@@ -276,6 +282,8 @@ begin
   
   Result := (ResultCode = 0);
 end;
+
+
 var
   LogFileName: String;
   LogForm: TForm;
@@ -305,12 +313,153 @@ begin
   Result := Bytes / 1024 / 1024;
 end;
 
+
+
+
+function CheckPowerShell: Boolean;
+var
+  PowerShellScriptPath: String;
+  ResultCode: Integer;
+begin
+  PowerShellScriptPath := ExpandConstant('{tmp}\checkForPowerShellVersion.ps1');
+  if FileExists(PowerShellScriptPath) then
+  begin
+    if Exec('powershell.exe', '-ExecutionPolicy Bypass -File "' + PowerShellScriptPath + '"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    begin
+      Result := (ResultCode = 0);
+    end
+    else
+    begin
+      MsgBox('Error executing PowerShell script.', mbError, MB_OK);
+      Result := False;
+    end;
+  end
+  else
+  begin
+    MsgBox('PowerShell script not found.', mbError, MB_OK);
+    Result := False;
+  end;
+end;
+
+
+
+function ReadVersionInfoFromFile: Boolean;
+var
+  VersionInfoFile: String;
+  VersionInfoContent: TStringList;
+  i: Integer;
+begin
+  VersionInfoFile := ExpandConstant('{tmp}\PShell.txt');
+  Result := False;
+
+  if FileExists(VersionInfoFile) then
+  begin
+    VersionInfoContent := TStringList.Create;
+    try
+      VersionInfoContent.LoadFromFile(VersionInfoFile);
+
+      for i := 0 to VersionInfoContent.Count - 1 do
+      begin
+        if Pos('verName=', VersionInfoContent[i]) = 1 then
+          LatestPShellVer := Copy(VersionInfoContent[i], Length('verName=') + 1, MaxInt)
+        else if Pos('verURL=', VersionInfoContent[i]) = 1 then
+          LatestPShellURL := Copy(VersionInfoContent[i], Length('verURL=') + 1, MaxInt);
+      end;
+
+      Result := (LatestPShellVer <> '') and (LatestPShellURL <> '');
+    finally
+      VersionInfoContent.Free;
+    end;
+  end;
+end;
+
+
+
+
+
+
 function InitializeSetup: Boolean;
+var
+  LogFileName: String;
+  PShellCheckScript: String;
+  PSScriptContent: TStringList;
+  ScriptFolderPath: String;
 begin
   LogFileName := ExpandConstant('{tmp}\install_log.txt');
   SaveStringToFile(LogFileName, '', False);
+
+  PShellCheckScript := ExpandConstant('{tmp}\checkForPowerShellVersion.ps1');
+  PSScriptContent := TStringList.Create;
+  try
+    ScriptFolderPath := ExtractFilePath(PShellCheckScript);
+    PSScriptContent.Add('$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path');
+    PSScriptContent.Add('function Write-VersionInfoToFile {');
+    PSScriptContent.Add('    param(');
+    PSScriptContent.Add('        [string]$verName,');
+    PSScriptContent.Add('        [string]$verURL,');
+    PSScriptContent.Add('        [string]$filename');
+    PSScriptContent.Add('    )');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('    try {');
+    PSScriptContent.Add('        $filePath = Join-Path $scriptRoot $filename');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('        Set-Content -Path $filePath -Value @("verName=$verName", "verURL=$verURL") -Force');
+    PSScriptContent.Add('        Write-Host "Data is written: $filePath"');
+    PSScriptContent.Add('    } catch {');
+    PSScriptContent.Add('        Write-Host "Error: $_"');
+    PSScriptContent.Add('    }');
+    PSScriptContent.Add('}');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('function Get-Latest-PowerShell-Installer-URL {');
+    PSScriptContent.Add('    $releasesUrl = "https://api.github.com/repos/PowerShell/PowerShell/releases"');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('    try {');
+    PSScriptContent.Add('        $response = Invoke-RestMethod -Uri $releasesUrl -Method Get');
+    PSScriptContent.Add('        if ($response) {');
+    PSScriptContent.Add('            $sortedReleases = $response | Sort-Object { [DateTime]$_.published_at } -Descending');
+    PSScriptContent.Add('            $latestRelease = $sortedReleases[0]');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('            $installerUrl = $null');
+    PSScriptContent.Add('            foreach ($asset in $latestRelease.assets) {');
+    PSScriptContent.Add('                if ($asset.name -like "*x64.msi") {');
+    PSScriptContent.Add('                    $installerUrl = $asset.browser_download_url');
+    PSScriptContent.Add('                    break');
+    PSScriptContent.Add('                }');
+    PSScriptContent.Add('            }');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('            if ($installerUrl) {');
+    PSScriptContent.Add('                return $latestRelease.tag_name, $installerUrl');
+    PSScriptContent.Add('            } else {');
+    PSScriptContent.Add('                Write-Host "MSI was not found Win x64."');
+    PSScriptContent.Add('                return $null, $null');
+    PSScriptContent.Add('            }');
+    PSScriptContent.Add('        }');
+    PSScriptContent.Add('    } catch {');
+    PSScriptContent.Add('        Write-Host "Error: $_"');
+    PSScriptContent.Add('        return $null, $null');
+    PSScriptContent.Add('    }');
+    PSScriptContent.Add('}');
+    PSScriptContent.Add('');
+    PSScriptContent.Add('$latestVersion, $latestInstallerUrl = Get-Latest-PowerShell-Installer-URL');
+    PSScriptContent.Add('if ($latestVersion -and $latestInstallerUrl) {');
+    PSScriptContent.Add('    Write-VersionInfoToFile -verName $latestVersion -verURL $latestInstallerUrl -filename "PShell.txt"');
+    PSScriptContent.Add('    Write-Output "verName=$latestVersion verURL=$latestInstallerUrl"');
+    PSScriptContent.Add('}');
+    PSScriptContent.SaveToFile(PShellCheckScript);
+  finally
+    PSScriptContent.Free;
+  end;
+  Result := CheckPowerShell;
+  Result := ReadVersionInfoFromFile;
   Result := True;
 end;
+
+
+
+
+
+
+
 
 function OnDownloadProgress(const Url, Filename: string; const Progress, ProgressMax: Int64): Boolean;
 var
@@ -341,11 +490,11 @@ var
 begin
   try
     TempPath := ExpandConstant('{tmp}');
-    InstallerPath := TempPath + '\PShell750.msi';
+    InstallerPath := TempPath + '\PShell.msi';
 
     if not FileExists(InstallerPath) then
     begin
-      DownloadTemporaryFile('https://github.com/PowerShell/PowerShell/releases/download/v7.5.0-preview.1/PowerShell-7.5.0-preview.1-win-x64.msi', 'PShell750.msi', '', @OnDownloadProgress);
+      DownloadTemporaryFile(LatestPShellURL, 'PShell.msi', '', @OnDownloadProgress);
     end;
 
     if FileExists(InstallerPath) then
@@ -384,13 +533,20 @@ begin
   end;
 end;
 
+
+
+
+
+
+
 procedure DeinitializeSetup;
 var
   ResultCode: Integer;
+
 begin
   try
     TempPath := ExpandConstant('{tmp}');
-    InstallerPath := TempPath + '\PShell750.msi';
+    InstallerPath := TempPath + '\PShell.msi';
     if FileExists(InstallerPath) then
       DeleteFile(InstallerPath);
   except
@@ -400,44 +556,46 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   TempPath := ExpandConstant('{tmp}');
-  InstallerPath := TempPath + '\PShell750.msi';
+  InstallerPath := TempPath + '\PShell.msi';
   Result := True;
   if (CurPageID = wpSelectComponents) and IsComponentSelected('PowerShell') then
   begin
     if not IsPowerShell7Installed then
     begin
+        
         if not FileExists(InstallerPath) then
         begin
-            case ActiveLanguage of
-              'english':
-                Result := MsgBox(
-                  'PowerShell 7 or later is required for this installation.' + #13#10 +
-                  'Do you want to install PowerShell 7.5.0-preview now?' + #13#10 + #13#10 +
-                  'The packe size is 104 MB, wait for it be dowloaded.' + #13#10,
-                  mbError, MB_YESNO) = IDYES;
-              'russian':
-                Result := MsgBox(
-                  'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
-                  'Установить PowerShell 7.5.0-preview прямо сейчас?' + #13#10 + #13#10 +
-                  'Размер пакета составляет 104 МБ, дожитесь окончания скачивания.' + #13#10,
-                  mbError, MB_YESNO) = IDYES;
-            end;
+          case ActiveLanguage of
+            'english':
+              Result := MsgBox(
+                'PowerShell 7 or later is required for this installation.' + #13#10 +
+                'Do you want to install PowerShell ' + LatestPShellVer + ' now?' + #13#10 + #13#10 +
+                'The packe size is  MB, wait for it be dowloaded.' + #13#10,
+                mbError, MB_YESNO) = IDYES;
+            'russian':
+              Result := MsgBox(
+                'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
+                'Установить PowerShell ' + LatestPShellVer + ' прямо сейчас?' + #13#10 + #13#10 +
+                'Размер пакета составляет МБ, дожитесь окончания скачивания.' + #13#10,
+                mbError, MB_YESNO) = IDYES;
+          end;
         end
         else
         begin
-            case ActiveLanguage of
-              'english':
-                Result := MsgBox(
-                  'PowerShell 7 or later is required for this installation.' + #13#10 +
-                  'You already done the PowerShell 7.5.0-preview downloading, want to launch?' + #13#10,
-                  mbError, MB_YESNO) = IDYES;
-              'russian':
-                Result := MsgBox(
-                  'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
-                  'Вы уже загрузили установщик PowerShell 7.5.0-preview, хотите его запустить?' + #13#10,
-                  mbError, MB_YESNO) = IDYES;
-            end;
+          case ActiveLanguage of
+            'english':
+              Result := MsgBox(
+                'PowerShell 7 or later is required for this installation.' + #13#10 +
+                'You already done the PowerShell ' + LatestPShellVer + ' downloading, want to launch?' + #13#10,
+                mbError, MB_YESNO) = IDYES;
+            'russian':
+              Result := MsgBox(
+                'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
+                'Вы уже загрузили установщик PowerShell ' + LatestPShellVer + ', хотите его запустить?' + #13#10,
+                mbError, MB_YESNO) = IDYES;
+          end;
         end;
+
       if Result then
       begin
         Result := DownloadPS7;

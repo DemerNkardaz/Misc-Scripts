@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Проверка версии PowerShell и создание ссылки на установщик</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    </head>
+    <body>
+
+        <script>
+    $(document).ready(function () {
+        // URL релизов PowerShell на GitHub
+        var releasesUrl = 'https://api.github.com/repos/PowerShell/PowerShell/releases';
+
+        // Функция для получения самого свежего релиза
+        function getLatestRelease() {
+            $.get(releasesUrl, function (data) {
+                // Отсортировать релизы по дате в убывающем порядке
+                var sortedReleases = data.sort(function (a, b) {
+                    return new Date(b.published_at) - new Date(a.published_at);
+                });
+
+                // Взять самый первый релиз (самый свежий)
+                var latestRelease = sortedReleases[0];
+
+                // Перейти по массиву аттачментов и найти MSI инсталлятор для Win x64
+                var installerLink;
+                latestRelease.assets.forEach(function (asset) {
+                    if (asset.name.endsWith('x64.msi')) {
+                        installerLink = asset.browser_download_url;
+                    }
+                });
+
+                // Создать ссылку и добавить ее на страницу
+                if (installerLink) {
+                    var linkElement = $('<a>').attr('href', installerLink).text('Скачать PowerShell');
+                    $('body').append(linkElement);
+                } else {
+                    console.error('MSI инсталлятор не найден для Win x64.');
+                }
+            });
+        }
+
+        // Вызвать функцию при загрузке документа
+        getLatestRelease();
+    });
+        </script>
+
+    </body>
+</html>
