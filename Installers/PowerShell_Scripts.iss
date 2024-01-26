@@ -33,7 +33,6 @@ Source: "..\icos\JSON.ico"; DestDir: "{app}\ics"
 Source: "..\icos\FolderAdd.ico"; DestDir: "{app}\ics"
 Source: "..\icos\Clip.ico"; DestDir: "{app}\ics"
 Source: "..\icos\ClipJSON.ico"; DestDir: "{app}\ics"
-Source: "..\checks\powershell5_ver.ps1"; DestDir: "{tmp}"; Flags: ignoreversion
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -49,9 +48,10 @@ AppSupportURL={#GitRepoURL}
 AppUpdatesURL={#GitRepoURL}
 DefaultDirName={commonpf64}\{#MSApplicationPath}
 DefaultGroupName={#MSApplicationTitle}
-OutputBaseFilename=DN_Misc_Scripts_Setup
+OutputBaseFilename={#MSApplicationTitle} {#ApplicationVER}
 SetupIconFile=E:\OffWork\Misc-Scripts\Installers\appico\appico256.ico
 WizardImageFile=E:\OffWork\Misc-Scripts\Installers\SideImage.bmp
+WizardSmallImageFile=E:\OffWork\Misc-Scripts\Installers\PersonalMonPart.bmp
 Compression=lzma
 SolidCompression=yes
 DisableDirPage=no
@@ -69,7 +69,6 @@ VersionInfoTextVersion=1.0.0
 VersionInfoProductName={#MSApplicationTitle}
 VersionInfoProductVersion={#ApplicationVER}
 VersionInfoProductTextVersion=DN Misc-Sripts
-WizardSmallImageFile=E:\OffWork\Misc-Scripts\Installers\PersonalMonPart.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -250,6 +249,8 @@ Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Глубокая JSON-т
 [Run]
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть README"; Languages: russian
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Open README"; Languages: english
+Filename: "https://github.com/DemerNkardaz/Misc-Scripts"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть GitHub"; Languages: russian
+Filename: "https://github.com/DemerNkardaz/Misc-Scripts"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Open GitHub"; Languages: english
 
 [Messages]
 WelcomeLabel1=[name/ver]
@@ -268,7 +269,8 @@ var
   PSScriptContent: TStrings;
   LatestPShellVer: String;
   LatestPShellURL: String;
-  LatestPShellPackageSize: Integer;
+  LatestPShellPackageSize: Int64;
+  
 function IsPowerShell7Installed: Boolean;
 var
   ResultCode: Integer;
@@ -282,7 +284,6 @@ begin
   
   Result := (ResultCode = 0);
 end;
-
 
 var
   LogFileName: String;
@@ -308,14 +309,6 @@ begin
   LogForm.Show;
 end;
 
-function BytesToMegabytes(Bytes: Int64): Double;
-begin
-  Result := Bytes / 1024 / 1024;
-end;
-
-
-
-
 function CheckPowerShell: Boolean;
 var
   PowerShellScriptPath: String;
@@ -340,8 +333,6 @@ begin
     Result := False;
   end;
 end;
-
-
 
 function ReadVersionInfoFromFile: Boolean;
 var
@@ -373,10 +364,29 @@ begin
   end;
 end;
 
+procedure UpdatePackageSize;
+var
+  WinHTTPRequest: Variant;
+  ContentLength: Double;
+  RAWPackageSize: Double;
+begin
+  try
+    WinHTTPRequest := CreateOleObject('MSXML2.ServerXMLHTTP.6.0');
+    WinHTTPRequest.open('HEAD', LatestPShellURL, false);
+    WinHTTPRequest.send;
 
+    if WinHTTPRequest.status = 200 then
+    begin
+      ContentLength := StrToFloat(WinHTTPRequest.getResponseHeader('Content-Length'));
 
-
-
+      if ContentLength <> -1 then
+      begin
+        LatestPShellPackageSize := Round(ContentLength / (1024.0 * 1024.0));
+      end;
+    end;
+  except
+  end;
+end;
 
 function InitializeSetup: Boolean;
 var
@@ -449,38 +459,39 @@ begin
   finally
     PSScriptContent.Free;
   end;
-  Result := CheckPowerShell;
-  Result := ReadVersionInfoFromFile;
   Result := True;
+  if Result then
+    begin
+      CheckPowerShell;
+      ReadVersionInfoFromFile;
+      UpdatePackageSize;
+    end;
 end;
-
-
-
-
-
-
-
 
 function OnDownloadProgress(const Url, Filename: string; const Progress, ProgressMax: Int64): Boolean;
 var
   LogMessage: String;
   ProgressInMB: Double;
+  ProgressValue: Double;
+  ProgressMaxValue: Double;
 begin
   if not Assigned(LogForm) then
     ShowLogForm;
-  if ProgressMax <> 0 then
-    ProgressInMB := BytesToMegabytes(ProgressMax)
-  else
-    ProgressInMB := 0;
-case ActiveLanguage of
-  'english': LogMessage := Format('Downloaded:'#8195''#9'%.2f'#9''#9'|'#9'%.2f MB', [BytesToMegabytes(Progress), ProgressInMB]);
-  'russian': LogMessage := Format('Скачано:'#8195''#9'%.2f'#9''#9'|'#9'%.2f МБ', [BytesToMegabytes(Progress), ProgressInMB]);
-end;
+
+  ProgressValue := Progress / (1024.0 * 1024.0);
+  ProgressMaxValue := ProgressMax / (1024.0 * 1024.0);
+
+  case ActiveLanguage of
+    'english': LogMessage := Format('Downloaded:'#8195''#9'%.2f'#9''#9'|'#9'%.2f MB', [ProgressValue, ProgressMaxValue]);
+    'russian': LogMessage := Format('Скачано:'#8195''#9'%.2f'#9''#9'|'#9'%.2f МБ', [ProgressValue, ProgressMaxValue]);
+  end;
 
   LogMemo.Lines.Add(LogMessage);
-  SaveStringToFile(LogFileName, LogMessage + #13#10, True); 
-  if BytesToMegabytes(Progress) = ProgressInMB then
+  SaveStringToFile(LogFileName, LogMessage + #13#10, True);
+
+  if Progress = ProgressMax then
     LogForm.Close;
+
   Result := True;
 end;
 
@@ -533,12 +544,6 @@ begin
   end;
 end;
 
-
-
-
-
-
-
 procedure DeinitializeSetup;
 var
   ResultCode: Integer;
@@ -570,13 +575,13 @@ begin
               Result := MsgBox(
                 'PowerShell 7 or later is required for this installation.' + #13#10 +
                 'Do you want to install PowerShell ' + LatestPShellVer + ' now?' + #13#10 + #13#10 +
-                'The packe size is  MB, wait for it be dowloaded.' + #13#10,
+                'The packe size is ' + IntToStr(LatestPShellPackageSize) + ' MB, wait for it be dowloaded.' + #13#10,
                 mbError, MB_YESNO) = IDYES;
             'russian':
               Result := MsgBox(
                 'Для установки требуется PowerShell 7 или более поздняя версия.' + #13#10 +
                 'Установить PowerShell ' + LatestPShellVer + ' прямо сейчас?' + #13#10 + #13#10 +
-                'Размер пакета составляет МБ, дожитесь окончания скачивания.' + #13#10,
+                'Размер пакета составляет ' + IntToStr(LatestPShellPackageSize) + ' МБ, дожитесь окончания скачивания.' + #13#10,
                 mbError, MB_YESNO) = IDYES;
           end;
         end
@@ -604,4 +609,5 @@ begin
     end;
   end;
 end;
+
 
