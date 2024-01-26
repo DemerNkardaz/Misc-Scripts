@@ -267,6 +267,7 @@ function IsPowerShell7Installed: Boolean;
 var
   ResultCode: Integer;
 begin
+  Result := False;
   Exec(ExpandConstant('{cmd}'), '/C pwsh-preview.cmd -version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   if ResultCode <> 0 then
     Exec(ExpandConstant('{cmd}'), '/C pwsh.exe -version', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
