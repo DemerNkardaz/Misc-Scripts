@@ -9,6 +9,8 @@
 #define GitAuthor "hhttps://github.com/DemerNkardaz"
 
 [Files]
+Source: "..\PowerShell\Compilator_CSS_Styles.ps1"; DestDir: "{app}\ps1"; DestName: "Compilator_CSS_Styles.ps1"; Components: PowerShell\CSStoMini; Languages: english
+Source: "..\PowerShell\Compilator_CSS_Styles_RU.ps1"; DestDir: "{app}\ps1"; DestName: "Compilator_CSS_Styles.ps1"; Components: PowerShell\CSStoMini; Languages: russian
 Source: "..\PowerShell\CurrentFiles.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List.ps1"; Components: PowerShell\CopyFileNames
 Source: "..\PowerShell\CurrentFiles_Clip.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List_to_Clip.ps1"; Components: PowerShell\CopyFileNamesClip
 Source: "..\PowerShell\CurrentFiles_WithoutFormat.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List_NoExt.ps1"; Components: PowerShell\CopyFileNamesNoExt
@@ -33,6 +35,8 @@ Source: "..\icos\JSON.ico"; DestDir: "{app}\ics"
 Source: "..\icos\FolderAdd.ico"; DestDir: "{app}\ics"
 Source: "..\icos\Clip.ico"; DestDir: "{app}\ics"
 Source: "..\icos\ClipJSON.ico"; DestDir: "{app}\ics"
+Source: "..\icos\CSS.ico"; DestDir: "{app}\ics"
+Source: "..\icos\JS.ico"; DestDir: "{app}\ics"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -208,8 +212,14 @@ Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSO
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Get Structure as 'directory'.JSON"; Languages: english
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Получить структуру как 'директория'.JSON"; Components: PowerShell\CopyDeepToJSONDirName; Languages: russian
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Deep_JSON_CurrDir_Name.ps1"" ""%V"""; Components: PowerShell\CopyDeepToJSONDirName
-
-
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\CSStoMini
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Collect .CSS into .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Собрать .CSS в .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Compilator_CSS_Styles.ps1"" ""%V"""; Components: PowerShell\CSStoMini
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\CSStoMini
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Collect .CSS into .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Собрать .CSS в .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Compilator_CSS_Styles.ps1"" ""%V"""; Components: PowerShell\CSStoMini
 
 [Types]
 Name: "Full"; Description: "PowerShell"; Flags: iscustom
@@ -245,6 +255,8 @@ Name: "PowerShell\CopyDeepToJSONClip"; Description: "Deep JSON-table from Direct
 Name: "PowerShell\CopyDeepToJSONClip"; Description: "Глубокая JSON-таблица из директории в Буфер обмена"; Types: Full; Languages: russian
 Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Deep JSON-table from Directory to 'directory'.json"; Types: Full; Languages: english
 Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Глубокая JSON-таблица из директории в 'директория'.json"; Types: Full; Languages: russian
+Name: "PowerShell\CSStoMini"; Description: "Collect .css files into single .min.css"; Types: Full; Languages: english
+Name: "PowerShell\CSStoMini"; Description: "Собрать .css файлы в единый .min.css"; Types: Full; Languages: russian
 
 [Run]
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть README"; Languages: russian

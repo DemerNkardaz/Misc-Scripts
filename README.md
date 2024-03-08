@@ -16,6 +16,11 @@ I run it via context menu with command like «pwsh.exe -ExecutionPolicy RemoteSi
 
 [PowerShell 7](https://github.com/PowerShell/PowerShell) is a minimal recommended version.
 
+### Collect .CSS into .MIN.CSS
+
+[Compilator_CSS_Styles.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/Compilator_CSS_Styles.ps1) collects all .CSS files in current directory and creating the .MIN.CSS from it.
+
+
 ### Files in Current Directory
 
 [CurrentFiles.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles.ps1) & [CurrentFiles_Clip.ps1](https://github.com/DemerNkardaz/Misc-Scripts/blob/main/PowerShell/CurrentFiles_Clip.ps1) gets current directory file names, first script creates _files.txt, second just copy list to clipboard (with creating and removing temporary _files.txt).
