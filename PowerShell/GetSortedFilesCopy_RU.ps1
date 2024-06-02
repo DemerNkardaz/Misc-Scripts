@@ -109,7 +109,7 @@ foreach ($subDir in $subDirectories) {
       $destinationFileHash = (Get-FileHash -Path $destinationPath).Hash
 
       if ($sourceFileHash -eq $destinationFileHash) {
-        LogFileAlreadyExists "$($relativePath) → % → $destinationFolder/$($newFileName)"
+        LogFileAlreadyExists "$($relativePath) → % → $($newFileName)"
         continue
       }
       else {
@@ -122,7 +122,7 @@ foreach ($subDir in $subDirectories) {
       }
     }
     Copy-Item -Path $file.FullName -Destination $destinationPath
-    LogToFile "$($relativePath) → % → $destinationFolder/$($newFileName)"
+    LogToFile "$($relativePath) → % → $($newFileName)"
     $filesCopied = $true
   }
 }

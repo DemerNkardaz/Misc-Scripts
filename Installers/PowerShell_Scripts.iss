@@ -37,6 +37,10 @@ Source: "..\icos\Clip.ico"; DestDir: "{app}\ics"
 Source: "..\icos\ClipJSON.ico"; DestDir: "{app}\ics"
 Source: "..\icos\CSS.ico"; DestDir: "{app}\ics"
 Source: "..\icos\JS.ico"; DestDir: "{app}\ics"
+Source: "..\PowerShell\GetSortedFilesCopy.ps1"; DestDir: "{app}\ps1"; DestName: "Get_FilesCopy_SortedByFolders.ps1"; Components: PowerShell\GetSortedFiles; Languages: english
+Source: "..\PowerShell\GetSortedFilesCopy_RU.ps1"; DestDir: "{app}\ps1"; DestName: "Get_FilesCopy_SortedByFolders.ps1"; Components: PowerShell\GetSortedFiles; Languages: russian
+Source: "..\icos\File.ico"; DestDir: "{app}\ics"
+Source: "..\icos\FileAdd.ico"; DestDir: "{app}\ics"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -220,6 +224,22 @@ Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_C
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Collect .CSS into .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: english
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Собрать .CSS в .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: russian
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Compilator_CSS_Styles.ps1"" ""%V"""; Components: PowerShell\CSStoMini
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FileAdd.ico"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Scripts"; Components: PowerShell\GetSortedFiles; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Скрипты файлов"; Components: PowerShell\GetSortedFiles; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\File.ico"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Copy files to destination sorted by folder names"; Components: PowerShell\GetSortedFiles; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Копировать файлы, отсортированные по именам папок"; Components: PowerShell\GetSortedFiles; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Get_FilesCopy_SortedByFolders.ps1"" ""%V"""; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FileAdd.ico"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Scripts"; Components: PowerShell\GetSortedFiles; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Скрипты файлов"; Components: PowerShell\GetSortedFiles; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\File.ico"; Components: PowerShell\GetSortedFiles
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Copy files to destination sorted by folder names"; Components: PowerShell\GetSortedFiles; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Копировать файлы, отсортированные по именам папок"; Components: PowerShell\GetSortedFiles; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Get_FilesCopy_SortedByFolders.ps1"" ""%V"""; Components: PowerShell\GetSortedFiles
 
 [Types]
 Name: "Full"; Description: "PowerShell"; Flags: iscustom
@@ -257,6 +277,8 @@ Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Deep JSON-table from Dir
 Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Глубокая JSON-таблица из директории в 'директория'.json"; Types: Full; Languages: russian
 Name: "PowerShell\CSStoMini"; Description: "Collect .css files into single .min.css"; Types: Full; Languages: english
 Name: "PowerShell\CSStoMini"; Description: "Собрать .css файлы в единый .min.css"; Types: Full; Languages: russian
+Name: "PowerShell\GetSortedFiles"; Description: "Copy all files from current dir folders to destination, sorted by origin folder name"; Types: Full; Languages: english
+Name: "PowerShell\GetSortedFiles"; Description: "Копировать все файлы из папок текущей директории в пункт назначения, отсортированные по имени исходной папки"; Types: Full; Languages: russian
 
 [Run]
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть README"; Languages: russian
