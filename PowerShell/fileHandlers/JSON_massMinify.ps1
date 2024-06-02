@@ -3,6 +3,7 @@ $directory = $args[0]
 if (-not $directory) {
   $directory = $PSScriptRoot
 }
+Set-Location $directory
 
 function LogToFile {
   param (
@@ -38,21 +39,21 @@ function LogCopySucces {
 function Get-Recursion {
   $confirmation = Read-Host "Do you want recursive file handling? (Y/N)"
   if ($confirmation -eq 'Y' -or $confirmation -eq 'y') {
-    return Get-ChildItem -Path $directory -Filter "*.css" -Recurse
+    return Get-ChildItem -Path $directory -Filter "*.json" -Recurse
   } 
-  return Get-ChildItem -Path $directory -Filter "*.css"
+  return Get-ChildItem -Path $directory -Filter "*.json"
 }
 
-Set-Location $directory
-$minifyScriptPath = Join-Path -Path $PSScriptRoot -ChildPath "minify.ps1"
-$cssFiles = Get-Recursion
 
-foreach ($file in $cssFiles) {
-  $currentCssPath = $file.FullName
-  $relativePath = $currentCssPath.Substring($directory.Length + 1)
+$jsonScriptPath = Join-Path -Path $PSScriptRoot -ChildPath "minify.ps1"
+$jsonFiles = Get-Recursion
+
+foreach ($file in $jsonFiles) {
+  $currentJsonPath = $file.FullName
+  $relativePath = $currentJsonPath.Substring($directory.Length + 1)
   $outputFileName = $file.FullName.Replace($directory, "") -replace "^\\"
-  $outputFileName = $outputFileName -replace "\.css$", ".min.css"
-  & $minifyScriptPath -cssPath $currentCssPath
+  $outputFileName = $outputFileName -replace "\.json$", ".min.json"
+  & $jsonScriptPath -jsonPath $currentJsonPath
   LogToFile $relativePath -outputFile $outputFileName
   $totalCopiedSizeInBytes += (Get-Item -Path $outputFileName).Length
   $totalCopiedFiles++

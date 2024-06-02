@@ -23,20 +23,20 @@ $totalCopiedFiles = 0
 function LogCopySucces {
   $timestamp = Get-Date -Format "HH:mm:ss"
   Write-Host -ForegroundColor Blue "`n[$timestamp]" -NoNewline
-  Write-Host -ForegroundColor Green " :: Copying of files completed successfully"
+  Write-Host -ForegroundColor Green " :: Копирование файлов выполнено успешно"
 
   $totalSizeInKB = $totalCopiedSizeInBytes / 1KB
   $totalSizeInMB = $totalSizeInKB / 1024
   $copiedSize = if ($totalSizeInMB -ge 1) { $totalSizeInMB.ToString("N2") + " GB" } else { $totalSizeInKB.ToString("N2") + " KB" }
 
   Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
-  Write-Host -ForegroundColor Cyan " :: Total size: $copiedSize"
+  Write-Host -ForegroundColor Cyan " :: Общий объём: $copiedSize"
   Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
-  Write-Host -ForegroundColor Cyan " :: Files count: $totalCopiedFiles"
+  Write-Host -ForegroundColor Cyan " :: Количество файлов: $totalCopiedFiles"
 }
 
 function Get-Recursion {
-  $confirmation = Read-Host "Do you want recursive file handling? (Y/N)"
+  $confirmation = Read-Host "Произвести рекурсивную обработку файлов? (Y/N)"
   if ($confirmation -eq 'Y' -or $confirmation -eq 'y') {
     return Get-ChildItem -Path $directory -Filter "*.css" -Recurse
   } 
