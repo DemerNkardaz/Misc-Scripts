@@ -11,36 +11,31 @@ Write-Host "The file [$lockFile] prevents the copying of files from subdirectori
 $destinationFolder = Select-DestinationFolderName
 function LogToFile {
   param (
-    [string]$message
+    [string]$relativePath,
+    [string]$copiedFileName
   )
   $timestamp = Get-Date -Format "HH:mm:ss"
-  $messageParts = $message -split ' → '
-  $relativePath = $messageParts[0]
-  $copiedFileName = $messageParts[-1]
   Write-Host -ForegroundColor Yellow "[$timestamp]" -NoNewline
   Write-Host -ForegroundColor White " :: " -NoNewline
   Write-Host -ForegroundColor Blue "[$relativePath]" -NoNewline
   Write-Host -ForegroundColor White " → % → " -NoNewline
   Write-Host -ForegroundColor Green "[$destinationFolder/$copiedFileName]"
 }
-
 function LogFileAlreadyExists {
   param (
-    [string]$message
+    [string]$copiedFileName
   )
   $timestamp = Get-Date -Format "HH:mm:ss"
-  $messageParts = $message -split ' → '
-  $copiedFileName = $messageParts[-1]
   Write-Host -ForegroundColor Yellow "[$timestamp]" -NoNewline
   Write-Host -ForegroundColor White " :: File [$copiedFileName] already exists in [/$destinationFolder/]"
 }
 
+
 function LogFolderSkip {
   param (
-    [string]$message
+    [string]$relativePath
   )
   $timestamp = Get-Date -Format "HH:mm:ss"
-  $relativePath = $message
   Write-Host -ForegroundColor Yellow "[$timestamp]" -NoNewline
   Write-Host -ForegroundColor Yellow " :: Skipping directory [$relativePath] : founded file [«$lockFile»]"
 }
@@ -106,26 +101,30 @@ foreach ($subDir in $subDirectories) {
 
   $lockFileInSubDir = Join-Path -Path $subDir.FullName -ChildPath $lockFile
   if (Test-Path -Path $lockFileInSubDir) {
-    LogFolderSkip "$($subDir.FullName)"
+    LogFolderSkip $subDir.FullName
     continue
   }
 
   $files = Get-ChildItem -Path $subDir.FullName -Recurse -File
 
   foreach ($file in $files) {
+    $skipped = $false
     $newFileName = "$rootFolderName`__$($file.Name)"
     $destinationPath = Join-Path -Path $sortedFolder -ChildPath $newFileName
     $relativePath = Get-RelativePath -AbsoluteFilePath $file.FullName -BaseDirectory $directory
 
     if (Test-Path -Path $destinationPath) {
-      $sourceFileHash = (Get-FileHash -Path $file.FullName).Hash
-      $destinationFileHash = (Get-FileHash -Path $destinationPath).Hash
-
-      if ($sourceFileHash -eq $destinationFileHash) {
-        LogFileAlreadyExists "$($relativePath) → % → $($newFileName)"
+      if ((Get-FileHash -Path $file.FullName).Hash -eq $(Get-FileHash -Path $destinationPath).Hash) {
+        LogFileAlreadyExists $newFileName
+        $skipped = $true
         continue
       }
-      else {
+      if ((Get-Item $file.FullName).Length -eq (Get-Item $destinationPath).Length) {
+        LogFileAlreadyExists $newFileName
+        $skipped = $true
+        continue
+      }
+      if (-not $skipped) {
         $counter = 1
         while (Test-Path -Path $destinationPath) {
           $newFileName = "$rootFolderName`__$counter`__$($file.Name)"
@@ -133,12 +132,18 @@ foreach ($subDir in $subDirectories) {
           $counter++
         }
       }
+      else {
+        continue
+      }
     }
-    Copy-Item -Path $file.FullName -Destination $destinationPath
-    LogToFile "$($relativePath) → % → $($newFileName)"
-    $totalCopiedSizeInBytes += (Get-Item $destinationPath).Length
-    $totalCopiedFiles++
-    $filesCopied = $true
+
+    if (-not $skipped) {
+      Copy-Item -Path $file.FullName -Destination $destinationPath
+      LogToFile $relativePath -copiedFileName $newFileName
+      $totalCopiedSizeInBytes += (Get-Item $destinationPath).Length
+      $totalCopiedFiles++
+      $filesCopied = $true
+    }
   }
 }
 
