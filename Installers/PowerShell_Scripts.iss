@@ -9,8 +9,6 @@
 #define GitAuthor "hhttps://github.com/DemerNkardaz"
 
 [Files]
-Source: "..\PowerShell\Compilator_CSS_Styles.ps1"; DestDir: "{app}\ps1"; DestName: "Compilator_CSS_Styles.ps1"; Components: PowerShell\CSStoMini; Languages: english
-Source: "..\PowerShell\Compilator_CSS_Styles_RU.ps1"; DestDir: "{app}\ps1"; DestName: "Compilator_CSS_Styles.ps1"; Components: PowerShell\CSStoMini; Languages: russian
 Source: "..\PowerShell\CurrentFiles.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List.ps1"; Components: PowerShell\CopyFileNames
 Source: "..\PowerShell\CurrentFiles_Clip.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List_to_Clip.ps1"; Components: PowerShell\CopyFileNamesClip
 Source: "..\PowerShell\CurrentFiles_WithoutFormat.ps1"; DestDir: "{app}\ps1"; DestName: "Current_Files_List_NoExt.ps1"; Components: PowerShell\CopyFileNamesNoExt
@@ -41,6 +39,16 @@ Source: "..\PowerShell\GetSortedFilesCopy.ps1"; DestDir: "{app}\ps1"; DestName: 
 Source: "..\PowerShell\GetSortedFilesCopy_RU.ps1"; DestDir: "{app}\ps1"; DestName: "Get_FilesCopy_SortedByFolders.ps1"; Components: PowerShell\GetSortedFiles; Languages: russian
 Source: "..\icos\File.ico"; DestDir: "{app}\ics"
 Source: "..\icos\FileAdd.ico"; DestDir: "{app}\ics"
+Source: "..\icos\FileHandling.ico"; DestDir: "{app}\ics"
+Source: "appico\appico256.ico"; DestDir: "{app}\ics"; DestName: "appico.ico"
+Source: "..\PowerShell\fileHandlers\JSON_minify.ps1"; DestDir: "{app}\ps1\fileHandlers\.json"; DestName: "minify.ps1"; Components: PowerShell\FileHandlers\JSON
+Source: "..\PowerShell\fileHandlers\JSON_to_YAML_RU.ps1"; DestDir: "{app}\ps1\fileHandlers\.json"; DestName: "to_yaml.ps1"; Components: PowerShell\FileHandlers\JSON; Languages: english
+Source: "..\PowerShell\fileHandlers\JSON_to_YAML.ps1"; DestDir: "{app}\ps1\fileHandlers\.json"; DestName: "to_yaml.ps1"; Components: PowerShell\FileHandlers\JSON; Languages: russian
+
+Source: "..\PowerShell\fileHandlers\YAML_TO_JSON_RU.ps1"; DestDir: "{app}\ps1\fileHandlers\.yaml"; DestName: "to_json.ps1"; Components: PowerShell\FileHandlers\YAML; Languages: english
+Source: "..\PowerShell\fileHandlers\YAML_TO_JSON.ps1"; DestDir: "{app}\ps1\fileHandlers\.yaml"; DestName: "to_json.ps1"; Components: PowerShell\FileHandlers\YAML; Languages: russian
+Source: "..\PowerShell\fileHandlers\CSS_minify.ps1"; DestDir: "{app}\ps1\fileHandlers\.css"; DestName: "minify.ps1"; Components: PowerShell\FileHandlers\CSS
+Source: "..\PowerShell\fileHandlers\CSS_massMinify.ps1"; DestDir: "{app}\ps1\fileHandlers\.css"; DestName: "massMinify.ps1"; Components: PowerShell\FileHandlers\CSS
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -86,10 +94,36 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "{group}\{cm:UninstallProgram,{#MSApplicationTitle}}"; Filename: "{uninstallexe}"
 
 [Registry]
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; Flags: uninsdeletekey; Components: PowerShell\FileHandlers
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; ValueName: "Icon"; ValueData: "pwsh.exe"; Components: PowerShell\FileHandlers
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Scripts"; Components: PowerShell\FileHandlers; Languages: english
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Скрипты"; Components: PowerShell\FileHandlers; Languages: russian
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\FileHandlers
+
+
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_to_YAML"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\json.ico"; Components: PowerShell\FileHandlers\JSON
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_to_YAML"; ValueType: string; ValueName: "MUIVerb"; ValueData: "JSON → YAML"; Components: PowerShell\FileHandlers\JSON
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_to_YAML\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.json\to_yaml.ps1"" ""%V"""; Components: PowerShell\FileHandlers\JSON
+
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_Minify"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\json.ico"; Components: PowerShell\FileHandlers\JSON
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_Minify"; ValueType: string; ValueName: "MUIVerb"; ValueData: "JSON → JSON Minified"; Components: PowerShell\FileHandlers\JSON; Languages: english
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_Minify"; ValueType: string; ValueName: "MUIVerb"; ValueData: "JSON → JSON Сжатый"; Components: PowerShell\FileHandlers\JSON; Languages: russian
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_JSON_Minify\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.json\minify.ps1"" ""%V"""; Components: PowerShell\FileHandlers\JSON
+
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_YAML_TO_JSON"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\PShell.ico"; Components: PowerShell\FileHandlers\YAML
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_YAML_TO_JSON"; ValueType: string; ValueName: "MUIVerb"; ValueData: "YAML → JSON"; Components: PowerShell\FileHandlers\YAML
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_YAML_TO_JSON\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.yaml\to_json.ps1"" ""%V"""; Components: PowerShell\FileHandlers\YAML
+
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_CSS_Minify"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\FileHandlers\CSS
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_CSS_Minify"; ValueType: string; ValueName: "MUIVerb"; ValueData: "CSS → CSS Minified"; Components: PowerShell\FileHandlers\CSS; Languages: english
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_CSS_Minify"; ValueType: string; ValueName: "MUIVerb"; ValueData: "CSS → CSS Сжатый"; Components: PowerShell\FileHandlers\CSS; Languages: russian
+Root: "HKCR"; Subkey: "*\shell\PowerShellScripts\shell\PowerShell_CSS_Minify\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.css\minify.ps1"" ""%V"""; Components: PowerShell\FileHandlers
+
+
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; Flags: uninsdeletekey
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "Icon"; ValueData: "pwsh.exe"
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "PowerShell Scripts"; Languages: english
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "PowerShell Скрипты"; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Scripts"; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Скрипты"; Languages: russian
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts"; ValueType: string; ValueName: "SubCommands"
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_CreateFolders"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FolderAdd.ico"; Components: PowerShell\FoldersFromClipboardJson PowerShell\FoldersFromClipboardData
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_CreateFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Folders Creating Scripts"; Components: PowerShell\FoldersFromClipboardData PowerShell\FoldersFromClipboardJson; Languages: english
@@ -153,8 +187,8 @@ Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerS
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Deep_JSON_CurrDir_Name.ps1"" ""%V"""; Components: PowerShell\CopyDeepToJSONDirName
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; Flags: uninsdeletekey
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "Icon"; ValueData: "pwsh.exe"
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "PowerShell Scripts"; Languages: english
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "PowerShell Скрипты"; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Scripts"; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Скрипты"; Languages: russian
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts"; ValueType: string; ValueName: "SubCommands"
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_CreateFolders"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FolderAdd.ico"; Components: PowerShell\FoldersFromClipboardJson PowerShell\FoldersFromClipboardData
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_CreateFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Folders Creating Scripts"; Components: PowerShell\FoldersFromClipboardData PowerShell\FoldersFromClipboardJson; Languages: english
@@ -216,14 +250,7 @@ Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSO
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Get Structure as 'directory'.JSON"; Languages: english
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Получить структуру как 'директория'.JSON"; Components: PowerShell\CopyDeepToJSONDirName; Languages: russian
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_05_JSONTable_OutFileDirName\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Deep_JSON_CurrDir_Name.ps1"" ""%V"""; Components: PowerShell\CopyDeepToJSONDirName
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\CSStoMini
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Collect .CSS into .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: english
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Собрать .CSS в .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: russian
-Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Compilator_CSS_Styles.ps1"" ""%V"""; Components: PowerShell\CSStoMini
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\CSStoMini
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Collect .CSS into .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: english
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Собрать .CSS в .MIN.CSS"; Components: PowerShell\CSStoMini; Languages: russian
-Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\PowerShell_00_D_CSSCompile\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Compilator_CSS_Styles.ps1"" ""%V"""; Components: PowerShell\CSStoMini
+
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FileAdd.ico"; Components: PowerShell\GetSortedFiles
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Scripts"; Components: PowerShell\GetSortedFiles; Languages: english
 Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Скрипты файлов"; Components: PowerShell\GetSortedFiles; Languages: russian
@@ -236,10 +263,32 @@ Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powers
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Scripts"; Components: PowerShell\GetSortedFiles; Languages: english
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Скрипты файлов"; Components: PowerShell\GetSortedFiles; Languages: russian
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\GetSortedFiles
+
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\File.ico"; Components: PowerShell\GetSortedFiles
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Copy files to destination sorted by folder names"; Components: PowerShell\GetSortedFiles; Languages: english
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Копировать файлы, отсортированные по именам папок"; Components: PowerShell\GetSortedFiles; Languages: russian
 Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2Files\shell\PowerShell_CFl_01_SortFromFolders\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\Get_FilesCopy_SortedByFolders.ps1"" ""%V"""; Components: PowerShell\GetSortedFiles
+
+
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FileHandling.ico"; Components: PowerShell\FileHandlers
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Handlers"; Components: PowerShell\FileHandlers; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Обработчики файлов"; Components: PowerShell\FileHandlers; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\FileHandlers
+
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\FileHandling.ico"; Components: PowerShell\FileHandlers
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "MUIVerb"; ValueData: "File Handlers"; Components: PowerShell\FileHandlers; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Обработчики файлов"; Components: PowerShell\FileHandlers; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling"; ValueType: string; ValueName: "SubCommands"; Components: PowerShell\FileHandlers
+
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\FileHandlers\CSS
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "MUIVerb"; ValueData: "All CSS → CSS Minify"; Components: PowerShell\FileHandlers\CSS; Languages: english
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Минифицировать все CSS"; Components: PowerShell\FileHandlers\CSS; Languages: russian
+Root: "HKCR"; Subkey: "Directory\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.css\nassMinify.ps1"" ""%V"""; Components: PowerShell\FileHandlers\CSS
+
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\ics\CSS.ico"; Components: PowerShell\FileHandlers\CSS
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "MUIVerb"; ValueData: "All CSS → CSS Minify"; Components: PowerShell\FileHandlers\CSS; Languages: english
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass"; ValueType: string; ValueName: "MUIVerb"; ValueData: "Минифицировать все CSS"; Components: PowerShell\FileHandlers\CSS; Languages: russian
+Root: "HKCR"; Subkey: "Directory\Background\shell\PowerShellScripts\shell\Powershell_00_Create2FilesHandling\shell\PowerShell_CSS_Minify_Mass\command"; ValueType: string; ValueData: """pwsh.exe"" -ExecutionPolicy RemoteSigned -File ""{app}\ps1\fileHandlers\.css\massMinify.ps1"" ""%V"""; Components: PowerShell\FileHandlers\CSS
 
 [Types]
 Name: "Full"; Description: "PowerShell"; Flags: iscustom
@@ -275,10 +324,16 @@ Name: "PowerShell\CopyDeepToJSONClip"; Description: "Deep JSON-table from Direct
 Name: "PowerShell\CopyDeepToJSONClip"; Description: "Глубокая JSON-таблица из директории в Буфер обмена"; Types: Full; Languages: russian
 Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Deep JSON-table from Directory to 'directory'.json"; Types: Full; Languages: english
 Name: "PowerShell\CopyDeepToJSONDirName"; Description: "Глубокая JSON-таблица из директории в 'директория'.json"; Types: Full; Languages: russian
-Name: "PowerShell\CSStoMini"; Description: "Collect .css files into single .min.css"; Types: Full; Languages: english
-Name: "PowerShell\CSStoMini"; Description: "Собрать .css файлы в единый .min.css"; Types: Full; Languages: russian
 Name: "PowerShell\GetSortedFiles"; Description: "Copy all files from current dir folders to destination, sorted by origin folder name"; Types: Full; Languages: english
 Name: "PowerShell\GetSortedFiles"; Description: "Копировать все файлы из папок текущей директории в пункт назначения, отсортированные по имени исходной папки"; Types: Full; Languages: russian
+Name: "PowerShell\FileHandlers"; Description: "File Handlers"; Types: Full; Languages: english
+Name: "PowerShell\FileHandlers"; Description: "Обработчики файлов"; Types: Full; Languages: russian
+Name: "PowerShell\FileHandlers\JSON"; Description: ".json scripts"; Types: Full; Languages: english
+Name: "PowerShell\FileHandlers\JSON"; Description: "Скрипты .json"; Types: Full; Languages: russian
+Name: "PowerShell\FileHandlers\YAML"; Description: ".yaml scripts"; Types: Full; Languages: english
+Name: "PowerShell\FileHandlers\YAML"; Description: "Скрипты .yaml"; Types: Full; Languages: russian
+Name: "PowerShell\FileHandlers\CSS"; Description: ".css scripts"; Types: Full; Languages: english
+Name: "PowerShell\FileHandlers\CSS"; Description: "Скрипты .css"; Types: Full; Languages: russian
 
 [Run]
 Filename: "{app}\readme.txt"; Flags: postinstall shellexec skipifsilent unchecked; Description: "Открыть README"; Languages: russian
