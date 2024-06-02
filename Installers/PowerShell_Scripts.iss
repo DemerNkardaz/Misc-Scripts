@@ -3,7 +3,7 @@
 
 #define MSApplicationTitle "DN Misc Scripts"
 #define MSApplicationPath "Nkardaz/Misc Scripts"
-#define ApplicationVER "1.0"
+#define ApplicationVER "1.2"
 #define PublisherTitle "Demer Nkardaz"
 #define GitRepoURL "https://github.com/DemerNkardaz/Misc-Scripts"
 #define GitAuthor "hhttps://github.com/DemerNkardaz"

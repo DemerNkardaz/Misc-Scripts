@@ -45,11 +45,24 @@ function LogFolderSkip {
   Write-Host -ForegroundColor Yellow " :: Пропуск директории [$relativePath] : обнаружен файл [«$lockFile»]"
 }
 
+
+$totalCopiedSizeInBytes = 0
+$totalCopiedFiles = 0
 function LogCopySucces {
   $timestamp = Get-Date -Format "HH:mm:ss"
   Write-Host -ForegroundColor Blue "`n[$timestamp]" -NoNewline
   Write-Host -ForegroundColor Green " :: Копирование файлов выполнено успешно"
+
+  $totalSizeInMB = $totalCopiedSizeInBytes / 1MB
+  $totalSizeInGB = $totalSizeInMB / 1024
+  $copiedSize = if ($totalSizeInGB -ge 1) { $totalSizeInGB.ToString("N2") + " GB" } else { $totalSizeInMB.ToString("N2") + " MB" }
+
+  Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
+  Write-Host -ForegroundColor Cyan " :: Общий объём: $copiedSize"
+  Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
+  Write-Host -ForegroundColor Cyan " :: Количество файлов: $totalCopiedFiles"
 }
+
 
 function LogNoFilesToCopy {
   $timestamp = Get-Date -Format "HH:mm:ss"
@@ -123,6 +136,8 @@ foreach ($subDir in $subDirectories) {
     }
     Copy-Item -Path $file.FullName -Destination $destinationPath
     LogToFile "$($relativePath) → % → $($newFileName)"
+    $totalCopiedSizeInBytes += (Get-Item $destinationPath).Length
+    $totalCopiedFiles++
     $filesCopied = $true
   }
 }

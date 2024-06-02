@@ -45,11 +45,24 @@ function LogFolderSkip {
   Write-Host -ForegroundColor Yellow " :: Skipping directory [$relativePath] : founded file [«$lockFile»]"
 }
 
+$totalCopiedSizeInBytes = 0
+$totalCopiedFiles = 0
+
 function LogCopySucces {
   $timestamp = Get-Date -Format "HH:mm:ss"
   Write-Host -ForegroundColor Blue "`n[$timestamp]" -NoNewline
   Write-Host -ForegroundColor Green " :: Copying of files completed successfully"
+
+  $totalSizeInMB = $totalCopiedSizeInBytes / 1MB
+  $totalSizeInGB = $totalSizeInMB / 1024
+  $copiedSize = if ($totalSizeInGB -ge 1) { $totalSizeInGB.ToString("N2") + " GB" } else { $totalSizeInMB.ToString("N2") + " MB" }
+
+  Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
+  Write-Host -ForegroundColor Cyan " :: Total size: $copiedSize"
+  Write-Host -ForegroundColor Blue "[$timestamp]" -NoNewline
+  Write-Host -ForegroundColor Cyan " :: Files count: $totalCopiedFiles"
 }
+
 
 function LogNoFilesToCopy {
   $timestamp = Get-Date -Format "HH:mm:ss"
@@ -123,6 +136,8 @@ foreach ($subDir in $subDirectories) {
     }
     Copy-Item -Path $file.FullName -Destination $destinationPath
     LogToFile "$($relativePath) → % → $($newFileName)"
+    $totalCopiedSizeInBytes += (Get-Item $destinationPath).Length
+    $totalCopiedFiles++
     $filesCopied = $true
   }
 }
