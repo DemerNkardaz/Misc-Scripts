@@ -98,6 +98,20 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "{group}\{cm:UninstallProgram,{#MSApplicationTitle}}"; Filename: "{uninstallexe}"
 
 [Registry]
+Root: "HKCR"; Subkey: "Directory\shellex\ContextMenuHandlers\NkardazMisc"; ValueType: string; ValueData: "{{1B7C7CFA-5294-4986-A272-3154E99BF9EE}"; Flags: uninsdeletekey; Components: PowerShell
+Root: "HKCR"; Subkey: "Directory\Background\shellex\ContextMenuHandlers\NkardazMisc"; ValueType: string; ValueData: "{{1B7C7CFA-5294-4986-A272-3154E99BF9EE}"; Flags: uninsdeletekey; Components: PowerShell
+
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{1B7C7CFA-5294-4986-A272-3154E99BF9EE}"; ValueType: string; ValueData: "NkardazMisc"; Flags: uninsdeletekey; Components: PowerShell
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{1B7C7CFA-5294-4986-A272-3154E99BF9EE}\InProcServer32"; ValueType: string; ValueData: "{app}\lib\folder_handlers.dll"; Components: PowerShell
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{1B7C7CFA-5294-4986-A272-3154E99BF9EE}\InProcServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Apartment"; Components: PowerShell
+
+Root: "HKCR"; Subkey: "*\shellex\ContextMenuHandlers\NkardazMisc"; ValueType: string; ValueData: "{{4C2B2658-7145-4D86-9456-CFF0F69D09D3}"; Flags: uninsdeletekey; Components: PowerShell
+
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{4C2B2658-7145-4D86-9456-CFF0F69D09D3}"; ValueType: string; ValueData: "NkardazMisc"; Flags: uninsdeletekey; Components: PowerShell
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{4C2B2658-7145-4D86-9456-CFF0F69D09D3}\InProcServer32"; ValueType: string; ValueData: "{app}\lib\file_handlers.dll"; Components: PowerShell
+Root: "HKCR"; Subkey: "WOW6432Node\CLSID\{{4C2B2658-7145-4D86-9456-CFF0F69D09D3}\InProcServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Apartment"; Components: PowerShell
+
+
 Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; Flags: uninsdeletekey; Components: PowerShell\FileHandlers
 Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: expandsz; ValueName: "Icon"; ValueData: "pwsh.exe"; Components: PowerShell\FileHandlers
 Root: "HKCR"; Subkey: "*\shell\PowerShellScripts"; ValueType: string; ValueName: "MUIVerb"; ValueData: "MISC :: PowerShell Scripts"; Components: PowerShell\FileHandlers; Languages: english
