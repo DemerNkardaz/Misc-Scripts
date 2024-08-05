@@ -15,42 +15,48 @@ This script binds specials chars insertion for some diacritic signs, spaces, ¹�
 #### List of binds
 
 _Diacritic signs_
-**LCtrl + LAlt +** **_following keys:_**
- **m** — combining marcon, looks like o —→ ō, u — ū.
- **b** — combining breve, looks like o —→ ŏ, u — ŭ.
- **c** — combining circumflex, looks like o —→ ô, u — û.
- **LShift + c** — combining caron, looks like o —→ ǒ, u — û.
- **a** — combining acute, looks like o —→ ó, u — ú.
- **g** — combining grave, looks like o —→ ò, u — ù.
 
-_Super and subscript number_ — **LCtrl + LAlt** **_(for subscript + LShift)_** **+ 1…0 numbers —** ¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀.
+**LCtrl + LAlt +** **_following keys:_**
+
+- **m** — combining marcon, looks like o —→ ō, u — ū.
+- **b** — combining breve, looks like o —→ ŏ, u — ŭ.
+- **c** — combining circumflex, looks like o —→ ô, u — û.
+- **LShift + c** — combining caron, looks like o —→ ǒ, u — û.
+- **a** — combining acute, looks like o —→ ó, u — ú.
+- **g** — combining grave, looks like o —→ ò, u — ù.
+
+- _Super and subscript number_ — **LCtrl + LAlt** **_(for subscript + LShift)_** **+ 1…0 numbers —** ¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀.
 
 _Spaces_
-**RAlt + RShift +** **_following keys:_**
- **1** — Em Space [ ].
- **2** — En Space [ ].
- **3** — ⅓ Em Space [ ].
- **4** — ¼ Em Space [ ].
- **5** — _empty bind_.
- **6** — ⅙ Em Space [ ].
- **7** — Thin Space [ ].
- **8** — Hair Space [ ].
- **9** — Punctuation Space [ ].
- **0** — Zero-Width Space [].
- **-** — Zero-Width No-Break Space [].
- *With numpad (need to turn off NumLock):*
- **0** — Figure Space [ ].
 
-**RAlt + LShift + Space —** Thin No-Break Space.
+**RAlt + RShift +** **_following keys:_**
+
+- **1** — Em Space [ ].
+- **2** — En Space [ ].
+- **3** — ⅓ Em Space [ ].
+- **4** — ¼ Em Space [ ].
+- **5** — _empty bind_.
+- **6** — ⅙ Em Space [ ].
+- **7** — Thin Space [ ].
+- **8** — Hair Space [ ].
+- **9** — Punctuation Space [ ].
+- **0** — Zero-Width Space [].
+- **-** — Zero-Width No-Break Space [].
+- _With numpad (need to turn off NumLock):_
+- **0** — Figure Space [ ].
+
+- **RAlt + LShift + Space —** Thin No-Break Space.
 
 _Other binds_
+
 **RAlt + m —** Minus sign [−].
 
 **LWin +** **_following keys:_**
- **[ or ]** — Single asian quotes:「」.
- **LShift + [ or ]** — Double asian quotes:『』.
- **LCtrl + [ or ]** — Vertical single asian quotes:﹁﹂.
- **LCtrl + LShift + [ or ]** — Vertical double asian quotes:﹃﹄.
+
+- **[ or ]** — Single asian quotes:「」.
+- **LShift + [ or ]** — Double asian quotes:『』.
+- **LCtrl + [ or ]** — Vertical single asian quotes:﹁﹂.
+- **LCtrl + LShift + [ or ]** — Vertical double asian quotes:﹃﹄.
 
 ## PowerShell Lists Scripts
 
