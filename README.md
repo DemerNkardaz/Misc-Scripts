@@ -4,7 +4,7 @@
 
 Just some scripts for me.
 
-All scripts created with AI.
+Some of scripts created with AI.
 
 ## AutoHotkey Scripts
 
