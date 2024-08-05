@@ -18,12 +18,12 @@ _Diacritic signs_
 
 **LCtrl + LAlt +** **_following keys:_**
 
-- **m** — combining marcon, looks like o —→ ō, u — ū.
-- **b** — combining breve, looks like o —→ ŏ, u — ŭ.
-- **c** — combining circumflex, looks like o —→ ô, u — û.
-- **LShift + c** — combining caron, looks like o —→ ǒ, u — û.
-- **a** — combining acute, looks like o —→ ó, u — ú.
-- **g** — combining grave, looks like o —→ ò, u — ù.
+- **m** — combining marcon, looks like o → ō, u →​ ū.
+- **b** — combining breve, looks like o → ŏ, u → ŭ.
+- **c** — combining circumflex, looks like o → ô, u → û.
+- **LShift + c** — combining caron, looks like o → ǒ, u → û.
+- **a** — combining acute, looks like o → ó, u → ú.
+- **g** — combining grave, looks like o → ò, u → ù.
 
 - _Super and subscript number_ — **LCtrl + LAlt** **_(for subscript + LShift)_** **+ 1…0 numbers —** ¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀.
 
