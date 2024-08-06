@@ -24,6 +24,10 @@ _Diacritic signs_
 - **LShift + c** — Combining caron, looks like o → ǒ, u → û.
 - **a** — Combining acute, looks like o → ó, u → ú.
 - **g** — Combining grave, looks like o → ò, u → ù.
+- **t** — Combining tilde, looks like o → õ, u → ũ.
+- **d** — Combining dot above, looks like o → ȯ, u → u̇.
+- **LShift + d** — Combining diaeresis, looks like o → ö, u → ü.
+- **r** — Combining ring above, looks like o → o̊, u → ů.
 
 - _Super and subscript number_ — **LCtrl + LAlt** **_(for subscript + LShift)_** **+ 1…0 numbers —** ¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀.
 

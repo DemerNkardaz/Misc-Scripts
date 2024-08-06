@@ -1,12 +1,51 @@
 <^<!m:: Send("{U+0304}") ; Combining macron
+<^<+<!m:: Send("{U+0331}") ; Combining macron below
 <^<!b:: Send("{U+0306}") ; Combining breve
+<^<+<!b:: Send("{U+0311}") ; Combining inverted breve
 <^<!c:: Send("{U+0302}") ; Combining circumflex
 <^<+<!c:: Send("{U+030C}") ; Combining caron
 <^<!a:: Send("{U+0301}") ; Combining acute
+<^<+<!a:: Send("{U+030B}") ; Combining double acute
 <^<!g:: Send("{U+0300}") ; Combining grave
+<^<+<!g:: Send("{U+030F}") ; Combining double grave
 <^<!t:: Send("{U+0303}") ; Combining tilde
+<^<+<!t:: Send("{U+0330}") ; Combining tilde below
 <^<!d:: Send("{U+0307}") ; Combining dot above
+<^<+<!d:: Send("{U+0308}") ; Combining diaeresis
 <^<!r:: Send("{U+030A}") ; Combining ring above
+<^<+<!r:: Send("{U+0325}") ; Combining ring below
+
+<^<!l:: Send("{U+0332}") ; Combining low line
+<^<+<!l:: Send("{U+0333}") ; Combining double low line
+
+<^<!p:: Send("{U+0321}") ; Combining palatilized hook below
+<^<+<!p:: Send("{U+0322}") ; Combining retroflex hood below
+
+<^<!o:: Send("{U+0305}") ; Combining overline
+<^<!h:: Send("{U+0309}") ; Combining hook above
+<^<+<!h:: Send("{U+031B}") ; Combining horn
+<^<!v:: Send("{U+030D}") ; Combining vertical line above
+<^<+<!v:: Send("{U+030E}") ; Combining double vertical line above
+
+<^<!,:: Send("{U+0313}") ; Combining comma above
+>^>!,:: Send("{U+0326}") ; Combining comma below
+<^<+<!,:: Send("{U+0314}") ; Combining reversed comma above
+<^<!/:: Send("{U+0312}") ; Combining turned comma above
+
+<^<!.:: Send("{U+0323}") ; Combining dot below
+<^<+<!.:: Send("{U+0324}") ; Combining diaeresis below
+
+>^>!x:: Send("{U+0327}") ; Combining cedilla
+>^>!c:: Send("{U+032D}") ; Combining circumflex
+>^>+>!c:: Send("{U+032C}") ; Combining caron
+>^>!o:: Send("{U+0327}") ; Combining ogonek
+>^>!b:: Send("{U+032E}") ; Combining breve below
+>^>+>!b:: Send("{U+032F}") ; Combining inverted breve below
+>^>!v:: Send("{U+0329}") ; Combining vertical line below
+>^>+>!v:: Send("{U+030E}") ; Combining double vertical line below
+
+>^b:: Send("{U+0346}") ; Combining bridge above
+>^>+b:: Send("{U+032A}") ; Combining bridge below
 
 <^<!1:: Send("{U+00B9}") ; Superscript 1
 <^<!2:: Send("{U+00B2}") ; Superscript 2
