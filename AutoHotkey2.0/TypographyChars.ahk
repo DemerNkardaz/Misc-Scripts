@@ -27,9 +27,9 @@
 <^<!v:: Send("{U+030D}") ; Combining vertical line above
 <^<+<!v:: Send("{U+030E}") ; Combining double vertical line above
 
-<^<!,:: Send("{U+0313}") ; Combining comma above
->^>!,:: Send("{U+0326}") ; Combining comma below
-<^<+<!,:: Send("{U+0314}") ; Combining reversed comma above
+<^<!,:: Send("{U+0326}") ; Combining comma below
+>^>!,:: Send("{U+0313}") ; Combining comma above
+>^>+>!,:: Send("{U+0314}") ; Combining reversed comma above
 <^<!/:: Send("{U+0312}") ; Combining turned comma above
 
 <^<!.:: Send("{U+0323}") ; Combining dot below
