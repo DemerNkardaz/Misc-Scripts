@@ -574,8 +574,8 @@ Constructor()
 
   DSLContent["UI"].TabsNCols := [
     [Map(
-      "ru", ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе"],
-      "en", ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About"]
+      "ru", ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе", "Полезное"],
+      "en", ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About", "Useful"]
     )],
     [Map(
       "ru", ["Имя", "Ключ", "Вид", "Unicode"],
@@ -677,7 +677,7 @@ Constructor()
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
-    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ, ffi → ﬃ"],
+    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ, OE → Œ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
@@ -796,9 +796,37 @@ Constructor()
   ButtonOK := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[SystemLanguage].About.AutoLoadAdd)
   ButtonOK.OnEvent("Click", AddScriptToAutoload)
 
+
+  Tab.UseTab(7)
+  DSLContent["ru"].Useful := {}
+  DSLContent["ru"].Useful.Unicode := "Unicode-ресурсы"
+  DSLContent["ru"].Useful.Dictionaries := "Словари"
+  DSLContent["ru"].Useful.JPnese := "Японский: "
+  DSLContent["ru"].Useful.CHnese := "Китайский: "
+  DSLContent["ru"].Useful.VTnese := "Вьетнамский: "
+
+
+  DSLContent["en"].Useful := {}
+  DSLContent["en"].Useful.Dictionaries := "Dictionaries"
+  DSLContent["en"].Useful.JPnese := "Japanese: "
+  DSLContent["en"].Useful.CHnese := "Chinese: "
+  DSLContent["en"].Useful.VTnese := "Vietnamese: "
+
+  DSLPadGUI.SetFont("s13")
+  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].Useful.Unicode)
+  DSLPadGUI.SetFont("s11")
+  DSLPadGUI.Add("Link", "w600", '<a href="https://symbl.cc/">Symbl.cc</a> <a href="https://www.compart.com/en/unicode/">Compart</a>')
+  DSLPadGUI.SetFont("s13")
+  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].Useful.Dictionaries)
+  DSLPadGUI.SetFont("s11")
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.JPnese . '<a href="https://yarxi.ru">ЯРКСИ</a> <a href="https://www.warodai.ruu">Warodai</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.CHnese . '<a href="https://bkrs.info">БКРС</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
+
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   FasKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  CommandsLV.OnEvent("DoubleClick", LV_RunCommand)
 
 
   DSLPadGUI.Title := DSLPadTitle
@@ -828,6 +856,34 @@ LV_OpenUnicodeWebsite(LV, RowNumber)
   }
 }
 
+LV_RunCommand(LV, RowNumber)
+{
+  Shortcut := LV.GetText(RowNumber, 2)
+
+  if (Shortcut = "Win Alt F")
+    SearchKey()
+
+  if (Shortcut = "Win Alt U")
+    InsertUnicodeKey()
+
+  if (Shortcut = "Win Alt A")
+    InsertAltCodeKey()
+
+  if (Shortcut = "Win Alt L")
+    Ligaturise()
+
+  if (Shortcut = "Win LAlt 1")
+    SwitchToScript("sup")
+
+  if (Shortcut = "Win RAlt 1")
+    SwitchToScript("sub")
+
+  if (Shortcut = "RAlt Home")
+    ToggleFastKeys()
+
+  if (Shortcut = "RAlt RShift Home")
+    ToggleInputHTMLEntities()
+}
 
 LV_MouseMove(Control, x, y) {
   RowNumber := Control.GetItemAt(x, y)
@@ -842,6 +898,13 @@ LV_MouseMove(Control, x, y) {
 }
 
 AddScriptToAutoload(*) {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].Success := "Ярлык для автозагрузки создан или обновлен."
+  Labels["en"].Success := "Shortcut for autoloading created or updated."
   CurrentScriptPath := A_ScriptFullPath
   AutoloadFolder := A_StartMenu "\Programs\Startup"
   ShortcutPath := AutoloadFolder "\DSLKeyPad.lnk"
@@ -853,7 +916,7 @@ AddScriptToAutoload(*) {
   Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
   RunWait(Command)
 
-  MsgBox("Ярлык для автозагрузки создан или обновлен.", DSLPadTitle, 0x40)
+  MsgBox(Labels[SystemLanguage].Success, DSLPadTitle, 0x40)
 }
 
 IsGuiOpen(title)
@@ -863,7 +926,9 @@ IsGuiOpen(title)
 
 ; Fastkeys
 
-<^>!Home::
+<^>!Home:: ToggleFastKeys()
+
+ToggleFastKeys()
 {
   SystemLanguage := GetSystemLanguage()
   global FastKeysIsActive, ConfigFile
@@ -883,7 +948,9 @@ IsGuiOpen(title)
   return
 }
 
-<^>!>+Home::
+<^>!>+Home:: ToggleInputHTMLEntities()
+
+ToggleInputHTMLEntities()
 {
   SystemLanguage := GetSystemLanguage()
   global InputHTMLEntities, ConfigFile
