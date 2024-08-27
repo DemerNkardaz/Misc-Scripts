@@ -76,6 +76,8 @@ BindDiacriticF2 := [
   [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
   [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
   [["g", "п"], "{U+0316}", ["Гравис снизу", "Grave Below"]],
+  [["h", "р"], "{U+0321}", ["Палатальный крюк", "Palatalized Hook Below"]],
+  [["H", "Р"], "{U+0322}", ["Ретрофлексный крюк", "Retroflex Hook Below"]],
 ]
 
 BindDiacriticF3 := [
@@ -454,13 +456,14 @@ Constructor()
     [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̭", "032D"],
     [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̬", "032C"],
     [Map("ru", "Гравис снизу", "en", "Grave Below"), "[g][п]", "◌̖", "0316"],
+    [Map("ru", "Палатальный крюк", "en", "Palatalized Hook Below"), "[g][р]", "◌̡", "0321"],
+    [Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"), "[G][Р]", "◌̢", "0322"],
     ["", "", "", ""],
     ["", "Win Alt F3", "", ""],
     [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", "0346"],
     [Map("ru", "Мостик снизу", "en", "Bridge Below"), "[B][И]", "◌̪", "032A"],
     [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [B][И]", "◌̺", "033A"],
   ]
-
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
 
   DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
@@ -616,11 +619,11 @@ Constructor()
 
   DSLPadGUI.SetFont("s16")
   DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.Title)
+  DSLPadGUI.SetFont("s11")
   DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.SubTitle)
 
   for item in DSLContent[SystemLanguage].About.Texts
   {
-    DSLPadGUI.SetFont("s10")
     DSLPadGUI.Add("Text", "w600", item)
   }
   DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
