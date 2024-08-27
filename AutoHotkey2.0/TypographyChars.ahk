@@ -1,3 +1,239 @@
+#Requires Autohotkey v2
+#SingleInstance Force
+
+; Only EN US & RU RU Keyboard Layout
+
+GetSystemLanguage()
+{
+  langID := RegRead("HKEY_CURRENT_USER\Control Panel\International", "LocaleName")
+  langID := SubStr(langID, 1, 2)
+  return langID ? langID : "en"
+}
+
+CtrlA := Chr(1)
+CtrlB := Chr(2)
+CtrlC := Chr(3)
+CtrlD := Chr(4)
+CtrlE := Chr(5)
+CtrlF := Chr(6)
+CtrlG := Chr(7)
+CtrlH := Chr(8)
+CtrlI := Chr(9)
+CtrlJ := Chr(10)
+CtrlK := Chr(11)
+CtrlL := Chr(12)
+CtrlM := Chr(13)
+CtrlN := Chr(14)
+CtrlO := Chr(15)
+CtrlP := Chr(16)
+CtrlQ := Chr(17)
+CtrlR := Chr(18)
+CtrlS := Chr(19)
+CtrlT := Chr(20)
+CtrlU := Chr(21)
+CtrlV := Chr(22)
+CtrlW := Chr(23)
+CtrlX := Chr(24)
+CtrlY := Chr(25)
+CtrlZ := Chr(26)
+SpaceKey := Chr(32)
+
+BindDiacriticF1 := [
+  [["a", "ф"], "{U+0301}", ["Акут", "Acute", "Ударение"]],
+  [["A", "Ф"], "{U+030B}", ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное Ударение"]],
+]
+
+BindSpaces := [
+  ["1", "{U+2003}", ["Em Space", "EmSP", "EM_SPACE", "Круглая Шпация"]],
+  ["2", "{U+2002}", ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
+  ["3", "{U+2004}", ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
+  ["4", "{U+2005}", ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
+  ["5", "{U+202F}", ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
+  ["6", "{U+2006}", ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
+  ["7", "{U+2009}", ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
+  ["8", "{U+200A}", ["Hair Space", "HairSP", "Волосяная Шпация"]],
+  ["9", "{U+2008}", ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
+  ["0", "{U+200B}", ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
+  ["-", "{U+2060}", ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины"]],
+  [SpaceKey, "{U+00A0}", ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
+]
+
+InputBridge(BindsArray) {
+  ih := InputHook("L1 M", "L")
+  ih.Start()
+  ih.Wait()
+  keyPressed := ih.Input
+  for index, pair in BindsArray {
+    if IsObject(pair[1]) {
+      for _, key in pair[1] {
+        if (keyPressed = key) {
+          Send(pair[2])
+          return
+        }
+      }
+    } else {
+      if (keyPressed = pair[1]) {
+        Send(pair[2])
+        return
+      }
+    }
+  }
+  ih.Stop()
+}
+
+CombineArrays(destinationArray, sourceArray*)
+{
+  for array in sourceArray
+  {
+    for value in array
+    {
+      destinationArray.Push(value)
+    }
+  }
+}
+
+SearchKey() {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].SearchTitle := "Поиск знака"
+  Labels["en"].SearchTitle := "Search symbol"
+  Labels["ru"].WindowPrompt := "Введите название знака"
+  Labels["en"].WindowPrompt := "Enter symbol name"
+
+  PromptValue := ""
+  SearchOfArray := []
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+
+  if IB.Result = "Cancel"
+    return
+  else
+    PromptValue := IB.Value
+
+  CombineArrays(SearchOfArray, BindDiacriticF1, BindSpaces)
+
+  Found := False
+  for index, pair in SearchOfArray {
+    if IsObject(pair[3]) {
+      for _, key in pair[3] {
+        if (StrLower(PromptValue) = StrLower(key)) {
+          Send(pair[2])
+          Found := True
+          break 2
+        }
+      }
+    }
+  }
+
+  if !Found {
+    MsgBox "Знак не найден."
+  }
+}
+
+InsertUnicodeKey() {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].SearchTitle := "UNICODE"
+  Labels["en"].SearchTitle := "UNICODE"
+  Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
+  Labels["en"].WindowPrompt := "Enter code name"
+
+  PromptValue := ""
+  SearchOfArray := []
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+
+  if IB.Result = "Cancel"
+    return
+  else
+    PromptValue := IB.Value
+  Send("{U+" . PromptValue . "}")
+}
+
+<#<!F1:: InputBridge(BindDiacriticF1)
+<#<!Space:: InputBridge(BindSpaces)
+<#<!f:: SearchKey()
+<#<!u:: InsertUnicodeKey()
+
+
+; Setting up of Diacritics-Spaces-Letters KeyPad
+
+DSLPadTitle := "DSL KeyPad (αλφα)"
+<#<!Home::
+{
+  if (IsGuiOpen(DSLPadTitle))
+  {
+    WinActivate(DSLPadTitle)
+  }
+  else
+  {
+    DSLPadGUI := Constructor()
+    DSLPadGUI.Show()
+  }
+}
+
+Constructor()
+{
+  DSLContent := {}
+  DSLContent[] := Map()
+  DSLContent["ru"] := {}
+  DSLContent["en"] := {}
+  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы"]
+  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces"]
+  DSLContent["ru"].BindListTitle := ["Имя", "Ключ", "Вид", "Unicode"]
+  DSLContent["ru"].BindList := {}
+  DSLContent["ru"].BindList.Diacritics := [
+    ["", "Win Alt F1", "", ""],
+    ["Акут", "[a][ф]", "◌́", "3001"],
+    ["Двойной Акут", "[A][Ф]", "◌̋", "030B"]
+  ]
+
+  SystemLanguage := GetSystemLanguage()
+
+  DSLPadGUI := Gui()
+
+  Tab := DSLPadGUI.Add("Tab3", "x8 y8 w458 h500", DSLContent[SystemLanguage].TabTitles)
+  DSLPadGUI.SetFont("s11")
+  Tab.UseTab(1)
+  DiacriticLV := DSLPadGUI.Add("ListView", "w435 h460", DSLContent[SystemLanguage].BindListTitle)
+  DiacriticLV.ModifyCol(1, 140)
+  DiacriticLV.ModifyCol(2, 140)
+  DiacriticLV.ModifyCol(3, 60)
+  DiacriticLV.ModifyCol(4, 85)
+
+  for item in DSLContent[SystemLanguage].BindList.Diacritics
+  {
+    DiacriticLV.Add(, item[1], item[2], item[3], item[4])
+  }
+
+
+  Tab.UseTab()
+  DSLPadGUI.Title := DSLPadTitle
+
+  screenWidth := A_ScreenWidth
+  screenHeight := A_ScreenHeight
+
+  windowWidth := 470
+  windowHeight := 512
+  xPos := screenWidth - windowWidth - 25
+  yPos := screenHeight - windowHeight - 75
+
+  DSLPadGUI.Show()
+  DSLPadGUI.Move(xPos, yPos)
+
+  return DSLPadGUI
+}
+
+IsGuiOpen(title)
+{
+  return WinExist(title) != 0
+}
+
+
 <^<!m:: Send("{U+0304}") ; Combining macron
 <^<+<!m:: Send("{U+0331}") ; Combining macron below
 <^<!b:: Send("{U+0306}") ; Combining breve
@@ -29,10 +265,10 @@
 
 <^<!,:: Send("{U+0326}") ; Combining comma below
 >^>!,:: Send("{U+0313}") ; Combining comma above
->^>+>!,:: Send("{U+0314}") ; Combining reversed comma above
+>^>+>!,:: Send("{U+0314}") ; Combining reversed comma aboves
 <^<!/:: Send("{U+0312}") ; Combining turned comma above
 
-<^<!.:: Send("{U+0323}") ; Combining dot below
+<^<!.:: Send("{U+0323}") ; Combining dot belowВ
 <^<+<!.:: Send("{U+0324}") ; Combining diaeresis below
 
 >^>!x:: Send("{U+0327}") ; Combining cedilla
@@ -84,6 +320,7 @@
 
 <^>!m:: Send("{U+2212}") ; Minus
 
+
 <^>!NumpadMult:: Send("{U+2051}") ; Double Asterisk
 <^>!>+NumpadMult:: Send("{U+2042}") ; Asterism
 <^>!<+NumpadMult:: Send("{U+204E}") ; Asterisk Below
@@ -101,3 +338,13 @@
 <#<^<+[:: Send("{U+FE43}") ; Vertical Double Asian Quotes
 <#<^]:: Send("{U+FE42}") ; Vertical Single Asian Quotes End
 <#<^<+]:: Send("{U+FE44}") ; Vertical Double Asian Quotes End
+
+<^<!e:: Send("{U+045E}") ; Cyrillic u with breve
+<^<+<!e:: Send("{U+040E}") ; Cyrillic cap u with breve
+<^<!w:: Send("{U+04EF}") ; Cyrillic u with macron
+<^<+<!w:: Send("{U+04EE}") ; Cyrillic cap u with macron
+<^<!q:: Send("{U+04E3}") ; Cyrillic i with macron
+<^<+<!q:: Send("{U+04E2}") ; Cyrillic cap i with macron
+
+<^<!x:: Send("{U+04AB}") ; CYRILLIC SMALL LETTER ES WITH DESCENDER
+<^<+<!x:: Send("{U+04AA}") ; CYRILLIC CAPITAL LETTER ES WITH DESCENDER
