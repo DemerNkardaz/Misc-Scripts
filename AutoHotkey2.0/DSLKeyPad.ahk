@@ -3,6 +3,20 @@
 
 ; Only EN US & RU RU Keyboard Layout
 
+ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
+
+FastKeysIsActive := False
+
+if FileExist(ConfigFile) {
+  IniValue := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
+  FastKeysIsActive := (IniValue = "True")
+} else {
+  IniWrite "False", ConfigFile, "Settings", "FastKeysIsActive"
+  IniWrite "", ConfigFile, "LatestPrompts", "Unicode"
+  IniWrite "", ConfigFile, "LatestPrompts", "Altcode"
+  IniWrite "", ConfigFile, "LatestPrompts", "Search"
+}
+
 GetSystemLanguage()
 {
   langID := RegRead("HKEY_CURRENT_USER\Control Panel\International", "LocaleName")
@@ -200,9 +214,9 @@ SearchKey() {
   Labels["ru"].WindowPrompt := "Введите название знака"
   Labels["en"].WindowPrompt := "Enter symbol name"
 
-  PromptValue := ""
+  PromptValue := IniRead(ConfigFile, "LatestPrompts", "Search", "")
   SearchOfArray := []
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -217,6 +231,7 @@ SearchKey() {
       for _, key in pair[3] {
         if (StrLower(PromptValue) = StrLower(key)) {
           Send(pair[2])
+          IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
           Found := True
           break 2
         }
@@ -240,15 +255,15 @@ InsertUnicodeKey() {
   Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
   Labels["en"].WindowPrompt := "Enter code ID"
 
-  PromptValue := ""
-  SearchOfArray := []
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  PromptValue := IniRead(ConfigFile, "LatestPrompts", "Unicode", "")
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
   else
     PromptValue := IB.Value
   Send("{U+" . PromptValue . "}")
+  IniWrite PromptValue, ConfigFile, "LatestPrompts", "Unicode"
 }
 
 ScriptConverter(Dictionary, FromValue) {
@@ -321,14 +336,15 @@ InsertAltCodeKey() {
   Labels["ru"].Err := "Введите числовое значение"
   Labels["en"].Err := "Enter numeric value"
 
-  PromptValue := ""
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
   if IB.Result = "Cancel"
     return
   else
     PromptValue := IB.Value
   if (PromptValue ~= "^\d+$") {
     SendAltNumpad(PromptValue)
+    IniWrite PromptValue, ConfigFile, "LatestPrompts", "Altcode"
   } else {
     MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
   }
@@ -659,16 +675,6 @@ IsGuiOpen(title)
 }
 
 ; Fastkeys
-ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
-
-FastKeysIsActive := False
-
-if FileExist(ConfigFile) {
-  IniValue := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
-  FastKeysIsActive := (IniValue = "True")
-} else {
-  IniWrite "False", ConfigFile, "Settings", "FastKeysIsActive"
-}
 
 <^>!Home::
 {
