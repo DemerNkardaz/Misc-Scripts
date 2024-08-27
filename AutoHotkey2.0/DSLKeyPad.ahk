@@ -354,6 +354,14 @@ SendAltNumpad(CharacterCode) {
 
 ; Setting up of Diacritics-Spaces-Letters KeyPad
 
+LocaliseArrayKeys(ObjectPath) {
+  for index, item in ObjectPath {
+    if IsObject(item[1]) {
+      item[1] := item[1][GetSystemLanguage()]
+    }
+  }
+}
+
 DSLPadTitle := "DSL KeyPad (αλφα)"
 <#<!Home::
 {
@@ -372,14 +380,22 @@ Constructor()
 {
   DSLContent := {}
   DSLContent[] := Map()
+  DSLContent["BindList"] := {}
+  DSLContent["UI"] := {}
   DSLContent["ru"] := {}
   DSLContent["en"] := {}
-  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе"]
-  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About"]
-  DSLContent["ru"].BindListTitle := ["Имя", "Ключ", "Вид", "Unicode"]
-  DSLContent["en"].BindListTitle := ["Name", "Key", "View", "Unicode"]
-  DSLContent["ru"].BindList := {}
-  DSLContent["en"].BindList := {}
+
+  DSLContent["UI"].TabsNCols := [
+    [Map(
+      "ru", ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе"],
+      "en", ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About"]
+    )],
+    [Map(
+      "ru", ["Имя", "Ключ", "Вид", "Unicode"],
+      "en", ["Name", "Key", "View", "Unicode"]
+    )],
+  ]
+  LocaliseArrayKeys(DSLContent["UI"].TabsNCols)
 
   SystemLanguage := GetSystemLanguage()
 
@@ -389,135 +405,143 @@ Constructor()
   ThreeColumnWidths := [300, 140, 145]
   ColumnListStyle := "w620 h460 +NoSort"
 
-  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent[SystemLanguage].TabTitles)
+  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent["UI"].TabsNCols[1][1])
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(1)
-  DSLContent["ru"].BindList.Diacritics := [
+  DSLContent["BindList"].Diacritics := [
     ["", "Win Alt F1", "", ""],
-    ["Акут", "[a][ф]", "◌́", "3001"],
-    ["Двойной акут", "[A][Ф]", "◌̋", "030B"],
-    ["Кратка", "[b][и]", "◌̆", "0306"],
-    ["Перевёрнутая кратка", "[B][И]", "◌̑", "0311"],
-    ["Циркумфлекс", "[c][с]", "◌̂", "0302"],
-    ["Гачек", "[C][С]", "◌̌", "030C"],
-    ["Точка сверху", "[d][в]", "◌̇", "0307"],
-    ["Диерезис", "[D][В]", "◌̈", "0308"],
+    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "3001"],
+    [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", "030B"],
+    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", "0306"],
+    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", "0311"],
+    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", "0302"],
+    [Map("ru", "Гачек", "en", "Caron"), "[C][С]", "◌̌", "030C"],
+    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
+    [Map("ru", "Диерезис", "en", "Diaeresis"), "[D][В]", "◌̈", "0308"],
     ["", "", "", ""],
     ["", "Win Alt F2", "", ""],
-    ["Кратка снизу", "[b][и]", "◌̮", "032E"],
-    ["Перевёрнутая кратка снизу", "[B][И]", "◌̯", "032F"],
-    ["Циркумфлекс снизу", "[c][с]", "◌̂", "032D"],
-    ["Гачек снизу", "[C][С]", "◌̌", "032C"],
+    [Map("ru", "Кратка снизу", "en", "Breve Below"), "[b][и]", "◌̮", "032E"],
+    [Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"), "[B][И]", "◌̯", "032F"],
+    [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̂", "032D"],
+    [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̌", "032C"],
     ["", "", "", ""],
     ["", "Win Alt F3", "", ""],
-    ["Мостик сверху", "[b][и]", "◌͆", "0346"],
-    ["Мостик снизу", "[B][И]", "◌̪", "032A"],
-    ["Перевёрнутый мостик снизу", "LCtrl [B][И]", "◌̺", "033A"],
+    [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", "0346"],
+    [Map("ru", "Мостик снизу", "en", "Bridge Below"), "[B][И]", "◌̪", "032A"],
+    [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [B][И]", "◌̺", "033A"],
   ]
-  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+
+  LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
+
+  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   DiacriticLV.ModifyCol(1, ColumnWidths[1])
   DiacriticLV.ModifyCol(2, ColumnWidths[2])
   DiacriticLV.ModifyCol(3, ColumnWidths[3])
   DiacriticLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent[SystemLanguage].BindList.Diacritics
+  for item in DSLContent["BindList"].Diacritics
   {
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
   Tab.UseTab(2)
 
   Tab.UseTab(3)
-  DSLContent["ru"].BindList.Spaces := [
+  DSLContent["BindList"].Spaces := [
     ["", "Win Alt Space", "", ""],
-    ["Круглая шпация", "[1]", "[ ]", "2003"],
-    ["Полукруглая шпация", "[2]", "[ ]", "2002"],
-    ["⅓ Круглой шпации", "[3]", "[ ]", "2004"],
-    ["¼ Круглой шпации", "[4]", "[ ]", "2005"],
-    ["Узкий неразрывный пробел", "[5]", "[ ]", "202F"],
-    ["⅙ Круглой шпации", "[6]", "[ ]", "2006"],
-    ["Узкий пробел", "[7]", "[ ]", "2009"],
-    ["Волосяная шпация", "[8]", "[ ]", "200A"],
-    ["Пунктуационный пробел", "[9]", "[ ]", "2008"],
-    ["Пробел нулевой ширины", "[0]", "[​]", "200B"],
-    ["Соединитель слов", "[-]", "[⁠]", "2060"],
-    ["Цифровой пробел", "[=]", "[ ]", "2007"],
-    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"]
+    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
+    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", "2002"],
+    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", "2004"],
+    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", "2005"],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", "202F"],
+    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", "2006"],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", "2009"],
+    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", "200A"],
+    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", "2008"],
+    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", "200B"],
+    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", "2060"],
+    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", "2007"],
+    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", "00A0"],
   ]
-  SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+
+  LocaliseArrayKeys(DSLContent["BindList"].Spaces)
+
+
+  SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   SpacesLV.ModifyCol(1, ColumnWidths[1])
   SpacesLV.ModifyCol(2, ColumnWidths[2])
   SpacesLV.ModifyCol(3, ColumnWidths[3])
   SpacesLV.ModifyCol(4, ColumnWidths[4])
 
+  for item in DSLContent["BindList"].Spaces
+  {
+    SpacesLV.Add(, item[1], item[2], item[3], item[4])
+  }
+
   Tab.UseTab(4)
-  DSLContent["ru"].BindList.Commands := [
-    ["Поиск по названию", "Win Alt F", ""],
-    ["Вставить по Unicode", "Win Alt U", ""],
-    ["Вставить по Альт-коду", "Win Alt A", ""],
-    ["Конвертировать в верхний индекс", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
-    ["Конвертировать в нижний индекс", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
-    ["Активировать быстрые ключи", "RAlt Home", ""],
-    [" (Ускоренный ввод избранных знаков)", "", ""],
-  ]
-  DSLContent["en"].BindList.Commands := [
-    ["Find by name", "Win Alt F", ""],
-    ["Unicode insertion", "Win Alt U", ""],
-    ["Alt-code insertion", "Win Alt A", ""],
-    ["Convert into superscript", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
-    ["Convert into subscript", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
-    ["Activate fastkeys", "RAlt Home", ""],
-    [" (Faster input of chosen signs)", "", ""],
+  DSLContent["BindList"].Commands := [
+    [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
+    [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
+    [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
+    [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
+    [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+    [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
+    [Map("ru", " (Ускоренный ввод избранных знаков)", "en", " (Faster input of chosen signs)"), "", ""],
   ]
 
+  LocaliseArrayKeys(DSLContent["BindList"].Commands)
 
   CommandsLV := DSLPadGUI.Add("ListView", ColumnListStyle,
-    [DSLContent[SystemLanguage].BindListTitle[1], DSLContent[SystemLanguage].BindListTitle[2], DSLContent[SystemLanguage].BindListTitle[3]])
+    [DSLContent["UI"].TabsNCols[2][1][1], DSLContent["UI"].TabsNCols[2][1][2], DSLContent["UI"].TabsNCols[2][1][3]])
   CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
   CommandsLV.ModifyCol(2, ThreeColumnWidths[2])
   CommandsLV.ModifyCol(3, ThreeColumnWidths[3])
 
-  for item in DSLContent[SystemLanguage].BindList.Commands
+  for item in DSLContent["BindList"].Commands
   {
     CommandsLV.Add(, item[1], item[2], item[3])
   }
 
 
   Tab.UseTab(5)
-  DSLContent["ru"].BindList.FasKeysLV := [
+  DSLContent["BindList"].FasKeysLV := [
     ["", "LCtrl LAlt", "", ""],
-    ["Акут", "[a][ф]", "◌́", "3001"],
-    ["Двойной акут", "LShift [a][ф]", "◌̋", "030B"],
-    ["Кратка", "[b][и]", "◌̆", "0306"],
-    ["Перевёрнутая кратка", "LShift [b][и]", "◌̑", "0311"],
-    ["Циркумфлекс", "[c][с]", "◌̂", "0302"],
-    ["Гачек", "LShift [c][с]", "◌̌", "030C"],
+    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "3001"],
+    [Map("ru", "Двойной Акут", "en", "Double Acute"), "LShift [a][ф]", "◌̋", "030B"],
+    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", "0306"],
+    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "LShift [b][и]", "◌̑", "0311"],
+    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", "0302"],
+    [Map("ru", "Гачек", "en", "Caron"), "LShift [c][с]", "◌̌", "030C"],
+    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
+    [Map("ru", "Диерезис", "en", "Diaeresis"), "LShift [d][в]", "◌̈", "0308"],
     ["", "", "", ""],
     ["", "RAlt RShift", "", ""],
-    ["Круглая шпация", "[1]", "[ ]", "2003"],
-    ["Полукруглая шпация", "[2]", "[ ]", "2002"],
-    ["⅓ Круглой шпации", "[3]", "[ ]", "2004"],
-    ["¼ Круглой шпации", "[4]", "[ ]", "2005"],
-    ["Узкий неразрывный пробел", "[5]", "[ ]", "202F"],
-    ["⅙ Круглой шпации", "[6]", "[ ]", "2006"],
-    ["Узкий пробел", "[7]", "[ ]", "2009"],
-    ["Волосяная шпация", "[8]", "[ ]", "200A"],
-    ["Пунктуационный пробел", "[9]", "[ ]", "2008"],
-    ["Пробел нулевой ширины", "[0]", "[​]", "200B"],
-    ["Соединитель слов", "[-]", "[⁠]", "2060"],
-    ["Цифровой пробел", "[=]", "[ ]", "2007"],
-    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"],
+    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
+    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", "2002"],
+    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", "2004"],
+    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", "2005"],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", "202F"],
+    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", "2006"],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", "2009"],
+    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", "200A"],
+    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", "2008"],
+    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", "200B"],
+    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", "2060"],
+    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", "2007"],
+    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", "00A0"],
     ["", "", "", ""],
-    ["Верхний индекс", "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
-    ["Нижний индекс", "LCtrl LAlt LShift [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
+    [Map("ru", "Верхний индекс", "en", "Superscript"), "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
+    [Map("ru", "Нижний индекс", "en", "Subscript"), "LCtrl LAlt [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
   ]
 
-  FasKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+  LocaliseArrayKeys(DSLContent["BindList"].FasKeysLV)
+
+  FasKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   FasKeysLV.ModifyCol(1, ColumnWidths[1])
   FasKeysLV.ModifyCol(2, ColumnWidths[2])
   FasKeysLV.ModifyCol(3, ColumnWidths[3])
   FasKeysLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent[SystemLanguage].BindList.FasKeysLV
+  for item in DSLContent["BindList"].FasKeysLV
   {
     FasKeysLV.Add(, item[1], item[2], item[3], item[4])
   }
@@ -573,10 +597,6 @@ Constructor()
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   FasKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
 
-  for item in DSLContent[SystemLanguage].BindList.Spaces
-  {
-    SpacesLV.Add(, item[1], item[2], item[3], item[4])
-  }
 
   DSLPadGUI.Title := DSLPadTitle
 
