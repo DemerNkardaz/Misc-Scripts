@@ -14,6 +14,7 @@ DefaultConfig := [
   ["LatestPrompts", "Unicode", ""],
   ["LatestPrompts", "Altcode", ""],
   ["LatestPrompts", "Search", ""],
+  ["LatestPrompts", "Ligature", ""],
 ]
 
 if FileExist(ConfigFile) {
@@ -188,6 +189,34 @@ SubscriptDictionary := [
   ["i", "{U+1D62}"],
 ]
 
+LigaturesDictionary := [
+  ["AA", "{U+A732}"],
+  ["aa", "{U+A733}"],
+  ["AE", "{U+00C6}"],
+  ["ae", "{U+00E6}"],
+  ["OE", "{U+0152}"],
+  ["oe", "{U+0153}"],
+  ["ff", "{U+FB00}"],
+  ["ff", "{U+FB00}"],
+  ["fl", "{U+FB02}"],
+  ["fi", "{U+FB01}"],
+  ["fti", "{U+FB05}"],
+  ["ffi", "{U+FB03}"],
+  ["ffl", "{U+FB04}"],
+  ["st", "{U+FB06}"],
+  ["ts", "{U+02A6}"],
+  ["IJ", "{U+0132}"],
+  ["IJ", "{U+0132}"],
+  ["LJ", "{U+01C7}"],
+  ["Lj", "{U+01C8}"],
+  ["lj", "{U+01C9}"],
+  ["fs", "{U+00DF}"],
+  ["Fs", "{U+1E9E}"],
+  ["ue", "{U+1D6B}"],
+  ["OO", "{U+A74E}"],
+  ["oo", "{U+A74F}"],
+]
+
 InputBridge(BindsArray) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
@@ -266,7 +295,15 @@ SearchKey() {
     if IsObject(pair[3]) {
       for _, key in pair[3] {
         if (StrLower(PromptValue) = StrLower(key)) {
-          Send(pair[2])
+          if IsObject(pair[2]) {
+            if InputHTMLEntities {
+              SendText(pair[2][2])
+            } else {
+              Send(pair[2][1])
+            }
+          } else {
+            Send(pair[2])
+          }
           IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
           Found := True
           break 2
@@ -386,6 +423,40 @@ InsertAltCodeKey() {
   }
 }
 
+Ligaturise() {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].SearchTitle := "Лигатуризатор"
+  Labels["en"].SearchTitle := "Ligaturise"
+  Labels["ru"].WindowPrompt := "Введите комбинацию для лигатуры"
+  Labels["en"].WindowPrompt := "Enter combination for ligature"
+  Labels["ru"].Err := "Лигатуры не найдено"
+  Labels["en"].Err := "Ligatures not found"
+
+  PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
+  if IB.Result = "Cancel"
+    return
+  else
+    PromptValue := IB.Value
+  Found := False
+  for index, pair in LigaturesDictionary {
+    if (PromptValue == pair[1]) {
+      Send(pair[2])
+      IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
+      Found := True
+      return
+    }
+  }
+  if (!Found) {
+    MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+  }
+}
+
+
 SendAltNumpad(CharacterCode) {
   Send("{Alt Down}")
   Loop Parse, CharacterCode
@@ -400,6 +471,7 @@ SendAltNumpad(CharacterCode) {
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
 <#<!a:: InsertAltCodeKey()
+<#<!l:: Ligaturise()
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 
@@ -542,6 +614,7 @@ Constructor()
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
+    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
