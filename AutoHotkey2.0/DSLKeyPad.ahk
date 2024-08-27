@@ -62,13 +62,20 @@ BindDiacriticF1 := [
   [["C", "С"], "{U+030C}", ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
   [["d", "в"], "{U+0307}", ["Точка сверху", "Circumflex", "Dot Above"]],
   [["D", "В"], "{U+0308}", ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
+  [["f", "а"], "{U+0352}", ["Фермата", "Fermata"]],
+  [["g", "п"], "{U+0300}", ["Гравис", "Grave"]],
+  [["G", "П"], "{U+030F}", ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
+  [["h", "р"], "{U+0309}", ["Хвостик сверху", "Hook Above"]],
+  [["H", "Р"], "{U+031B}", ["Рожок", "Horn"]],
 ]
 
 BindDiacriticF2 := [
+  [["a", "ф"], "{U+0317}", ["Акут снизу", "Acute Below", "Ударение снизу"]],
   [["b", "и"], "{U+032E}", ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
   [["B", "И"], "{U+032F}", ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
   [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
   [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
+  [["g", "п"], "{U+0316}", ["Гравис снизу", "Grave Below"]],
 ]
 
 BindDiacriticF3 := [
@@ -419,14 +426,14 @@ Constructor()
 
   ColumnWidths := [300, 140, 60, 85]
   ThreeColumnWidths := [300, 140, 145]
-  ColumnListStyle := "w620 h460 +NoSort"
+  ColumnListStyle := "w620 h510 +NoSort"
 
-  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent["UI"].TabsNCols[1][1])
+  Tab := DSLPadGUI.Add("Tab3", "w650 h550", DSLContent["UI"].TabsNCols[1][1])
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(1)
   DSLContent["BindList"].Diacritics := [
     ["", "Win Alt F1", "", ""],
-    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "3001"],
+    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "0301"],
     [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", "030B"],
     [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", "0306"],
     [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", "0311"],
@@ -434,12 +441,19 @@ Constructor()
     [Map("ru", "Гачек", "en", "Caron"), "[C][С]", "◌̌", "030C"],
     [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
     [Map("ru", "Диерезис", "en", "Diaeresis"), "[D][В]", "◌̈", "0308"],
+    [Map("ru", "Фермата", "en", "Fermata"), "[f][а]", "◌͒", "0352"],
+    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
+    [Map("ru", "Двойной гравис", "en", "Double Grave"), "[G][П]", "◌̏", "030F"],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̏", "0309"],
+    [Map("ru", "Рожок", "en", "Horn"), "[H][Р]", "◌̏", "031B"],
     ["", "", "", ""],
     ["", "Win Alt F2", "", ""],
+    [Map("ru", "Акут снизу", "en", "Acute Below"), "[a][ф]", "◌̗", "0317"],
     [Map("ru", "Кратка снизу", "en", "Breve Below"), "[b][и]", "◌̮", "032E"],
     [Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"), "[B][И]", "◌̯", "032F"],
-    [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̂", "032D"],
-    [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̌", "032C"],
+    [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̭", "032D"],
+    [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̬", "032C"],
+    [Map("ru", "Гравис снизу", "en", "Grave Below"), "[g][п]", "◌̖", "0316"],
     ["", "", "", ""],
     ["", "Win Alt F3", "", ""],
     [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", "0346"],
@@ -529,6 +543,10 @@ Constructor()
     [Map("ru", "Гачек", "en", "Caron"), "LShift [c][с]", "◌̌", "030C"],
     [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
     [Map("ru", "Диерезис", "en", "Diaeresis"), "LShift [d][в]", "◌̈", "0308"],
+    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
+    [Map("ru", "Двойной гравис", "en", "Double Grave"), "LShift [g][п]", "◌̏", "030F"],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̏", "0309"],
+    [Map("ru", "Рожок", "en", "Horn"), "LShift [h][р]", "◌̏", "031B"],
     ["", "", "", ""],
     ["", "RAlt RShift", "", ""],
     [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
@@ -547,6 +565,8 @@ Constructor()
     ["", "", "", ""],
     [Map("ru", "Верхний индекс", "en", "Superscript"), "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
     [Map("ru", "Нижний индекс", "en", "Subscript"), "LCtrl LAlt [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
+    ["", "", "", ""],
+    [Map("ru", "Соединитель графем ✅", "en", "Grapheme Joiner ✅"), "LShift RShift [g]", "◌͏", ""],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].FasKeysLV)
@@ -576,7 +596,7 @@ Constructor()
     "Примечание: Использовать на русской и английской раскладках",
     "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если для него существует горячая клавиша, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
     "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа.",
-    "Режимы`nОбычный — требует «активации» группы знаков: Win Alt [Группа] (F1, Space…) необходимо нажать, но не удерживать, после чего нажать на символ ключа нужного знака.`nБыстрые ключи — необходимо удерживать модифицирующие клавиши, например, LCtrl LAlt + m, что бы ввести знак макрона [◌̄]."
+    "Режимы`nОбычный — требует «активации» группы знаков: Win Alt [Группа] (F1, Space…) необходимо нажать, но не удерживать, после чего нажать на символ ключа нужного знака.`nБыстрые ключи — необходимо удерживать модифицирующие клавиши, например, LCtrl LAlt + m, что бы ввести знак макрона [◌̄].`nБыстрые ключи, отмеченные ✅, активны всегда."
   ]
 
   DSLContent["en"].About := {}
@@ -590,16 +610,17 @@ Constructor()
     "Author: Demer Nkardaz",
     "Note: Use on Russian or English keyboard layout",
     "This program is created to assist in entering special characters, such as diacritics signs, whitespace characters, and modified letters. You can use hotkeys, insert a symbol by name (Win Alt F), if a hotkey exists for it, or enter the “raw” Unicode key (Win Alt U) of any symbol.",
-    "This window displays all available key combinations. Double-clicking the LMB on any line containing Unicode will take you to the Symbl.cc site with an overview of the corresponding symbol."
+    "This window displays all available key combinations. Double-clicking the LMB on any line containing Unicode will take you to the Symbl.cc site with an overview of the corresponding symbol.",
+    "Modes`nCommon: requires “activation” of characters groups: Win Alt [Groups] (F1, Space…) must be pressed, but not held, after which to enter the macro [◌̄].`nFast keys: must be held down modifier keys, for example, LCtrl LAlt + m, to enter the macro [◌̄].`nFast keys, marked ✅, always active."
   ]
 
   DSLPadGUI.SetFont("s16")
   DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.Title)
-  DSLPadGUI.SetFont("s11")
   DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.SubTitle)
 
   for item in DSLContent[SystemLanguage].About.Texts
   {
+    DSLPadGUI.SetFont("s10")
     DSLPadGUI.Add("Text", "w600", item)
   }
   DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
@@ -620,7 +641,7 @@ Constructor()
   screenHeight := A_ScreenHeight
 
   windowWidth := 650
-  windowHeight := 512
+  windowHeight := 562
   xPos := screenWidth - windowWidth - 40
   yPos := screenHeight - windowHeight - 75
 
@@ -822,3 +843,6 @@ HandleFastKey(char)
 
 <^<!x:: Send("{U+04AB}") ; CYRILLIC SMALL LETTER ES WITH DESCENDER
 <^<+<!x:: Send("{U+04AA}") ; CYRILLIC CAPITAL LETTER ES WITH DESCENDER
+
+
+>+<+g:: Send("{U+034F}") ; Combining Grapheme Joiner
