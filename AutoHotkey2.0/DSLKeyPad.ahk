@@ -65,53 +65,103 @@ CtrlZ := Chr(26)
 SpaceKey := Chr(32)
 
 
+CharCodes := {}
+CharCodes.acute := ["{U+0301}", "&#769;"]
+CharCodes.dacute := ["{U+030B}", "&#779;"]
+CharCodes.acutebelow := ["{U+0317}", "&#791;"]
+CharCodes.breve := ["{U+0306}", "&#774;"]
+CharCodes.brevebelow := ["{U+032E}", "&#814;"]
+CharCodes.ibreve := ["{U+0311}", "&#785;"]
+CharCodes.ibrevebelow := ["{U+032F}", "&#815;"]
+CharCodes.circumflex := ["{U+0302}", "&#770;"]
+CharCodes.circumflexbelow := ["{U+032D}", "&#813;"]
+CharCodes.caron := ["{U+030C}", "&#780;"]
+CharCodes.caronbelow := ["{U+032C}", "&#812;"]
+CharCodes.diaeresis := ["{U+0308}", "&#776;"]
+CharCodes.dotabove := ["{U+0307}", "&#775;"]
+CharCodes.fermata := ["{U+0352}", "&#850;"]
+CharCodes.grave := ["{U+0300}", "&#768;"]
+CharCodes.gravebelow := ["{U+0316}", "&#790;"]
+CharCodes.dgrave := ["{U+030F}", "&#783;"]
+CharCodes.hookabove := ["{U+0309}", "&#777;"]
+CharCodes.horn := ["{U+031B}", "&#795;"]
+CharCodes.phookbelow := ["{U+0321}", "&#801;"]
+CharCodes.rhookbelow := ["{U+0322}", "&#802;"]
+CharCodes.bridgeabove := ["{U+0346}", "&#838;"]
+CharCodes.bridgebelow := ["{U+032A}", "&#810;"]
+CharCodes.ibridgebelow := ["{U+033A}", "&#825;"]
+
+CharCodes.macron := ["{U+0304}", "&#772;"]
+CharCodes.macronbelow := ["{U+0331}", "&#817;"]
+
+CharCodes.grapjoiner := ["{U+034F}", "&#847;"]
+
+
+CharCodes.emsp := ["{U+2003}", "&emsp;"]
+CharCodes.ensp := ["{U+2002}", "&ensp;"]
+CharCodes.emsp13 := ["{U+2004}", "&emsp13;"]
+CharCodes.emsp14 := ["{U+2005}", "&emsp14;"]
+CharCodes.emsp16 := ["{U+2006}", "&#8198;"]
+CharCodes.nnbsp := ["{U+202F}", "&#8239;"]
+CharCodes.thinsp := ["{U+2009}", "&#ThinSpace;"]
+CharCodes.hairsp := ["{U+200A}", "&#8202;"]
+CharCodes.puncsp := ["{U+2008}", "&puncsp;"]
+CharCodes.zwsp := ["{U+200B}", "&#8203;"]
+CharCodes.wj := ["{U+2060}", "&NoBreak;"]
+CharCodes.numsp := ["{U+2007}", "&numsp;"]
+CharCodes.nbsp := ["{U+00A0}", "&nbsp;"]
+
+UniTrim(str) {
+  return SubStr(str, 4, StrLen(str) - 4)
+}
+
 BindDiacriticF1 := [
-  [["a", "ф"], ["{U+0301}", "&#769;"], ["Акут", "Acute", "Ударение"]],
-  [["A", "Ф"], ["{U+030B}", "&#779;"], ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
-  [["b", "и"], ["{U+0306}", "&#774;"], ["Бреве", "Бревис", "Breve", "Кратка"]],
-  [["B", "И"], ["{U+0311}", "&#785;"], ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
-  [["c", "с"], ["{U+0302}", "&#770;"], ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
-  [["C", "С"], ["{U+030C}", "&#780;"], ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
-  [["d", "в"], ["{U+0307}", "&#775;"], ["Точка сверху", "Dot Above"]],
-  [["D", "В"], ["{U+0308}", "&#776;"], ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
-  [["f", "а"], ["{U+0352}", "&#850;"], ["Фермата", "Fermata"]],
-  [["g", "п"], ["{U+0300}", "&#768;"], ["Гравис", "Grave"]],
-  [["G", "П"], ["{U+030F}", "&#783;"], ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
-  [["h", "р"], ["{U+0309}", "&#777;"], ["Хвостик сверху", "Hook Above"]],
-  [["H", "Р"], ["{U+031B}", "&#795;"], ["Рожок", "Horn"]],
+  [["a", "ф"], CharCodes.acute, ["Акут", "Acute", "Ударение"]],
+  [["A", "Ф"], CharCodes.dacute, ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
+  [["b", "и"], CharCodes.breve, ["Бреве", "Бревис", "Breve", "Кратка"]],
+  [["B", "И"], CharCodes.ibreve, ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
+  [["c", "с"], CharCodes.circumflex, ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
+  [["C", "С"], CharCodes.caron, ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
+  [["d", "в"], CharCodes.dotabove, ["Точка сверху", "Dot Above"]],
+  [["D", "В"], CharCodes.diaeresis, ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
+  [["f", "а"], CharCodes.fermata, ["Фермата", "Fermata"]],
+  [["g", "п"], CharCodes.grave, ["Гравис", "Grave"]],
+  [["G", "П"], CharCodes.dgrave, ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
+  [["h", "р"], CharCodes.hookabove, ["Хвостик сверху", "Hook Above"]],
+  [["H", "Р"], CharCodes.horn, ["Рожок", "Horn"]],
 ]
 
 BindDiacriticF2 := [
-  [["a", "ф"], ["{U+0317}", "&#791;"], ["Акут снизу", "Acute Below", "Ударение снизу"]],
-  [["b", "и"], ["{U+032E}", "&#814;"], ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
-  [["B", "И"], ["{U+032F}", "&#815;"], ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
-  [["c", "с"], ["{U+032D}", "&#813;"], ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
-  [["C", "С"], ["{U+032C}", "&#812;"], ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
-  [["g", "п"], ["{U+0316}", "&#790;"], ["Гравис снизу", "Grave Below"]],
-  [["h", "р"], ["{U+0321}", "&#801;"], ["Палатальный крюк", "Palatalized Hook Below"]],
-  [["H", "Р"], ["{U+0322}", "&#802;"], ["Ретрофлексный крюк", "Retroflex Hook Below"]],
+  [["a", "ф"], CharCodes.acutebelow, ["Акут снизу", "Acute Below", "Ударение снизу"]],
+  [["b", "и"], CharCodes.brevebelow, ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
+  [["B", "И"], CharCodes.ibrevebelow, ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
+  [["c", "с"], CharCodes.circumflexbelow, ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
+  [["C", "С"], CharCodes.caronbelow, ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
+  [["g", "п"], CharCodes.gravebelow, ["Гравис снизу", "Grave Below"]],
+  [["h", "р"], CharCodes.phookbelow, ["Палатальный крюк", "Palatalized Hook Below"]],
+  [["H", "Р"], CharCodes.rhookbelow, ["Ретрофлексный крюк", "Retroflex Hook Below"]],
 ]
 
 BindDiacriticF3 := [
-  [["b", "и"], ["{U+0346}", "&#838;"], ["Мостик сверху", "Bridge Above"]],
-  [["B", "И"], ["{U+032A}", "&#810;"], ["Мостик снизу", "Bridge Below"]],
-  [CtrlB, ["{U+033A}", "&#826;"], ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
+  [["b", "и"], CharCodes.bridgeabove, ["Мостик сверху", "Bridge Above"]],
+  [["B", "И"], CharCodes.bridgebelow, ["Мостик снизу", "Bridge Below"]],
+  [CtrlB, CharCodes.ibridgebelow, ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
 ]
 
 BindSpaces := [
-  ["1", ["{U+2003}", "&emsp;"], ["Em Space", "EmSP", "EM_SPACE", "Круглая Шпация"]],
-  ["2", ["{U+2002}", "&ensp;"], ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
-  ["3", ["{U+2004}", "&emsp13;"], ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
-  ["4", ["{U+2005}", "&emsp14;"], ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
-  ["5", ["{U+202F}", ""], ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
-  ["6", ["{U+2006}", "&#8239;"], ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
-  ["7", ["{U+2009}", "&#ThinSpace;"], ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
-  ["8", ["{U+200A}", "&#8202;"], ["Hair Space", "HairSP", "Волосяная Шпация"]],
-  ["9", ["{U+2008}", "&puncsp;"], ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
-  ["0", ["{U+200B}", "&#8203;"], ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
-  ["-", ["{U+2060}", "&NoBreak;"], ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
-  ["=", ["{U+2007}", "&numsp;"], ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
-  [SpaceKey, ["{U+00A0}", "&nbsp;"], ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
+  ["1", CharCodes.emsp, ["Em Space", "EmSP", "EM_SPACE", "Круглая Шпация"]],
+  ["2", CharCodes.ensp, ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
+  ["3", CharCodes.emsp13, ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
+  ["4", CharCodes.emsp14, ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
+  ["5", CharCodes.nnbsp, ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
+  ["6", CharCodes.emsp16, ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
+  ["7", CharCodes.thinsp, ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
+  ["8", CharCodes.hairsp, ["Hair Space", "HairSP", "Волосяная Шпация"]],
+  ["9", CharCodes.puncsp, ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
+  ["0", CharCodes.zwsp, ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
+  ["-", CharCodes.wj, ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
+  ["=", CharCodes.numsp, ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
+  [SpaceKey, CharCodes.nbsp, ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
 ]
 
 
@@ -194,6 +244,8 @@ LigaturesDictionary := [
   ["aa", "{U+A733}"],
   ["AE", "{U+00C6}"],
   ["ae", "{U+00E6}"],
+  ["AU", "{U+A736}"],
+  ["au", "{U+A737}"],
   ["OE", "{U+0152}"],
   ["oe", "{U+0153}"],
   ["ff", "{U+FB00}"],
@@ -206,7 +258,7 @@ LigaturesDictionary := [
   ["st", "{U+FB06}"],
   ["ts", "{U+02A6}"],
   ["IJ", "{U+0132}"],
-  ["IJ", "{U+0132}"],
+  ["ij", "{U+0133}"],
   ["LJ", "{U+01C7}"],
   ["Lj", "{U+01C8}"],
   ["lj", "{U+01C9}"],
@@ -215,6 +267,17 @@ LigaturesDictionary := [
   ["ue", "{U+1D6B}"],
   ["OO", "{U+A74E}"],
   ["oo", "{U+A74F}"],
+  ["ie", "{U+AB61}"],
+  ["IЄ", "{U+0464}"],
+  ["iє", "{U+0465}"],
+  ["Iѣ", "{U+A652}"],
+  ["iѣ", "{U+A653}"],
+  ["IА", "{U+A656}"],
+  ["iа", "{U+A657}"],
+  ["IѪ", "{U+046C}"],
+  ["iѫ", "{U+046D}"],
+  ["IѦ", "{U+0468}"],
+  ["iѧ", "{U+0469}"],
 ]
 
 InputBridge(BindsArray) {
@@ -534,34 +597,34 @@ Constructor()
   Tab.UseTab(1)
   DSLContent["BindList"].Diacritics := [
     ["", "Win Alt F1", "", ""],
-    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "0301"],
-    [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", "030B"],
-    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", "0306"],
-    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", "0311"],
-    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", "0302"],
-    [Map("ru", "Гачек", "en", "Caron"), "[C][С]", "◌̌", "030C"],
-    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
-    [Map("ru", "Диерезис", "en", "Diaeresis"), "[D][В]", "◌̈", "0308"],
-    [Map("ru", "Фермата", "en", "Fermata"), "[f][а]", "◌͒", "0352"],
-    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
-    [Map("ru", "Двойной гравис", "en", "Double Grave"), "[G][П]", "◌̏", "030F"],
-    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", "0309"],
-    [Map("ru", "Рожок", "en", "Horn"), "[H][Р]", "◌̛", "031B"],
+    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", UniTrim(CharCodes.acute[1])],
+    [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", UniTrim(CharCodes.dacute[1])],
+    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", UniTrim(CharCodes.breve[1])],
+    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", UniTrim(CharCodes.ibreve[1])],
+    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", UniTrim(CharCodes.circumflex[1])],
+    [Map("ru", "Гачек", "en", "Caron"), "[C][С]", "◌̌", UniTrim(CharCodes.caron[1])],
+    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", UniTrim(CharCodes.dotabove[1])],
+    [Map("ru", "Диерезис", "en", "Diaeresis"), "[D][В]", "◌̈", UniTrim(CharCodes.diaeresis[1])],
+    [Map("ru", "Фермата", "en", "Fermata"), "[f][а]", "◌͒", UniTrim(CharCodes.fermata[1])],
+    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", UniTrim(CharCodes.grave[1])],
+    [Map("ru", "Двойной гравис", "en", "Double Grave"), "[G][П]", "◌̏", UniTrim(CharCodes.dgrave[1])],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", UniTrim(CharCodes.hookabove[1])],
+    [Map("ru", "Рожок", "en", "Horn"), "[H][Р]", "◌̛", UniTrim(CharCodes.horn[1])],
     ["", "", "", ""],
     ["", "Win Alt F2", "", ""],
-    [Map("ru", "Акут снизу", "en", "Acute Below"), "[a][ф]", "◌̗", "0317"],
-    [Map("ru", "Кратка снизу", "en", "Breve Below"), "[b][и]", "◌̮", "032E"],
-    [Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"), "[B][И]", "◌̯", "032F"],
-    [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̭", "032D"],
-    [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̬", "032C"],
-    [Map("ru", "Гравис снизу", "en", "Grave Below"), "[g][п]", "◌̖", "0316"],
-    [Map("ru", "Палатальный крюк", "en", "Palatalized Hook Below"), "[g][р]", "◌̡", "0321"],
-    [Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"), "[G][Р]", "◌̢", "0322"],
+    [Map("ru", "Акут снизу", "en", "Acute Below"), "[a][ф]", "◌̗", UniTrim(CharCodes.acutebelow[1])],
+    [Map("ru", "Кратка снизу", "en", "Breve Below"), "[b][и]", "◌̮", UniTrim(CharCodes.brevebelow[1])],
+    [Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"), "[B][И]", "◌̯", UniTrim(CharCodes.ibrevebelow[1])],
+    [Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"), "[c][с]", "◌̭", UniTrim(CharCodes.circumflexbelow[1])],
+    [Map("ru", "Гачек снизу", "en", "Caron Below"), "[C][С]", "◌̬", UniTrim(CharCodes.caronbelow[1])],
+    [Map("ru", "Гравис снизу", "en", "Grave Below"), "[g][п]", "◌̖", UniTrim(CharCodes.gravebelow[1])],
+    [Map("ru", "Палатальный крюк", "en", "Palatalized Hook Below"), "[g][р]", "◌̡", UniTrim(CharCodes.phookbelow[1])],
+    [Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"), "[G][Р]", "◌̢", UniTrim(CharCodes.rhookbelow[1])],
     ["", "", "", ""],
     ["", "Win Alt F3", "", ""],
-    [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", "0346"],
-    [Map("ru", "Мостик снизу", "en", "Bridge Below"), "[B][И]", "◌̪", "032A"],
-    [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [B][И]", "◌̺", "033A"],
+    [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", UniTrim(CharCodes.bridgeabove[1])],
+    [Map("ru", "Мостик снизу", "en", "Bridge Below"), "[B][И]", "◌̪", UniTrim(CharCodes.brevebelow[1])],
+    [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [B][И]", "◌̺", UniTrim(CharCodes.ibridgebelow[1])],
   ]
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
 
@@ -580,19 +643,19 @@ Constructor()
   Tab.UseTab(3)
   DSLContent["BindList"].Spaces := [
     ["", "Win Alt Space", "", ""],
-    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
-    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", "2002"],
-    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", "2004"],
-    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", "2005"],
-    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", "202F"],
-    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", "2006"],
-    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", "2009"],
-    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", "200A"],
-    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", "2008"],
-    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", "200B"],
-    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", "2060"],
-    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", "2007"],
-    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", "00A0"],
+    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", UniTrim(CharCodes.emsp[1])],
+    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", UniTrim(CharCodes.ensp[1])],
+    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", UniTrim(CharCodes.emsp13[1])],
+    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", UniTrim(CharCodes.emsp14[1])],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
+    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", UniTrim(CharCodes.emsp16[1])],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", UniTrim(CharCodes.thinsp[1])],
+    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", UniTrim(CharCodes.hairsp[1])],
+    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", UniTrim(CharCodes.puncsp[1])],
+    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", UniTrim(CharCodes.zwsp[1])],
+    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", UniTrim(CharCodes.wj[1])],
+    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", UniTrim(CharCodes.numsp[1])],
+    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", UniTrim(CharCodes.nbsp[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].Spaces)
@@ -614,7 +677,7 @@ Constructor()
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
-    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ"],
+    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ, ffi → ﬃ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
@@ -638,38 +701,38 @@ Constructor()
   Tab.UseTab(5)
   DSLContent["BindList"].FasKeysLV := [
     ["", "LCtrl LAlt", "", ""],
-    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", "3001"],
-    [Map("ru", "Двойной Акут", "en", "Double Acute"), "LShift [a][ф]", "◌̋", "030B"],
-    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", "0306"],
-    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "LShift [b][и]", "◌̑", "0311"],
-    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", "0302"],
-    [Map("ru", "Гачек", "en", "Caron"), "LShift [c][с]", "◌̌", "030C"],
-    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", "0307"],
-    [Map("ru", "Диерезис", "en", "Diaeresis"), "LShift [d][в]", "◌̈", "0308"],
-    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
-    [Map("ru", "Двойной гравис", "en", "Double Grave"), "LShift [g][п]", "◌̏", "030F"],
-    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", "0309"],
-    [Map("ru", "Рожок", "en", "Horn"), "LShift [h][р]", "◌̛", "031B"],
+    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", UniTrim(CharCodes.acute[1])],
+    [Map("ru", "Двойной Акут", "en", "Double Acute"), "LShift [a][ф]", "◌̋", UniTrim(CharCodes.dacute[1])],
+    [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", UniTrim(CharCodes.breve[1])],
+    [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "LShift [b][и]", "◌̑", UniTrim(CharCodes.ibreve[1])],
+    [Map("ru", "Циркумфлекс", "en", "Circumflex"), "[c][с]", "◌̂", UniTrim(CharCodes.circumflex[1])],
+    [Map("ru", "Гачек", "en", "Caron"), "LShift [c][с]", "◌̌", UniTrim(CharCodes.caron[1])],
+    [Map("ru", "Точка сверху", "en", "Dot Above"), "[d][в]", "◌̇", UniTrim(CharCodes.dotabove[1])],
+    [Map("ru", "Диерезис", "en", "Diaeresis"), "LShift [d][в]", "◌̈", UniTrim(CharCodes.diaeresis[1])],
+    [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", UniTrim(CharCodes.grave[1])],
+    [Map("ru", "Двойной гравис", "en", "Double Grave"), "LShift [g][п]", "◌̏", UniTrim(CharCodes.dgrave[1])],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", UniTrim(CharCodes.hookabove[1])],
+    [Map("ru", "Рожок", "en", "Horn"), "LShift [h][р]", "◌̛", UniTrim(CharCodes.horn[1])],
     ["", "", "", ""],
     ["", "RAlt RShift", "", ""],
-    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
-    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", "2002"],
-    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", "2004"],
-    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", "2005"],
-    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", "202F"],
-    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", "2006"],
-    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", "2009"],
-    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", "200A"],
-    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", "2008"],
-    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", "200B"],
-    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", "2060"],
-    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", "2007"],
-    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", "00A0"],
+    [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", UniTrim(CharCodes.emsp[1])],
+    [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", UniTrim(CharCodes.ensp[1])],
+    [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", UniTrim(CharCodes.emsp13[1])],
+    [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", UniTrim(CharCodes.emsp13[1])],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
+    [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", UniTrim(CharCodes.emsp16[1])],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", UniTrim(CharCodes.thinsp[1])],
+    [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", UniTrim(CharCodes.hairsp[1])],
+    [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", UniTrim(CharCodes.puncsp[1])],
+    [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", UniTrim(CharCodes.zwsp[1])],
+    [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", UniTrim(CharCodes.wj[1])],
+    [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", UniTrim(CharCodes.numsp[1])],
+    [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", UniTrim(CharCodes.nbsp[1])],
     ["", "", "", ""],
     [Map("ru", "Верхний индекс", "en", "Superscript"), "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
     [Map("ru", "Нижний индекс", "en", "Subscript"), "LCtrl LAlt [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
     ["", "", "", ""],
-    [Map("ru", "Соединитель графем ✅", "en", "Grapheme Joiner ✅"), "LShift RShift [g]", "◌͏", ""],
+    [Map("ru", "Соединитель графем ✅", "en", "Grapheme Joiner ✅"), "LShift RShift [g]", "◌͏", UniTrim(CharCodes.grapjoiner[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].FasKeysLV)
@@ -850,18 +913,18 @@ HandleFastKey(char)
 }
 
 
-<^<!a:: HandleFastKey("{U+0301}") ; Combining acute
-<^<+<!a:: HandleFastKey("{U+030B}") ; Combining double acute
-<^<!b:: HandleFastKey("{U+0306}") ; Combining breve
-<^<+<!b:: HandleFastKey("{U+0311}") ; Combining inverted breve
-<^<!c:: HandleFastKey("{U+0302}") ; Combining circumflex
-<^<+<!c:: HandleFastKey("{U+030C}") ; Combining caron
-<^<!d:: HandleFastKey("{U+0307}") ; Combining dot above
-<^<+<!d:: HandleFastKey("{U+0308}") ; Combining diaeresis
-<^<!g:: HandleFastKey("{U+0300}") ; Combining grave
-<^<+<!g:: HandleFastKey("{U+030F}") ; Combining double grave
-<^<!m:: HandleFastKey("{U+0304}") ; Combining macron
-<^<+<!m:: HandleFastKey("{U+0331}") ; Combining macron below
+<^<!a:: HandleFastKey(CharCodes.acute[1])
+<^<+<!a:: HandleFastKey(CharCodes.dacute[1])
+<^<!b:: HandleFastKey(CharCodes.breve[1])
+<^<+<!b:: HandleFastKey(CharCodes.ibreve[1])
+<^<!c:: HandleFastKey(CharCodes.circumflex[1])
+<^<+<!c:: HandleFastKey(CharCodes.caron[1])
+<^<!d:: HandleFastKey(CharCodes.dotabove[1])
+<^<+<!d:: HandleFastKey(CharCodes.diaeresis[1])
+<^<!g:: HandleFastKey(CharCodes.grave[1])
+<^<+<!g:: HandleFastKey(CharCodes.dgrave[1])
+<^<!m:: HandleFastKey(CharCodes.macron[1])
+<^<+<!m:: HandleFastKey(CharCodes.macronbelow[1])
 
 
 <^<!t:: Send("{U+0303}") ; Combining tilde
@@ -922,19 +985,19 @@ HandleFastKey(char)
 <^<+<!9:: HandleFastKey("{U+2089}") ; Subscript 9
 <^<+<!0:: HandleFastKey("{U+2080}") ; Subscript 0
 
-<^>!>+1:: HandleFastKey("{U+2003}") ; Em Space
-<^>!>+2:: HandleFastKey("{U+2002}") ; En Space
-<^>!>+3:: HandleFastKey("{U+2004}") ; 1/3 Em Space
-<^>!>+4:: HandleFastKey("{U+2005}") ; 1/4 Em Space
-<^>!>+5:: HandleFastKey("{U+202F}") ; Thin Nonbreak Space
-<^>!>+6:: HandleFastKey("{U+2006}") ; 1/6 Em Space
-<^>!>+7:: HandleFastKey("{U+2009}") ; Thin Space
-<^>!>+8:: HandleFastKey("{U+200A}") ; Hair Space
-<^>!>+9:: HandleFastKey("{U+2008}") ; Punctuation Space
-<^>!>+0:: HandleFastKey("{U+200B}") ; Zero-Width Space
-<^>!>+-:: HandleFastKey("{U+2060}") ; Zero-Width Nonbreak Space
-<^>!>+=:: HandleFastKey("{U+2007}") ; Number Space
-<^>!<+Space:: HandleFastKey("{U+00A0}") ; Nonbreak Space
+<^>!>+1:: HandleFastKey(CharCodes.emsp[1])
+<^>!>+2:: HandleFastKey(CharCodes.ensp[1])
+<^>!>+3:: HandleFastKey(CharCodes.emsp13[1])
+<^>!>+4:: HandleFastKey(CharCodes.emsp14[1])
+<^>!>+5:: HandleFastKey(CharCodes.nnbsp[1])
+<^>!>+6:: HandleFastKey(CharCodes.emsp16[1])
+<^>!>+7:: HandleFastKey(CharCodes.thinsp[1])
+<^>!>+8:: HandleFastKey(CharCodes.hairsp[1])
+<^>!>+9:: HandleFastKey(CharCodes.puncsp[1])
+<^>!>+0:: HandleFastKey(CharCodes.zwsp[1])
+<^>!>+-:: HandleFastKey(CharCodes.wj[1])
+<^>!>+=:: HandleFastKey(CharCodes.numsp[1])
+<^>!<+Space:: HandleFastKey(CharCodes.nbsp[1])
 
 <^>!m:: Send("{U+2212}") ; Minus
 
