@@ -41,6 +41,17 @@ SpaceKey := Chr(32)
 BindDiacriticF1 := [
   [["a", "ф"], "{U+0301}", ["Акут", "Acute", "Ударение"]],
   [["A", "Ф"], "{U+030B}", ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное Ударение"]],
+  [["b", "и"], "{U+0306}", ["Бреве", "Бревис", "Breve", "Кратка"]],
+  [["B", "И"], "{U+0311}", ["Перевёрнутый бреве", "Перевёрнутый Бревис", "Inverted Breve", "Перевёрнутая Кратка"]],
+  [["c", "с"], "{U+0302}", ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
+  [["C", "С"], "{U+030C}", ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
+]
+
+BindDiacriticF2 := [
+  [["b", "и"], "{U+032E}", ["Бреве снизу", "Бревис Снизу", "Breve Below", "Кратка Снизу"]],
+  [["B", "И"], "{U+032F}", ["Перевёрнутый бреве снизу", "Перевёрнутый Бревис Снизу", "Inverted Breve Below", "Перевёрнутая Кратка Снизу"]],
+  [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка Снизу", "Домик Снизу"]],
+  [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек Снизу", "Hachek Below", "Hacek Снизу"]],
 ]
 
 BindSpaces := [
@@ -112,7 +123,7 @@ SearchKey() {
   else
     PromptValue := IB.Value
 
-  CombineArrays(SearchOfArray, BindDiacriticF1, BindSpaces)
+  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindSpaces)
 
   Found := False
   for index, pair in SearchOfArray {
@@ -155,6 +166,7 @@ InsertUnicodeKey() {
 }
 
 <#<!F1:: InputBridge(BindDiacriticF1)
+<#<!F2:: InputBridge(BindDiacriticF2)
 <#<!Space:: InputBridge(BindSpaces)
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
@@ -189,37 +201,66 @@ Constructor()
   DSLContent["ru"].BindList.Diacritics := [
     ["", "Win Alt F1", "", ""],
     ["Акут", "[a][ф]", "◌́", "3001"],
-    ["Двойной Акут", "[A][Ф]", "◌̋", "030B"]
+    ["Двойной акут", "[A][Ф]", "◌̋", "030B"],
+    ["Кратка", "[b][и]", "◌̆", "0306"],
+    ["Перевёрнутая кратка", "[B][И]", "◌̑", "0311"],
+    ["Циркумфлекс", "[c][с]", "◌̂", "0302"],
+    ["Гачек", "[C][С]", "◌̌", "030C"],
+    ["", "", "", ""],
+    ["", "Win Alt F2", "", ""],
+    ["Кратка снизу", "[b][и]", "◌̮", "032E"],
+    ["Перевёрнутая кратка снизу", "[B][И]", "◌̯", "032F"],
+    ["Циркумфлекс снизу", "[c][с]", "◌̂", "032D"],
+    ["Гачек снизу", "[C][С]", "◌̌", "032C"],
+  ]
+
+  DSLContent["ru"].BindList.Spaces := [
+    ["", "Win Alt Space", "", ""],
+    ["Круглая шпация", "[1]", "[ ]", "2003"],
+    ["Полукруглая шпация", "[2]", "[ ]", "2002"],
   ]
 
   SystemLanguage := GetSystemLanguage()
 
   DSLPadGUI := Gui()
 
-  Tab := DSLPadGUI.Add("Tab3", "x8 y8 w458 h500", DSLContent[SystemLanguage].TabTitles)
+  ColumnWidths := [300, 140, 60, 85]
+  ColumnListStyle := "w620 h460 +NoSort"
+
+  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent[SystemLanguage].TabTitles)
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(1)
-  DiacriticLV := DSLPadGUI.Add("ListView", "w435 h460", DSLContent[SystemLanguage].BindListTitle)
-  DiacriticLV.ModifyCol(1, 140)
-  DiacriticLV.ModifyCol(2, 140)
-  DiacriticLV.ModifyCol(3, 60)
-  DiacriticLV.ModifyCol(4, 85)
+  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+  DiacriticLV.ModifyCol(1, ColumnWidths[1])
+  DiacriticLV.ModifyCol(2, ColumnWidths[2])
+  DiacriticLV.ModifyCol(3, ColumnWidths[3])
+  DiacriticLV.ModifyCol(4, ColumnWidths[4])
 
   for item in DSLContent[SystemLanguage].BindList.Diacritics
   {
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
+  Tab.UseTab(2)
+  Tab.UseTab(3)
+  SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+  SpacesLV.ModifyCol(1, ColumnWidths[1])
+  SpacesLV.ModifyCol(2, ColumnWidths[2])
+  SpacesLV.ModifyCol(3, ColumnWidths[3])
+  SpacesLV.ModifyCol(4, ColumnWidths[4])
 
+  for item in DSLContent[SystemLanguage].BindList.Spaces
+  {
+    SpacesLV.Add(, item[1], item[2], item[3], item[4])
+  }
 
-  Tab.UseTab()
   DSLPadGUI.Title := DSLPadTitle
 
   screenWidth := A_ScreenWidth
   screenHeight := A_ScreenHeight
 
-  windowWidth := 470
+  windowWidth := 650
   windowHeight := 512
-  xPos := screenWidth - windowWidth - 25
+  xPos := screenWidth - windowWidth - 40
   yPos := screenHeight - windowHeight - 75
 
   DSLPadGUI.Show()
@@ -238,6 +279,7 @@ IsGuiOpen(title)
 <^<+<!m:: Send("{U+0331}") ; Combining macron below
 <^<!b:: Send("{U+0306}") ; Combining breve
 <^<+<!b:: Send("{U+0311}") ; Combining inverted breve
+
 <^<!c:: Send("{U+0302}") ; Combining circumflex
 <^<+<!c:: Send("{U+030C}") ; Combining caron
 <^<!a:: Send("{U+0301}") ; Combining acute
