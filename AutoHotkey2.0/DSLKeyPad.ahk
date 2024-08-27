@@ -46,6 +46,8 @@ BindDiacriticF1 := [
   [["B", "И"], "{U+0311}", ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
   [["c", "с"], "{U+0302}", ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
   [["C", "С"], "{U+030C}", ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
+  [["d", "в"], "{U+0307}", ["Точка сверху", "Circumflex", "Dot Above"]],
+  [["D", "В"], "{U+0308}", ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
 ]
 
 BindDiacriticF2 := [
@@ -236,7 +238,7 @@ InsertUnicodeKey() {
   Labels["ru"].SearchTitle := "UNICODE"
   Labels["en"].SearchTitle := "UNICODE"
   Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
-  Labels["en"].WindowPrompt := "Enter code name"
+  Labels["en"].WindowPrompt := "Enter code ID"
 
   PromptValue := ""
   SearchOfArray := []
@@ -306,6 +308,38 @@ SwitchToScript(scriptMode) {
   Send(PromptValue)
 }
 
+InsertAltCodeKey() {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].SearchTitle := "Альт-код"
+  Labels["en"].SearchTitle := "Alt Code"
+  Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
+  Labels["en"].WindowPrompt := "Enter code ID"
+  Labels["ru"].Err := "Введите числовое значение"
+  Labels["en"].Err := "Enter numeric value"
+
+  PromptValue := ""
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  if IB.Result = "Cancel"
+    return
+  else
+    PromptValue := IB.Value
+  if (PromptValue ~= "^\d+$") {
+    SendAltNumpad(PromptValue)
+  } else {
+    MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+  }
+}
+
+SendAltNumpad(CharacterCode) {
+  Send("{Alt Down}")
+  Loop Parse, CharacterCode
+    Send("{Numpad" A_LoopField "}")
+  Send("{Alt Up}")
+}
 
 <#<!F1:: InputBridge(BindDiacriticF1)
 <#<!F2:: InputBridge(BindDiacriticF2)
@@ -313,6 +347,7 @@ SwitchToScript(scriptMode) {
 <#<!Space:: InputBridge(BindSpaces)
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
+<#<!a:: InsertAltCodeKey()
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 
@@ -345,6 +380,18 @@ Constructor()
   DSLContent["en"].BindListTitle := ["Name", "Key", "View", "Unicode"]
   DSLContent["ru"].BindList := {}
   DSLContent["en"].BindList := {}
+
+  SystemLanguage := GetSystemLanguage()
+
+  DSLPadGUI := Gui()
+
+  ColumnWidths := [300, 140, 60, 85]
+  ThreeColumnWidths := [300, 140, 145]
+  ColumnListStyle := "w620 h460 +NoSort"
+
+  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent[SystemLanguage].TabTitles)
+  DSLPadGUI.SetFont("s11")
+  Tab.UseTab(1)
   DSLContent["ru"].BindList.Diacritics := [
     ["", "Win Alt F1", "", ""],
     ["Акут", "[a][ф]", "◌́", "3001"],
@@ -353,6 +400,8 @@ Constructor()
     ["Перевёрнутая кратка", "[B][И]", "◌̑", "0311"],
     ["Циркумфлекс", "[c][с]", "◌̂", "0302"],
     ["Гачек", "[C][С]", "◌̌", "030C"],
+    ["Точка сверху", "[d][в]", "◌̇", "0307"],
+    ["Диерезис", "[D][В]", "◌̈", "0308"],
     ["", "", "", ""],
     ["", "Win Alt F2", "", ""],
     ["Кратка снизу", "[b][и]", "◌̮", "032E"],
@@ -365,7 +414,19 @@ Constructor()
     ["Мостик снизу", "[B][И]", "◌̪", "032A"],
     ["Перевёрнутый мостик снизу", "LCtrl [B][И]", "◌̺", "033A"],
   ]
+  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+  DiacriticLV.ModifyCol(1, ColumnWidths[1])
+  DiacriticLV.ModifyCol(2, ColumnWidths[2])
+  DiacriticLV.ModifyCol(3, ColumnWidths[3])
+  DiacriticLV.ModifyCol(4, ColumnWidths[4])
 
+  for item in DSLContent[SystemLanguage].BindList.Diacritics
+  {
+    DiacriticLV.Add(, item[1], item[2], item[3], item[4])
+  }
+  Tab.UseTab(2)
+
+  Tab.UseTab(3)
   DSLContent["ru"].BindList.Spaces := [
     ["", "Win Alt Space", "", ""],
     ["Круглая шпация", "[1]", "[ ]", "2003"],
@@ -382,41 +443,6 @@ Constructor()
     ["Цифровой пробел", "[=]", "[ ]", "2007"],
     ["Неразрывный пробел", "[Space]", "[ ]", "00A0"]
   ]
-
-  DSLContent["ru"].BindList.Commands := [
-    ["Поиск по названию", "Win Alt F", ""],
-    ["Вставить по Unicode", "Win Alt U", ""],
-    ["Конвертировать в верхний индекс", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
-    ["Конвертировать в нижний индекс", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
-    ["Активировать быстрые ключи", "RAlt Home", ""],
-    [" (Ускоренный ввод избранных знаков)", "", ""],
-  ]
-
-
-  SystemLanguage := GetSystemLanguage()
-
-  DSLPadGUI := Gui()
-
-  ColumnWidths := [300, 140, 60, 85]
-  ThreeColumnWidths := [300, 140, 145]
-  ColumnListStyle := "w620 h460 +NoSort"
-
-  Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent[SystemLanguage].TabTitles)
-  DSLPadGUI.SetFont("s11")
-  Tab.UseTab(1)
-  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
-  DiacriticLV.ModifyCol(1, ColumnWidths[1])
-  DiacriticLV.ModifyCol(2, ColumnWidths[2])
-  DiacriticLV.ModifyCol(3, ColumnWidths[3])
-  DiacriticLV.ModifyCol(4, ColumnWidths[4])
-
-  for item in DSLContent[SystemLanguage].BindList.Diacritics
-  {
-    DiacriticLV.Add(, item[1], item[2], item[3], item[4])
-  }
-  Tab.UseTab(2)
-
-  Tab.UseTab(3)
   SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
   SpacesLV.ModifyCol(1, ColumnWidths[1])
   SpacesLV.ModifyCol(2, ColumnWidths[2])
@@ -424,6 +450,26 @@ Constructor()
   SpacesLV.ModifyCol(4, ColumnWidths[4])
 
   Tab.UseTab(4)
+  DSLContent["ru"].BindList.Commands := [
+    ["Поиск по названию", "Win Alt F", ""],
+    ["Вставить по Unicode", "Win Alt U", ""],
+    ["Вставить по Альт-коду", "Win Alt A", ""],
+    ["Конвертировать в верхний индекс", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
+    ["Конвертировать в нижний индекс", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+    ["Активировать быстрые ключи", "RAlt Home", ""],
+    [" (Ускоренный ввод избранных знаков)", "", ""],
+  ]
+  DSLContent["en"].BindList.Commands := [
+    ["Find by name", "Win Alt F", ""],
+    ["Unicode insertion", "Win Alt U", ""],
+    ["Alt-code insertion", "Win Alt A", ""],
+    ["Convert into superscript", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
+    ["Convert into subscript", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+    ["Activate fastkeys", "RAlt Home", ""],
+    [" (Faster input of chosen signs)", "", ""],
+  ]
+
+
   CommandsLV := DSLPadGUI.Add("ListView", ColumnListStyle,
     [DSLContent[SystemLanguage].BindListTitle[1], DSLContent[SystemLanguage].BindListTitle[2], DSLContent[SystemLanguage].BindListTitle[3]])
   CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
@@ -459,7 +505,10 @@ Constructor()
     ["Пробел нулевой ширины", "[0]", "[​]", "200B"],
     ["Соединитель слов", "[-]", "[⁠]", "2060"],
     ["Цифровой пробел", "[=]", "[ ]", "2007"],
-    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"]
+    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"],
+    ["", "", "", ""],
+    ["Верхний индекс", "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
+    ["Нижний индекс", "LCtrl LAlt LShift [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
   ]
 
   FasKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
@@ -486,7 +535,8 @@ Constructor()
     "Автор: Демер Нкардаз",
     "Примечание: Использовать на русской и английской раскладках",
     "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если для него существует горячая клавиша, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
-    "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа."
+    "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа.",
+    "Режимы`nОбычный — требует «активации» группы знаков: Win Alt [Группа] (F1, Space…) необходимо нажать, но не удерживать, после чего нажать на символ ключа нужного знака.`nБыстрые ключи — необходимо удерживать модифицирующие клавиши, например, LCtrl LAlt + m, что бы ввести знак макрона [◌̄]."
   ]
 
   DSLContent["en"].About := {}
@@ -514,7 +564,7 @@ Constructor()
   }
   DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
 
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
 
   ButtonOK := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[SystemLanguage].About.AutoLoadAdd)
   ButtonOK.OnEvent("Click", AddScriptToAutoload)
@@ -580,7 +630,7 @@ AddScriptToAutoload(*) {
   Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
   RunWait(Command)
 
-  MsgBox "Ярлык для автозагрузки создан или обновлен."
+  MsgBox("Ярлык для автозагрузки создан или обновлен.", DSLPadTitle, 0x40)
 }
 
 IsGuiOpen(title)
@@ -630,23 +680,22 @@ HandleFastKey(char)
 }
 
 
-if (FastKeysIsActive == True) {
-  <^<!m:: HandleFastKey("{U+0304}") ; Combining macron
-  <^<+<!m:: HandleFastKey("{U+0331}") ; Combining macron below
-}
-<^<!b:: Send("{U+0306}") ; Combining breve
-<^<+<!b:: Send("{U+0311}") ; Combining inverted breve
+<^<!a:: HandleFastKey("{U+0301}") ; Combining acute
+<^<+<!a:: HandleFastKey("{U+030B}") ; Combining double acute
+<^<!b:: HandleFastKey("{U+0306}") ; Combining breve
+<^<+<!b:: HandleFastKey("{U+0311}") ; Combining inverted breve
+<^<!c:: HandleFastKey("{U+0302}") ; Combining circumflex
+<^<+<!c:: HandleFastKey("{U+030C}") ; Combining caron
+<^<!d:: HandleFastKey("{U+0307}") ; Combining dot above
+<^<+<!d:: HandleFastKey("{U+0308}") ; Combining diaeresis
+<^<!g:: HandleFastKey("{U+0300}") ; Combining grave
+<^<+<!g:: HandleFastKey("{U+030F}") ; Combining double grave
+<^<!m:: HandleFastKey("{U+0304}") ; Combining macron
+<^<+<!m:: HandleFastKey("{U+0331}") ; Combining macron below
 
-<^<!c:: Send("{U+0302}") ; Combining circumflex
-<^<+<!c:: Send("{U+030C}") ; Combining caron
-<^<!a:: Send("{U+0301}") ; Combining acute
-<^<+<!a:: Send("{U+030B}") ; Combining double acute
-<^<!g:: Send("{U+0300}") ; Combining grave
-<^<+<!g:: Send("{U+030F}") ; Combining double grave
+
 <^<!t:: Send("{U+0303}") ; Combining tilde
 <^<+<!t:: Send("{U+0330}") ; Combining tilde below
-<^<!d:: Send("{U+0307}") ; Combining dot above
-<^<+<!d:: Send("{U+0308}") ; Combining diaeresis
 <^<!r:: Send("{U+030A}") ; Combining ring above
 <^<+<!r:: Send("{U+0325}") ; Combining ring below
 
