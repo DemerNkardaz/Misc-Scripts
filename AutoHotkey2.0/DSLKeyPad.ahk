@@ -6,15 +6,26 @@
 ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
 FastKeysIsActive := False
+InputHTMLEntities := False
+
+DefaultConfig := [
+  ["Settings", "FastKeysIsActive", "False"],
+  ["Settings", "InputHTMLEntities", "False"],
+  ["LatestPrompts", "Unicode", ""],
+  ["LatestPrompts", "Altcode", ""],
+  ["LatestPrompts", "Search", ""],
+]
 
 if FileExist(ConfigFile) {
-  IniValue := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
-  FastKeysIsActive := (IniValue = "True")
+  isFastKeysEnabled := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
+  isInputHTMLEntities := IniRead(ConfigFile, "Settings", "InputHTMLEntities", "False")
+
+  FastKeysIsActive := (isFastKeysEnabled = "True")
+  InputHTMLEntities := (isInputHTMLEntities = "True")
 } else {
-  IniWrite "False", ConfigFile, "Settings", "FastKeysIsActive"
-  IniWrite "", ConfigFile, "LatestPrompts", "Unicode"
-  IniWrite "", ConfigFile, "LatestPrompts", "Altcode"
-  IniWrite "", ConfigFile, "LatestPrompts", "Search"
+  for index, config in DefaultConfig {
+    IniWrite config[3], ConfigFile, config[1], config[2]
+  }
 }
 
 GetSystemLanguage()
@@ -54,52 +65,52 @@ SpaceKey := Chr(32)
 
 
 BindDiacriticF1 := [
-  [["a", "ф"], "{U+0301}", ["Акут", "Acute", "Ударение"]],
-  [["A", "Ф"], "{U+030B}", ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
-  [["b", "и"], "{U+0306}", ["Бреве", "Бревис", "Breve", "Кратка"]],
-  [["B", "И"], "{U+0311}", ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
-  [["c", "с"], "{U+0302}", ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
-  [["C", "С"], "{U+030C}", ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
-  [["d", "в"], "{U+0307}", ["Точка сверху", "Circumflex", "Dot Above"]],
-  [["D", "В"], "{U+0308}", ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
-  [["f", "а"], "{U+0352}", ["Фермата", "Fermata"]],
-  [["g", "п"], "{U+0300}", ["Гравис", "Grave"]],
-  [["G", "П"], "{U+030F}", ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
-  [["h", "р"], "{U+0309}", ["Хвостик сверху", "Hook Above"]],
-  [["H", "Р"], "{U+031B}", ["Рожок", "Horn"]],
+  [["a", "ф"], ["{U+0301}", "&#769;"], ["Акут", "Acute", "Ударение"]],
+  [["A", "Ф"], ["{U+030B}", "&#779;"], ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
+  [["b", "и"], ["{U+0306}", "&#774;"], ["Бреве", "Бревис", "Breve", "Кратка"]],
+  [["B", "И"], ["{U+0311}", "&#785;"], ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
+  [["c", "с"], ["{U+0302}", "&#770;"], ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
+  [["C", "С"], ["{U+030C}", "&#780;"], ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
+  [["d", "в"], ["{U+0307}", "&#775;"], ["Точка сверху", "Dot Above"]],
+  [["D", "В"], ["{U+0308}", "&#776;"], ["Диерезис", "Diaeresis", "Умлаут", "Umlaut"]],
+  [["f", "а"], ["{U+0352}", "&#850;"], ["Фермата", "Fermata"]],
+  [["g", "п"], ["{U+0300}", "&#768;"], ["Гравис", "Grave"]],
+  [["G", "П"], ["{U+030F}", "&#783;"], ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
+  [["h", "р"], ["{U+0309}", "&#777;"], ["Хвостик сверху", "Hook Above"]],
+  [["H", "Р"], ["{U+031B}", "&#795;"], ["Рожок", "Horn"]],
 ]
 
 BindDiacriticF2 := [
-  [["a", "ф"], "{U+0317}", ["Акут снизу", "Acute Below", "Ударение снизу"]],
-  [["b", "и"], "{U+032E}", ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
-  [["B", "И"], "{U+032F}", ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
-  [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
-  [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
-  [["g", "п"], "{U+0316}", ["Гравис снизу", "Grave Below"]],
-  [["h", "р"], "{U+0321}", ["Палатальный крюк", "Palatalized Hook Below"]],
-  [["H", "Р"], "{U+0322}", ["Ретрофлексный крюк", "Retroflex Hook Below"]],
+  [["a", "ф"], ["{U+0317}", "&#791;"], ["Акут снизу", "Acute Below", "Ударение снизу"]],
+  [["b", "и"], ["{U+032E}", "&#814;"], ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
+  [["B", "И"], ["{U+032F}", "&#815;"], ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
+  [["c", "с"], ["{U+032D}", "&#813;"], ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
+  [["C", "С"], ["{U+032C}", "&#812;"], ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
+  [["g", "п"], ["{U+0316}", "&#790;"], ["Гравис снизу", "Grave Below"]],
+  [["h", "р"], ["{U+0321}", "&#801;"], ["Палатальный крюк", "Palatalized Hook Below"]],
+  [["H", "Р"], ["{U+0322}", "&#802;"], ["Ретрофлексный крюк", "Retroflex Hook Below"]],
 ]
 
 BindDiacriticF3 := [
-  [["b", "и"], "{U+0346}", ["Мостик сверху", "Bridge Above"]],
-  [["B", "И"], "{U+032A}", ["Мостик снизу", "Bridge Below"]],
-  [CtrlB, "{U+033A}", ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
+  [["b", "и"], ["{U+0346}", "&#838;"], ["Мостик сверху", "Bridge Above"]],
+  [["B", "И"], ["{U+032A}", "&#810;"], ["Мостик снизу", "Bridge Below"]],
+  [CtrlB, ["{U+033A}", "&#826;"], ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
 ]
 
 BindSpaces := [
-  ["1", "{U+2003}", ["Em Space", "EmSP", "EM_SPACE", "Круглая Шпация"]],
-  ["2", "{U+2002}", ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
-  ["3", "{U+2004}", ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
-  ["4", "{U+2005}", ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
-  ["5", "{U+202F}", ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
-  ["6", "{U+2006}", ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
-  ["7", "{U+2009}", ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
-  ["8", "{U+200A}", ["Hair Space", "HairSP", "Волосяная Шпация"]],
-  ["9", "{U+2008}", ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
-  ["0", "{U+200B}", ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
-  ["-", "{U+2060}", ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
-  ["=", "{U+2007}", ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
-  [SpaceKey, "{U+00A0}", ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
+  ["1", ["{U+2003}", "&emsp;"], ["Em Space", "EmSP", "EM_SPACE", "Круглая Шпация"]],
+  ["2", ["{U+2002}", "&ensp;"], ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
+  ["3", ["{U+2004}", "&emsp13;"], ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
+  ["4", ["{U+2005}", "&emsp14;"], ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
+  ["5", ["{U+202F}", ""], ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
+  ["6", ["{U+2006}", "&#8239;"], ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
+  ["7", ["{U+2009}", "&#ThinSpace;"], ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
+  ["8", ["{U+200A}", "&#8202;"], ["Hair Space", "HairSP", "Волосяная Шпация"]],
+  ["9", ["{U+2008}", "&puncsp;"], ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
+  ["0", ["{U+200B}", "&#8203;"], ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
+  ["-", ["{U+2060}", "&NoBreak;"], ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
+  ["=", ["{U+2007}", "&numsp;"], ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
+  [SpaceKey, ["{U+00A0}", "&nbsp;"], ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
 ]
 
 
@@ -177,7 +188,6 @@ SubscriptDictionary := [
   ["i", "{U+1D62}"],
 ]
 
-
 InputBridge(BindsArray) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
@@ -187,19 +197,36 @@ InputBridge(BindsArray) {
     if IsObject(pair[1]) {
       for _, key in pair[1] {
         if (keyPressed == key) {
-          Send(pair[2])
+          if IsObject(pair[2]) {
+            if InputHTMLEntities {
+              SendText(pair[2][2])
+            } else {
+              Send(pair[2][1])
+            }
+          } else {
+            Send(pair[2])
+          }
           return
         }
       }
     } else {
       if (keyPressed == pair[1]) {
-        Send(pair[2])
+        if IsObject(pair[2]) {
+          if InputHTMLEntities {
+            SendText(pair[2][2])
+          } else {
+            Send(pair[2][1])
+          }
+        } else {
+          Send(pair[2])
+        }
         return
       }
     }
   }
   ih.Stop()
 }
+
 
 CombineArrays(destinationArray, sourceArray*)
 {
@@ -446,8 +473,8 @@ Constructor()
     [Map("ru", "Фермата", "en", "Fermata"), "[f][а]", "◌͒", "0352"],
     [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
     [Map("ru", "Двойной гравис", "en", "Double Grave"), "[G][П]", "◌̏", "030F"],
-    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̏", "0309"],
-    [Map("ru", "Рожок", "en", "Horn"), "[H][Р]", "◌̏", "031B"],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", "0309"],
+    [Map("ru", "Рожок", "en", "Horn"), "[H][Р]", "◌̛", "031B"],
     ["", "", "", ""],
     ["", "Win Alt F2", "", ""],
     [Map("ru", "Акут снизу", "en", "Acute Below"), "[a][ф]", "◌̗", "0317"],
@@ -518,7 +545,7 @@ Constructor()
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
-    [Map("ru", " (Ускоренный ввод избранных знаков)", "en", " (Faster input of chosen signs)"), "", ""],
+    [Map("ru", "Активировать ввод HTML-энтити", "en", "Activate input of HTML entities"), "RAlt RShift Home", ""],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].Commands)
@@ -548,8 +575,8 @@ Constructor()
     [Map("ru", "Диерезис", "en", "Diaeresis"), "LShift [d][в]", "◌̈", "0308"],
     [Map("ru", "Гравис", "en", "Grave"), "[g][п]", "◌̀", "0300"],
     [Map("ru", "Двойной гравис", "en", "Double Grave"), "LShift [g][п]", "◌̏", "030F"],
-    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̏", "0309"],
-    [Map("ru", "Рожок", "en", "Horn"), "LShift [h][р]", "◌̏", "031B"],
+    [Map("ru", "Хвостик сверху", "en", "Hook Above"), "[h][р]", "◌̉", "0309"],
+    [Map("ru", "Рожок", "en", "Horn"), "LShift [h][р]", "◌̛", "031B"],
     ["", "", "", ""],
     ["", "RAlt RShift", "", ""],
     [Map("ru", "Круглая шпация", "en", "Em Space"), "[1]", "[ ]", "2003"],
@@ -716,6 +743,26 @@ IsGuiOpen(title)
   ActivationMessage["en"].Active := "Fast keys activated"
   ActivationMessage["en"].Deactive := "Fast keys deactivated"
   MsgBox(FastKeysIsActive ? ActivationMessage[SystemLanguage].Active : ActivationMessage[SystemLanguage].Deactive, "FastKeys", 0x40)
+
+  return
+}
+
+<^>!>+Home::
+{
+  SystemLanguage := GetSystemLanguage()
+  global InputHTMLEntities, ConfigFile
+  InputHTMLEntities := !InputHTMLEntities
+  IniWrite (InputHTMLEntities ? "True" : "False"), ConfigFile, "Settings", "InputHTMLEntities"
+
+  ActivationMessage := {}
+  ActivationMessage[] := Map()
+  ActivationMessage["ru"] := {}
+  ActivationMessage["en"] := {}
+  ActivationMessage["ru"].Active := "Ввод HTML-энтити активирован"
+  ActivationMessage["ru"].Deactive := "Ввод HTML-энтити деактивирован"
+  ActivationMessage["en"].Active := "Input HTML entities activated"
+  ActivationMessage["en"].Deactive := "Input HTML entities deactivated"
+  MsgBox(InputHTMLEntities ? ActivationMessage[SystemLanguage].Active : ActivationMessage[SystemLanguage].Deactive, "HTML-Entities", 0x40)
 
   return
 }
