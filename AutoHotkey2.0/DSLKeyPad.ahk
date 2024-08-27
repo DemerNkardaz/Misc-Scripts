@@ -339,8 +339,8 @@ Constructor()
   DSLContent[] := Map()
   DSLContent["ru"] := {}
   DSLContent["en"] := {}
-  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы", "Команды", "О программе"]
-  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces", "Commands", "About"]
+  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе"]
+  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About"]
   DSLContent["ru"].BindListTitle := ["Имя", "Ключ", "Вид", "Unicode"]
   DSLContent["en"].BindListTitle := ["Name", "Key", "View", "Unicode"]
   DSLContent["ru"].BindList := {}
@@ -363,7 +363,7 @@ Constructor()
     ["", "Win Alt F3", "", ""],
     ["Мостик сверху", "[b][и]", "◌͆", "0346"],
     ["Мостик снизу", "[B][И]", "◌̪", "032A"],
-    ["Перевёрнутый мостик снизу", "Ctrl[B][И]", "◌̺", "033A"],
+    ["Перевёрнутый мостик снизу", "LCtrl [B][И]", "◌̺", "033A"],
   ]
 
   DSLContent["ru"].BindList.Spaces := [
@@ -388,6 +388,8 @@ Constructor()
     ["Вставить по Unicode", "Win Alt U", ""],
     ["Конвертировать в верхний индекс", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     ["Конвертировать в нижний индекс", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+    ["Активировать быстрые ключи", "RAlt Home", ""],
+    [" (Ускоренный ввод избранных знаков)", "", ""],
   ]
 
 
@@ -433,8 +435,48 @@ Constructor()
     CommandsLV.Add(, item[1], item[2], item[3])
   }
 
+
   Tab.UseTab(5)
+  DSLContent["ru"].BindList.FasKeysLV := [
+    ["", "LCtrl LAlt", "", ""],
+    ["Акут", "[a][ф]", "◌́", "3001"],
+    ["Двойной акут", "LShift [a][ф]", "◌̋", "030B"],
+    ["Кратка", "[b][и]", "◌̆", "0306"],
+    ["Перевёрнутая кратка", "LShift [b][и]", "◌̑", "0311"],
+    ["Циркумфлекс", "[c][с]", "◌̂", "0302"],
+    ["Гачек", "LShift [c][с]", "◌̌", "030C"],
+    ["", "", "", ""],
+    ["", "RAlt RShift", "", ""],
+    ["Круглая шпация", "[1]", "[ ]", "2003"],
+    ["Полукруглая шпация", "[2]", "[ ]", "2002"],
+    ["⅓ Круглой шпации", "[3]", "[ ]", "2004"],
+    ["¼ Круглой шпации", "[4]", "[ ]", "2005"],
+    ["Узкий неразрывный пробел", "[5]", "[ ]", "202F"],
+    ["⅙ Круглой шпации", "[6]", "[ ]", "2006"],
+    ["Узкий пробел", "[7]", "[ ]", "2009"],
+    ["Волосяная шпация", "[8]", "[ ]", "200A"],
+    ["Пунктуационный пробел", "[9]", "[ ]", "2008"],
+    ["Пробел нулевой ширины", "[0]", "[​]", "200B"],
+    ["Соединитель слов", "[-]", "[⁠]", "2060"],
+    ["Цифровой пробел", "[=]", "[ ]", "2007"],
+    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"]
+  ]
+
+  FasKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
+  FasKeysLV.ModifyCol(1, ColumnWidths[1])
+  FasKeysLV.ModifyCol(2, ColumnWidths[2])
+  FasKeysLV.ModifyCol(3, ColumnWidths[3])
+  FasKeysLV.ModifyCol(4, ColumnWidths[4])
+
+  for item in DSLContent[SystemLanguage].BindList.FasKeysLV
+  {
+    FasKeysLV.Add(, item[1], item[2], item[3], item[4])
+  }
+
+
+  Tab.UseTab(6)
   DSLContent["ru"].About := {}
+  DSLContent["ru"].About.AutoLoadAdd := "Добавить в автозагрузку"
   DSLContent["ru"].About.Title := "DSL KeyPad"
   DSLContent["ru"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
   DSLContent["ru"].About.Repository := "Папка AHK репозитория: "
@@ -448,6 +490,7 @@ Constructor()
   ]
 
   DSLContent["en"].About := {}
+  DSLContent["en"].About.AutoLoadAdd := "Add to Autoload"
   DSLContent["en"].About.Title := "DSL KeyPad"
   DSLContent["en"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
   DSLContent["en"].About.Repository := "AHK Folder on Repository: "
@@ -473,9 +516,12 @@ Constructor()
 
   DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>')
 
+  ButtonOK := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[SystemLanguage].About.AutoLoadAdd)
+  ButtonOK.OnEvent("Click", AddScriptToAutoload)
 
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  FasKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
 
   for item in DSLContent[SystemLanguage].BindList.Spaces
   {
@@ -511,17 +557,30 @@ LV_OpenUnicodeWebsite(LV, RowNumber)
 
 
 LV_MouseMove(Control, x, y) {
-  ; Получить номер строки под курсором
   RowNumber := Control.GetItemAt(x, y)
 
-  ; Если курсор над строкой, показать тултип
   if (RowNumber) {
-    FileName := Control.GetText(RowNumber, 1)  ; Получить текст из первой колонки
-    FileSize := Control.GetText(RowNumber, 2)  ; Получить текст из второй колонки
+    FileName := Control.GetText(RowNumber, 1)
+    FileSize := Control.GetText(RowNumber, 2)
     Tooltip "File Name: " FileName "`nFile Size: " FileSize " KB"
   } else {
-    Tooltip  ; Закрыть тултип, если курсор вне строки
+    Tooltip
   }
+}
+
+AddScriptToAutoload(*) {
+  CurrentScriptPath := A_ScriptFullPath
+  AutoloadFolder := A_StartMenu "\Programs\Startup"
+  ShortcutPath := AutoloadFolder "\DSLKeyPad.lnk"
+
+  if (FileExist(ShortcutPath)) {
+    FileDelete(ShortcutPath)
+  }
+
+  Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
+  RunWait(Command)
+
+  MsgBox "Ярлык для автозагрузки создан или обновлен."
 }
 
 IsGuiOpen(title)
@@ -529,9 +588,52 @@ IsGuiOpen(title)
   return WinExist(title) != 0
 }
 
+; Fastkeys
+ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
-<^<!m:: Send("{U+0304}") ; Combining macron
-<^<+<!m:: Send("{U+0331}") ; Combining macron below
+FastKeysIsActive := False
+
+if FileExist(ConfigFile) {
+  IniValue := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
+  FastKeysIsActive := (IniValue = "True")
+} else {
+  IniWrite "False", ConfigFile, "Settings", "FastKeysIsActive"
+}
+
+<^>!Home::
+{
+  SystemLanguage := GetSystemLanguage()
+  global FastKeysIsActive, ConfigFile
+  FastKeysIsActive := !FastKeysIsActive
+  IniWrite (FastKeysIsActive ? "True" : "False"), ConfigFile, "Settings", "FastKeysIsActive"
+
+  ActivationMessage := {}
+  ActivationMessage[] := Map()
+  ActivationMessage["ru"] := {}
+  ActivationMessage["en"] := {}
+  ActivationMessage["ru"].Active := "Быстрые ключи активированы"
+  ActivationMessage["ru"].Deactive := "Быстрые ключи деактивированы"
+  ActivationMessage["en"].Active := "Fast keys activated"
+  ActivationMessage["en"].Deactive := "Fast keys deactivated"
+  MsgBox(FastKeysIsActive ? ActivationMessage[SystemLanguage].Active : ActivationMessage[SystemLanguage].Deactive, "FastKeys", 0x40)
+
+  return
+}
+
+
+HandleFastKey(char)
+{
+  global FastKeysIsActive
+  if (FastKeysIsActive) {
+    Send(char)
+  }
+}
+
+
+if (FastKeysIsActive == True) {
+  <^<!m:: HandleFastKey("{U+0304}") ; Combining macron
+  <^<+<!m:: HandleFastKey("{U+0331}") ; Combining macron below
+}
 <^<!b:: Send("{U+0306}") ; Combining breve
 <^<+<!b:: Send("{U+0311}") ; Combining inverted breve
 
@@ -580,40 +682,40 @@ IsGuiOpen(title)
 >^b:: Send("{U+0346}") ; Combining bridge above
 >^>+b:: Send("{U+032A}") ; Combining bridge below
 
-<^<!1:: Send("{U+00B9}") ; Superscript 1
-<^<!2:: Send("{U+00B2}") ; Superscript 2
-<^<!3:: Send("{U+00B3}") ; Superscript 3
-<^<!4:: Send("{U+2074}") ; Superscript 4
-<^<!5:: Send("{U+2075}") ; Superscript 5
-<^<!6:: Send("{U+2076}") ; Superscript 6
-<^<!7:: Send("{U+2077}") ; Superscript 7
-<^<!8:: Send("{U+2078}") ; Superscript 8
-<^<!9:: Send("{U+2079}") ; Superscript 9
-<^<!0:: Send("{U+2070}") ; Superscript 0
-<^<+<!1:: Send("{U+2081}") ; Subscript 1
-<^<+<!2:: Send("{U+2082}") ; Subscript 2
-<^<+<!3:: Send("{U+2083}") ; Subscript 3
-<^<+<!4:: Send("{U+2084}") ; Subscript 4
-<^<+<!5:: Send("{U+2085}") ; Subscript 5
-<^<+<!6:: Send("{U+2086}") ; Subscript 6
-<^<+<!7:: Send("{U+2087}") ; Subscript 7
-<^<+<!8:: Send("{U+2088}") ; Subscript 8
-<^<+<!9:: Send("{U+2089}") ; Subscript 9
-<^<+<!0:: Send("{U+2080}") ; Subscript 0
+<^<!1:: HandleFastKey("{U+00B9}") ; Superscript 1
+<^<!2:: HandleFastKey("{U+00B2}") ; Superscript 2
+<^<!3:: HandleFastKey("{U+00B3}") ; Superscript 3
+<^<!4:: HandleFastKey("{U+2074}") ; Superscript 4
+<^<!5:: HandleFastKey("{U+2075}") ; Superscript 5
+<^<!6:: HandleFastKey("{U+2076}") ; Superscript 6
+<^<!7:: HandleFastKey("{U+2077}") ; Superscript 7
+<^<!8:: HandleFastKey("{U+2078}") ; Superscript 8
+<^<!9:: HandleFastKey("{U+2079}") ; Superscript 9
+<^<!0:: HandleFastKey("{U+2070}") ; Superscript 0
+<^<+<!1:: HandleFastKey("{U+2081}") ; Subscript 1
+<^<+<!2:: HandleFastKey("{U+2082}") ; Subscript 2
+<^<+<!3:: HandleFastKey("{U+2083}") ; Subscript 3
+<^<+<!4:: HandleFastKey("{U+2084}") ; Subscript 4
+<^<+<!5:: HandleFastKey("{U+2085}") ; Subscript 5
+<^<+<!6:: HandleFastKey("{U+2086}") ; Subscript 6
+<^<+<!7:: HandleFastKey("{U+2087}") ; Subscript 7
+<^<+<!8:: HandleFastKey("{U+2088}") ; Subscript 8
+<^<+<!9:: HandleFastKey("{U+2089}") ; Subscript 9
+<^<+<!0:: HandleFastKey("{U+2080}") ; Subscript 0
 
-<^>!>+1:: Send("{U+2003}") ; Em Space
-<^>!>+2:: Send("{U+2002}") ; En Space
-<^>!>+3:: Send("{U+2004}") ; 1/3 Em Space
-<^>!>+4:: Send("{U+2005}") ; 1/4 Em Space
-<^>!>+6:: Send("{U+2006}") ; 1/6 Em Space
-<^>!>+7:: Send("{U+2009}") ; Thin Space
-<^>!>+8:: Send("{U+200A}") ; Hair Space
-<^>!>+9:: Send("{U+2008}") ; Punctuation Space
-<^>!>+0:: Send("{U+200B}") ; Zero-Width Space
-<^>!>+-:: Send("{U+2060}") ; Zero-Width Nonbreak Space
-<^>!>+NumpadIns:: Send("{U+2007}") ; Number Space
-
-<^>!<+Space:: Send("{U+202F}") ; Thin Nonbreak Space
+<^>!>+1:: HandleFastKey("{U+2003}") ; Em Space
+<^>!>+2:: HandleFastKey("{U+2002}") ; En Space
+<^>!>+3:: HandleFastKey("{U+2004}") ; 1/3 Em Space
+<^>!>+4:: HandleFastKey("{U+2005}") ; 1/4 Em Space
+<^>!>+5:: HandleFastKey("{U+202F}") ; Thin Nonbreak Space
+<^>!>+6:: HandleFastKey("{U+2006}") ; 1/6 Em Space
+<^>!>+7:: HandleFastKey("{U+2009}") ; Thin Space
+<^>!>+8:: HandleFastKey("{U+200A}") ; Hair Space
+<^>!>+9:: HandleFastKey("{U+2008}") ; Punctuation Space
+<^>!>+0:: HandleFastKey("{U+200B}") ; Zero-Width Space
+<^>!>+-:: HandleFastKey("{U+2060}") ; Zero-Width Nonbreak Space
+<^>!>+=:: HandleFastKey("{U+2007}") ; Number Space
+<^>!<+Space:: HandleFastKey("{U+00A0}") ; Nonbreak Space
 
 <^>!m:: Send("{U+2212}") ; Minus
 
