@@ -38,20 +38,27 @@ CtrlY := Chr(25)
 CtrlZ := Chr(26)
 SpaceKey := Chr(32)
 
+
 BindDiacriticF1 := [
   [["a", "ф"], "{U+0301}", ["Акут", "Acute", "Ударение"]],
-  [["A", "Ф"], "{U+030B}", ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное Ударение"]],
+  [["A", "Ф"], "{U+030B}", ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
   [["b", "и"], "{U+0306}", ["Бреве", "Бревис", "Breve", "Кратка"]],
-  [["B", "И"], "{U+0311}", ["Перевёрнутый бреве", "Перевёрнутый Бревис", "Inverted Breve", "Перевёрнутая Кратка"]],
+  [["B", "И"], "{U+0311}", ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
   [["c", "с"], "{U+0302}", ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
   [["C", "С"], "{U+030C}", ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
 ]
 
 BindDiacriticF2 := [
-  [["b", "и"], "{U+032E}", ["Бреве снизу", "Бревис Снизу", "Breve Below", "Кратка Снизу"]],
-  [["B", "И"], "{U+032F}", ["Перевёрнутый бреве снизу", "Перевёрнутый Бревис Снизу", "Inverted Breve Below", "Перевёрнутая Кратка Снизу"]],
-  [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка Снизу", "Домик Снизу"]],
-  [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек Снизу", "Hachek Below", "Hacek Снизу"]],
+  [["b", "и"], "{U+032E}", ["Бреве снизу", "Бревис снизу", "Breve Below", "Кратка снизу"]],
+  [["B", "И"], "{U+032F}", ["Перевёрнутый бреве снизу", "Перевёрнутый бревис снизу", "Inverted Breve Below", "Перевёрнутая кратка снизу"]],
+  [["c", "с"], "{U+032D}", ["Циркумфлекс снизу", "Circumflex Below", "Крышечка снизу", "Домик снизу"]],
+  [["C", "С"], "{U+032C}", ["Карон снизу", "Caron Below", "Гачек снизу", "Hachek Below", "Hacek below"]],
+]
+
+BindDiacriticF3 := [
+  [["b", "и"], "{U+0346}", ["Мостик сверху", "Bridge Above"]],
+  [["B", "И"], "{U+032A}", ["Мостик снизу", "Bridge Below"]],
+  [CtrlB, "{U+033A}", ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
 ]
 
 BindSpaces := [
@@ -65,25 +72,102 @@ BindSpaces := [
   ["8", "{U+200A}", ["Hair Space", "HairSP", "Волосяная Шпация"]],
   ["9", "{U+2008}", ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
   ["0", "{U+200B}", ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
-  ["-", "{U+2060}", ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины"]],
+  ["-", "{U+2060}", ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
+  ["=", "{U+2007}", ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
   [SpaceKey, "{U+00A0}", ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
 ]
 
+
+SuperscriptDictionary := [
+  ["1", "{U+00B9}"],
+  ["2", "{U+00B2}"],
+  ["3", "{U+00B3}"],
+  ["4", "{U+2074}"],
+  ["5", "{U+2075}"],
+  ["6", "{U+2076}"],
+  ["7", "{U+2077}"],
+  ["8", "{U+2078}"],
+  ["9", "{U+2079}"],
+  ["0", "{U+2070}"],
+  ["+", "{U+207A}"],
+  ["-", "{U+207B}"],
+  ["=", "{U+207C}"],
+  ["(", "{U+207D}"],
+  [")", "{U+207E}"],
+  ["a", "{U+1D43}"],
+  ["b", "{U+1D47}"],
+  ["c", "{U+1D9C}"],
+  ["d", "{U+1D48}"],
+  ["e", "{U+1D49}"],
+  ["f", "{U+1DA0}"],
+  ["g", "{U+1DA2}"],
+  ["k", "{U+1D4F}"],
+  ["m", "{U+1D50}"],
+  ["n", "{U+207F}"],
+  ["o", "{U+1D52}"],
+  ["p", "{U+1D56}"],
+  ["r", "{U+1D63}"],
+  ["t", "{U+1D57}"],
+  ["u", "{U+1D58}"],
+  ["v", "{U+1D5B}"],
+  ["x", "{U+1D61}"],
+  ["z", "{U+1DBB}"],
+  ["A", "{U+1D2C}"],
+  ["B", "{U+1D2E}"],
+  ["D", "{U+1D30}"],
+  ["E", "{U+1D31}"],
+  ["H", "{U+1D34}"],
+  ["J", "{U+1D36}"],
+  ["I", "{U+1D35}"],
+  ["K", "{U+1D37}"],
+  ["L", "{U+1D38}"],
+  ["M", "{U+1D39}"],
+  ["N", "{U+1D3A}"],
+  ["O", "{U+1D3C}"],
+  ["P", "{U+1D3E}"],
+  ["R", "{U+1D3F}"],
+  ["T", "{U+1D40}"],
+  ["U", "{U+1D41}"],
+  ["W", "{U+1D42}"],
+]
+
+SubscriptDictionary := [
+  ["1", "{U+2081}"],
+  ["2", "{U+2082}"],
+  ["3", "{U+2083}"],
+  ["4", "{U+2084}"],
+  ["5", "{U+2085}"],
+  ["6", "{U+2086}"],
+  ["7", "{U+2087}"],
+  ["8", "{U+2088}"],
+  ["9", "{U+2089}"],
+  ["0", "{U+2080}"],
+  ["+", "{U+208A}"],
+  ["-", "{U+208B}"],
+  ["=", "{U+208C}"],
+  ["(", "{U+208D}"],
+  [")", "{U+208E}"],
+  ["a", "{U+2090}"],
+  ["e", "{U+2091}"],
+  ["i", "{U+1D62}"],
+]
+
+
 InputBridge(BindsArray) {
-  ih := InputHook("L1 M", "L")
+  ih := InputHook("L1 C M", "L")
   ih.Start()
   ih.Wait()
   keyPressed := ih.Input
   for index, pair in BindsArray {
     if IsObject(pair[1]) {
       for _, key in pair[1] {
-        if (keyPressed = key) {
+        if (keyPressed == key) {
           Send(pair[2])
           return
         }
       }
     } else {
-      if (keyPressed = pair[1]) {
+      if (keyPressed == pair[1]) {
         Send(pair[2])
         return
       }
@@ -123,7 +207,7 @@ SearchKey() {
   else
     PromptValue := IB.Value
 
-  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindSpaces)
+  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindDiacriticF3, BindSpaces)
 
   Found := False
   for index, pair in SearchOfArray {
@@ -165,11 +249,72 @@ InsertUnicodeKey() {
   Send("{U+" . PromptValue . "}")
 }
 
+ScriptConverter(Dictionary, FromValue) {
+  if (FromValue = "")
+    return
+
+  ConvertedText := ""
+  for index, char in StrSplit(FromValue)
+  {
+    Found := False
+    for pair in Dictionary
+    {
+      if (char = pair[1])
+      {
+        ConvertedText .= Chr(0x200C) . pair[2]
+        Found := True
+        break
+      }
+    }
+    if (!Found)
+      ConvertedText .= char
+  }
+  return ConvertedText
+}
+
+SwitchToScript(scriptMode) {
+  SystemLanguage := GetSystemLanguage()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  if (scriptMode = "sup") {
+    Labels["ru"].SearchTitle := "Верхний индекс"
+    Labels["en"].SearchTitle := "Superscript"
+  }
+  else if (scriptMode = "sub") {
+    Labels["ru"].SearchTitle := "Нижний индекс"
+    Labels["en"].SearchTitle := "Subscript"
+  }
+  Labels["ru"].WindowPrompt := "Введите знаки для конвертации"
+  Labels["en"].WindowPrompt := "Enter chars for convert"
+
+  PromptValue := ""
+
+  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  if IB.Result = "Cancel"
+    return
+  else {
+    PromptValue := IB.Value
+    if (scriptMode = "sup") {
+      PromptValue := ScriptConverter(SuperscriptDictionary, PromptValue)
+    } else if (scriptMode = "sub") {
+      PromptValue := ScriptConverter(SubscriptDictionary, PromptValue)
+    }
+  }
+
+  Send(PromptValue)
+}
+
+
 <#<!F1:: InputBridge(BindDiacriticF1)
 <#<!F2:: InputBridge(BindDiacriticF2)
+<#<!F3:: InputBridge(BindDiacriticF3)
 <#<!Space:: InputBridge(BindSpaces)
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
+<#<!1:: SwitchToScript("sup")
+<#<^>!1:: SwitchToScript("sub")
 
 
 ; Setting up of Diacritics-Spaces-Letters KeyPad
@@ -194,10 +339,12 @@ Constructor()
   DSLContent[] := Map()
   DSLContent["ru"] := {}
   DSLContent["en"] := {}
-  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы"]
-  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces"]
+  DSLContent["ru"].TabTitles := ["Диакритика", "Буквы", "Пробелы", "Команды", "О программе"]
+  DSLContent["en"].TabTitles := ["Diacritics", "Letters", "Spaces", "Commands", "About"]
   DSLContent["ru"].BindListTitle := ["Имя", "Ключ", "Вид", "Unicode"]
+  DSLContent["en"].BindListTitle := ["Name", "Key", "View", "Unicode"]
   DSLContent["ru"].BindList := {}
+  DSLContent["en"].BindList := {}
   DSLContent["ru"].BindList.Diacritics := [
     ["", "Win Alt F1", "", ""],
     ["Акут", "[a][ф]", "◌́", "3001"],
@@ -212,19 +359,44 @@ Constructor()
     ["Перевёрнутая кратка снизу", "[B][И]", "◌̯", "032F"],
     ["Циркумфлекс снизу", "[c][с]", "◌̂", "032D"],
     ["Гачек снизу", "[C][С]", "◌̌", "032C"],
+    ["", "", "", ""],
+    ["", "Win Alt F3", "", ""],
+    ["Мостик сверху", "[b][и]", "◌͆", "0346"],
+    ["Мостик снизу", "[B][И]", "◌̪", "032A"],
+    ["Перевёрнутый мостик снизу", "Ctrl[B][И]", "◌̺", "033A"],
   ]
 
   DSLContent["ru"].BindList.Spaces := [
     ["", "Win Alt Space", "", ""],
     ["Круглая шпация", "[1]", "[ ]", "2003"],
     ["Полукруглая шпация", "[2]", "[ ]", "2002"],
+    ["⅓ Круглой шпации", "[3]", "[ ]", "2004"],
+    ["¼ Круглой шпации", "[4]", "[ ]", "2005"],
+    ["Узкий неразрывный пробел", "[5]", "[ ]", "202F"],
+    ["⅙ Круглой шпации", "[6]", "[ ]", "2006"],
+    ["Узкий пробел", "[7]", "[ ]", "2009"],
+    ["Волосяная шпация", "[8]", "[ ]", "200A"],
+    ["Пунктуационный пробел", "[9]", "[ ]", "2008"],
+    ["Пробел нулевой ширины", "[0]", "[​]", "200B"],
+    ["Соединитель слов", "[-]", "[⁠]", "2060"],
+    ["Цифровой пробел", "[=]", "[ ]", "2007"],
+    ["Неразрывный пробел", "[Space]", "[ ]", "00A0"]
   ]
+
+  DSLContent["ru"].BindList.Commands := [
+    ["Поиск по названию", "Win Alt F", ""],
+    ["Вставить по Unicode", "Win Alt U", ""],
+    ["Конвертировать в верхний индекс", "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
+    ["Конвертировать в нижний индекс", "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+  ]
+
 
   SystemLanguage := GetSystemLanguage()
 
   DSLPadGUI := Gui()
 
   ColumnWidths := [300, 140, 60, 85]
+  ThreeColumnWidths := [300, 140, 145]
   ColumnListStyle := "w620 h460 +NoSort"
 
   Tab := DSLPadGUI.Add("Tab3", "w650 h500", DSLContent[SystemLanguage].TabTitles)
@@ -241,12 +413,69 @@ Constructor()
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
   Tab.UseTab(2)
+
   Tab.UseTab(3)
   SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent[SystemLanguage].BindListTitle)
   SpacesLV.ModifyCol(1, ColumnWidths[1])
   SpacesLV.ModifyCol(2, ColumnWidths[2])
   SpacesLV.ModifyCol(3, ColumnWidths[3])
   SpacesLV.ModifyCol(4, ColumnWidths[4])
+
+  Tab.UseTab(4)
+  CommandsLV := DSLPadGUI.Add("ListView", ColumnListStyle,
+    [DSLContent[SystemLanguage].BindListTitle[1], DSLContent[SystemLanguage].BindListTitle[2], DSLContent[SystemLanguage].BindListTitle[3]])
+  CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
+  CommandsLV.ModifyCol(2, ThreeColumnWidths[2])
+  CommandsLV.ModifyCol(3, ThreeColumnWidths[3])
+
+  for item in DSLContent[SystemLanguage].BindList.Commands
+  {
+    CommandsLV.Add(, item[1], item[2], item[3])
+  }
+
+  Tab.UseTab(5)
+  DSLContent["ru"].About := {}
+  DSLContent["ru"].About.Title := "DSL KeyPad"
+  DSLContent["ru"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
+  DSLContent["ru"].About.Repository := "Папка AHK репозитория: "
+  DSLContent["ru"].About.AuthorGit := "Профиль автора: "
+  DSLContent["ru"].About.Texts := [
+    "Версия: Альфа от 27.08.2024",
+    "Автор: Демер Нкардаз",
+    "Примечание: Использовать на русской и английской раскладках",
+    "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если для него существует горячая клавиша, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
+    "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа."
+  ]
+
+  DSLContent["en"].About := {}
+  DSLContent["en"].About.Title := "DSL KeyPad"
+  DSLContent["en"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
+  DSLContent["en"].About.Repository := "AHK Folder on Repository: "
+  DSLContent["en"].About.AuthorGit := "Author’s Profile: "
+  DSLContent["en"].About.Texts := [
+    "Version: Alpha at 27/08/2024",
+    "Author: Demer Nkardaz",
+    "Note: Use on Russian or English keyboard layout",
+    "This program is created to assist in entering special characters, such as diacritics signs, whitespace characters, and modified letters. You can use hotkeys, insert a symbol by name (Win Alt F), if a hotkey exists for it, or enter the “raw” Unicode key (Win Alt U) of any symbol.",
+    "This window displays all available key combinations. Double-clicking the LMB on any line containing Unicode will take you to the Symbl.cc site with an overview of the corresponding symbol."
+  ]
+
+  DSLPadGUI.SetFont("s16")
+  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.Title)
+  DSLPadGUI.SetFont("s11")
+  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.SubTitle)
+
+  for item in DSLContent[SystemLanguage].About.Texts
+  {
+    DSLPadGUI.Add("Text", "w600", item)
+  }
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
+
+  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>')
+
+
+  DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
 
   for item in DSLContent[SystemLanguage].BindList.Spaces
   {
@@ -267,6 +496,32 @@ Constructor()
   DSLPadGUI.Move(xPos, yPos)
 
   return DSLPadGUI
+}
+
+LV_OpenUnicodeWebsite(LV, RowNumber)
+{
+  SystemLanguage := GetSystemLanguage()
+  SelectedRow := LV.GetText(RowNumber, 4)
+  URIComponent := "https://symbl.cc/" . SystemLanguage . "/" . SelectedRow
+  if (SelectedRow != "")
+  {
+    Run(URIComponent)
+  }
+}
+
+
+LV_MouseMove(Control, x, y) {
+  ; Получить номер строки под курсором
+  RowNumber := Control.GetItemAt(x, y)
+
+  ; Если курсор над строкой, показать тултип
+  if (RowNumber) {
+    FileName := Control.GetText(RowNumber, 1)  ; Получить текст из первой колонки
+    FileSize := Control.GetText(RowNumber, 2)  ; Получить текст из второй колонки
+    Tooltip "File Name: " FileName "`nFile Size: " FileSize " KB"
+  } else {
+    Tooltip  ; Закрыть тултип, если курсор вне строки
+  }
 }
 
 IsGuiOpen(title)
