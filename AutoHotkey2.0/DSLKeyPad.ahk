@@ -396,9 +396,17 @@ InsertUnicodeKey() {
 
   if IB.Result = "Cancel"
     return
-  else
-    PromptValue := IB.Value
-  Send("{U+" . PromptValue . "}")
+
+  PromptValue := IB.Value
+  UnicodeCodes := StrSplit(PromptValue, " ")
+
+  Output := ""
+  for code in UnicodeCodes {
+    if code
+      Output .= Chr("0x" . code)
+  }
+
+  Send(Output)
   IniWrite PromptValue, ConfigFile, "LatestPrompts", "Unicode"
 }
 
@@ -465,12 +473,12 @@ InsertAltCodeKey() {
   Labels[] := Map()
   Labels["ru"] := {}
   Labels["en"] := {}
-  Labels["ru"].SearchTitle := "Альт-код"
-  Labels["en"].SearchTitle := "Alt Code"
-  Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
-  Labels["en"].WindowPrompt := "Enter code ID"
-  Labels["ru"].Err := "Введите числовое значение"
-  Labels["en"].Err := "Enter numeric value"
+  Labels["ru"].SearchTitle := "Альт-коды"
+  Labels["en"].SearchTitle := "Alt Codes"
+  Labels["ru"].WindowPrompt := "Введите кодовые обозначения через пробел"
+  Labels["en"].WindowPrompt := "Enter code IDs separated by spaces"
+  Labels["ru"].Err := "Введите числовые значения через пробел"
+  Labels["en"].Err := "Enter numeric values separated by spaces"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
   IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
@@ -478,12 +486,28 @@ InsertAltCodeKey() {
     return
   else
     PromptValue := IB.Value
-  if (PromptValue ~= "^\d+$") {
-    SendAltNumpad(PromptValue)
-    IniWrite PromptValue, ConfigFile, "LatestPrompts", "Altcode"
-  } else {
-    MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+
+  ; Разделяем введенные значения на массив
+  AltCodes := StrSplit(PromptValue, " ")
+
+  ; Отправляем каждый код поочередно
+  for code in AltCodes {
+    if (code ~= "^\d+$") {
+      SendAltNumpad(code)
+    } else {
+      MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+      return
+    }
   }
+
+  IniWrite PromptValue, ConfigFile, "LatestPrompts", "Altcode"
+}
+
+SendAltNumpad(CharacterCode) {
+  Send("{Alt Down}")
+  Loop Parse, CharacterCode
+    Send("{Numpad" A_LoopField "}")
+  Send("{Alt Up}")
 }
 
 Ligaturise() {
@@ -519,13 +543,6 @@ Ligaturise() {
   }
 }
 
-
-SendAltNumpad(CharacterCode) {
-  Send("{Alt Down}")
-  Loop Parse, CharacterCode
-    Send("{Numpad" A_LoopField "}")
-  Send("{Alt Up}")
-}
 
 <#<!F1:: InputBridge(BindDiacriticF1)
 <#<!F2:: InputBridge(BindDiacriticF2)
@@ -590,7 +607,10 @@ Constructor()
 
   ColumnWidths := [300, 140, 60, 85]
   ThreeColumnWidths := [300, 140, 145]
-  ColumnListStyle := "w620 h510 +NoSort"
+  ColumnAreaWidth := "w620"
+  ColumnAreaHeight := "h510"
+  ColumnAreaSorting := "+NoSort"
+  ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaSorting
 
   Tab := DSLPadGUI.Add("Tab3", "w650 h550", DSLContent["UI"].TabsNCols[1][1])
   DSLPadGUI.SetFont("s11")
@@ -673,7 +693,13 @@ Constructor()
   }
 
   Tab.UseTab(4)
+  DSLContent["ru"].EntrydblClick := "2×ЛКМ"
+  DSLContent["en"].EntrydblClick := "2×LMB"
+  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃»"
+  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃”"
   DSLContent["BindList"].Commands := [
+    [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[SystemLanguage].EntrydblClick, ""],
+    [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[SystemLanguage].EntrydblClick, ""],
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
@@ -686,7 +712,7 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].Commands)
 
-  CommandsLV := DSLPadGUI.Add("ListView", ColumnListStyle,
+  CommandsLV := DSLPadGUI.Add("ListView", ColumnAreaWidth . " h450 " . ColumnAreaSorting,
     [DSLContent["UI"].TabsNCols[2][1][1], DSLContent["UI"].TabsNCols[2][1][2], DSLContent["UI"].TabsNCols[2][1][3]])
   CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
   CommandsLV.ModifyCol(2, ThreeColumnWidths[2])
@@ -696,6 +722,9 @@ Constructor()
   {
     CommandsLV.Add(, item[1], item[2], item[3])
   }
+
+  DSLPadGUI.SetFont("s9")
+  DSLPadGUI.Add("Text", "w600", DSLContent[SystemLanguage].CommandsNote)
 
 
   Tab.UseTab(5)
@@ -852,9 +881,17 @@ LV_OpenUnicodeWebsite(LV, RowNumber)
   URIComponent := "https://symbl.cc/" . SystemLanguage . "/" . SelectedRow
   if (SelectedRow != "")
   {
-    Run(URIComponent)
+    IsCtrlDown := GetKeyState("LControl")
+    if (IsCtrlDown) {
+      UnicodeCodePoint := "0x" . SelectedRow
+      A_Clipboard := Chr(UnicodeCodePoint)
+    }
+    else {
+      Run(URIComponent)
+    }
   }
 }
+
 
 LV_RunCommand(LV, RowNumber)
 {
