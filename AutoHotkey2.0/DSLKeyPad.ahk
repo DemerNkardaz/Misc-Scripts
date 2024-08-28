@@ -94,6 +94,8 @@ CharCodes := {}
 CharCodes.acute := ["{U+0301}", "&#769;"]
 CharCodes.dacute := ["{U+030B}", "&#779;"]
 CharCodes.acutebelow := ["{U+0317}", "&#791;"]
+CharCodes.asteriskabove := ["{U+20F0}", "&#8432;"]
+CharCodes.asteriskbelow := ["{U+0359}", "&#857;"]
 CharCodes.breve := ["{U+0306}", "&#774;"]
 CharCodes.brevebelow := ["{U+032E}", "&#814;"]
 CharCodes.ibreve := ["{U+0311}", "&#785;"]
@@ -120,7 +122,12 @@ CharCodes.macron := ["{U+0304}", "&#772;"]
 CharCodes.macronbelow := ["{U+0331}", "&#817;"]
 
 CharCodes.grapjoiner := ["{U+034F}", "&#847;"]
-
+CharCodes.fractionslash := ["{U+2044}", "&#8260;"]
+CharCodes.dagger := ["{U+2020}", "&#8224;"]
+CharCodes.ddagger := ["{U+2021}", "&#8225;"]
+CharCodes.asterism := ["{U+2042}", "&#8258;"]
+CharCodes.twoasterisks := ["{U+2051}", "&#8273;"]
+CharCodes.lowasterisk := ["{U+204E}", "&#8270;"]
 
 CharCodes.emsp := ["{U+2003}", "&emsp;"]
 CharCodes.ensp := ["{U+2002}", "&ensp;"]
@@ -135,6 +142,32 @@ CharCodes.zwsp := ["{U+200B}", "&#8203;"]
 CharCodes.wj := ["{U+2060}", "&NoBreak;"]
 CharCodes.numsp := ["{U+2007}", "&numsp;"]
 CharCodes.nbsp := ["{U+00A0}", "&nbsp;"]
+
+CharCodes.ligatures := {}
+CharCodes.ligatures.capitalaa := ["{U+A732}", "&#42802;"]
+CharCodes.ligatures.smalaa := ["{U+A733}", "&#42803;"]
+CharCodes.ligatures.capitalae := ["{U+00C6}", "&#198;"]
+CharCodes.ligatures.smalae := ["{U+00E6}", "U+00E6"]
+CharCodes.ligatures.capitalau := ["{U+A736}", "&#42806;"]
+CharCodes.ligatures.smalau := ["{U+A737}", "&#42807;"]
+CharCodes.ligatures.capitaloe := ["{U+0152}", "&#338;"]
+CharCodes.ligatures.smaloe := ["{U+0153}", "&#339;"]
+CharCodes.ligatures.ff := ["{U+FB00}", "&#64256;"]
+CharCodes.ligatures.fl := ["{U+FB02}", "&#64258;"]
+CharCodes.ligatures.fi := ["{U+FB01}", "&#64257;"]
+CharCodes.ligatures.ft := ["{U+FB05}", "&#64261;"]
+CharCodes.ligatures.ffi := ["{U+FB03}", "&#64259;"]
+CharCodes.ligatures.ffl := ["{U+FB04}", "&#64260;"]
+CharCodes.ligatures.st := ["{U+FB06}", "&#64262;"]
+CharCodes.ligatures.ts := ["{U+02A6}", "&#678;"]
+
+CharCodes.ligatures.capitalij := ["{U+0132}", "&#306;"]
+CharCodes.ligatures.smalij := ["{U+0133}", "&#307;"]
+CharCodes.ligatures.capitallj := ["{U+01C7}", "&#455;"]
+CharCodes.ligatures.capsmallj := ["{U+01C8}", "&#456;"]
+CharCodes.ligatures.smallj := ["{U+01C9}", "&#457;"]
+CharCodes.ligatures.capitalfs := ["{U+1E9E}", "&#7838;"]
+CharCodes.ligatures.smalfs := ["{U+00DF}", "&#223;"]
 
 UniTrim(str) {
   return SubStr(str, 4, StrLen(str) - 4)
@@ -168,6 +201,8 @@ BindDiacriticF2 := [
 ]
 
 BindDiacriticF3 := [
+  [["a", "ф"], CharCodes.asteriskabove, ["Астериск сверху", "Asterisk Above"]],
+  [["A", "Ф"], CharCodes.asteriskbelow, ["Астериск снизу", "Asterisk Below"]],
   [["b", "и"], CharCodes.bridgeabove, ["Мостик сверху", "Bridge Above"]],
   [["B", "И"], CharCodes.bridgebelow, ["Мостик снизу", "Bridge Below"]],
   [CtrlB, CharCodes.ibridgebelow, ["Перевёрнутый мостик снизу", "Inverted Bridge Below"]],
@@ -178,15 +213,21 @@ BindSpaces := [
   ["2", CharCodes.ensp, ["En Space", "EnSP", "EN_SPACE", "Полукруглая Шпация"]],
   ["3", CharCodes.emsp13, ["1/3 Em Space", "1/3EmSP", "13 Em Space", "EmSP13", "1/3_SPACE", "1/3 Круглой Шпация"]],
   ["4", CharCodes.emsp14, ["1/4 Em Space", "1/4EmSP", "14 Em Space", "EmSP14", "1/4_SPACE", "1/4 Круглой Шпация"]],
-  ["5", CharCodes.nnbsp, ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
+  ["5", CharCodes.thinsp, ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
   ["6", CharCodes.emsp16, ["1/6 Em Space", "1/6EmSP", "16 Em Space", "EmSP16", "1/6_SPACE", "1/6 Круглой Шпация"]],
-  ["7", CharCodes.thinsp, ["Thin Space", "ThinSP", "Тонкий Пробел", "Узкий Пробел"]],
+  ["7", CharCodes.nnbsp, ["Thin No-Break Space", "ThinNoBreakSP", "Тонкий Неразрывный Пробел", "Узкий Неразрывный Пробел"]],
   ["8", CharCodes.hairsp, ["Hair Space", "HairSP", "Волосяная Шпация"]],
   ["9", CharCodes.puncsp, ["Punctuation Space", "PunctuationSP", "Пунктуационный Пробел"]],
   ["0", CharCodes.zwsp, ["Zero-Width Space", "ZeroWidthSP", "Пробел Нулевой Ширины"]],
   ["-", CharCodes.wj, ["Zero-Width No-Break Space", "ZeroWidthSP", "Word Joiner", "WJoiner", "Неразрывный Пробел Нулевой Ширины", "Соединитель слов"]],
   ["=", CharCodes.numsp, ["Number Space", "NumSP", "Figure Space", "FigureSP", "Цифровой пробел"]],
   [SpaceKey, CharCodes.nbsp, ["No-Break Space", "NBSP", "Неразрывный Пробел"]],
+]
+
+BindSpecialF6 := [
+  [["a", "ф"], CharCodes.lowasterisk, ["Низкий астериск", "Low Asterisk"]],
+  [["A", "Ф"], CharCodes.twoasterisks, ["Два астериска", "Two Asterisks"]],
+  [CtrlA, CharCodes.asterism, ["Астеризм", "Asterism"]],
 ]
 
 
@@ -265,44 +306,64 @@ SubscriptDictionary := [
 ]
 
 LigaturesDictionary := [
-  ["AA", "{U+A732}"],
-  ["aa", "{U+A733}"],
-  ["AE", "{U+00C6}"],
-  ["ae", "{U+00E6}"],
-  ["AU", "{U+A736}"],
-  ["au", "{U+A737}"],
-  ["OE", "{U+0152}"],
-  ["oe", "{U+0153}"],
-  ["ff", "{U+FB00}"],
-  ["ff", "{U+FB00}"],
-  ["fl", "{U+FB02}"],
-  ["fi", "{U+FB01}"],
-  ["fti", "{U+FB05}"],
-  ["ffi", "{U+FB03}"],
-  ["ffl", "{U+FB04}"],
-  ["st", "{U+FB06}"],
-  ["ts", "{U+02A6}"],
-  ["IJ", "{U+0132}"],
-  ["ij", "{U+0133}"],
-  ["LJ", "{U+01C7}"],
-  ["Lj", "{U+01C8}"],
-  ["lj", "{U+01C9}"],
-  ["fs", "{U+00DF}"],
-  ["Fs", "{U+1E9E}"],
+  ["AA", CharCodes.ligatures.capitalaa[1]],
+  ["aa", CharCodes.ligatures.smalaa[1]],
+  ["AE", CharCodes.ligatures.capitalae[1]],
+  ["ae", CharCodes.ligatures.smalae[1]],
+  ["AU", CharCodes.ligatures.capitalau[1]],
+  ["au", CharCodes.ligatures.smalau[1]],
+  ["OE", CharCodes.ligatures.capitaloe[1]],
+  ["oe", CharCodes.ligatures.smaloe[1]],
+  ["ff", CharCodes.ligatures.ff[1]],
+  ["fl", CharCodes.ligatures.fl[1]],
+  ["fi", CharCodes.ligatures.fi[1]],
+  ["ft", CharCodes.ligatures.ft[1]],
+  ["ffi", CharCodes.ligatures.ffi[1]],
+  ["ffl", CharCodes.ligatures.ffl[1]],
+  ["st", CharCodes.ligatures.st[1]],
+  ["ts", CharCodes.ligatures.ts[1]],
+  ["IJ", CharCodes.ligatures.capitalij[1]],
+  ["ij", CharCodes.ligatures.smalij[1]],
+  ["LJ", CharCodes.ligatures.capitallj[1]],
+  ["Lj", CharCodes.ligatures.capsmallj[1]],
+  ["lj", CharCodes.ligatures.smallj[1]],
+  ["Fs", CharCodes.ligatures.capitalfs[1]],
+  ["fs", CharCodes.ligatures.smalfs[1]],
   ["ue", "{U+1D6B}"],
   ["OO", "{U+A74E}"],
   ["oo", "{U+A74F}"],
-  ["ie", "{U+AB61}"],
-  ["IЄ", "{U+0464}"],
-  ["iє", "{U+0465}"],
-  ["Iѣ", "{U+A652}"],
-  ["iѣ", "{U+A653}"],
-  ["IА", "{U+A656}"],
-  ["iа", "{U+A657}"],
-  ["IѪ", "{U+046C}"],
-  ["iѫ", "{U+046D}"],
-  ["IѦ", "{U+0468}"],
-  ["iѧ", "{U+0469}"],
+  ["іe", "{U+AB61}"],
+  ["ІЄ", "{U+0464}"],
+  ["І-Э", "{U+0464}"],
+  ["іє", "{U+0465}"],
+  ["і-э", "{U+0465}"],
+  ["Іѣ", "{U+A652}"],
+  ["І-Ь", "{U+A652}"],
+  ["іѣ", "{U+A653}"],
+  ["і-ь", "{U+A653}"],
+  ["ІА", "{U+A656}"],
+  ["іа", "{U+A657}"],
+  ["ІѪ", "{U+046C}"],
+  ["ІУЖ", "{U+046C}"],
+  ["іѫ", "{U+046D}"],
+  ["іуж", "{U+046D}"],
+  ["ІѦ", "{U+0468}"],
+  ["ІАТ", "{U+0468}"],
+  ["іѧ", "{U+0469}"],
+  ["іат", "{U+0469}"],
+  ["-Ь", "{U+0462}"],
+  ["-ь", "{U+0463}"],
+  ["-+", "{U+00B1}"],
+  ["-*", "{U+00D7}"],
+  ["**", "{U+2051}"],
+  ["***", "{U+2042}"],
+  ["..", "{U+2025}"],
+  ["...", "{U+2026}"],
+  [".-", "{U+2010}"],
+  ["--", "{U+2013}"],
+  ["---", "{U+2014}"],
+  ["----", "{U+2E3A}"],
+  ["-----", "{U+2E3B}"],
 ]
 
 InputBridge(BindsArray) {
@@ -376,7 +437,7 @@ SearchKey() {
   else
     PromptValue := IB.Value
 
-  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindDiacriticF3, BindSpaces)
+  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindDiacriticF3, BindSpecialF6, BindSpaces)
 
   Found := False
   for index, pair in SearchOfArray {
@@ -572,6 +633,7 @@ Ligaturise() {
 <#<!F1:: InputBridge(BindDiacriticF1)
 <#<!F2:: InputBridge(BindDiacriticF2)
 <#<!F3:: InputBridge(BindDiacriticF3)
+<#<!F6:: InputBridge(BindSpecialF6)
 <#<!Space:: InputBridge(BindSpaces)
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
@@ -629,12 +691,16 @@ Constructor()
 
   DSLContent["UI"].TabsNCols := [
     [Map(
-      "ru", ["Диакритика", "Буквы", "Пробелы", "Команды", "Быстрые ключи", "О программе", "Полезное"],
-      "en", ["Diacritics", "Letters", "Spaces", "Commands", "Fast Keys", "About", "Useful"]
+      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Лигатуры", "Быстрые ключи", "О программе", "Полезное"],
+      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Ligatures", "Fast Keys", "About", "Useful"]
     )],
     [Map(
       "ru", ["Имя", "Ключ", "Вид", "Unicode"],
       "en", ["Name", "Key", "View", "Unicode"]
+    )],
+    [Map(
+      "ru", ["Имя", "Ввод", "Вид", "Unicode"],
+      "en", ["Name", "Input", "View", "Unicode"]
     )],
   ]
   LocaliseArrayKeys(DSLContent["UI"].TabsNCols)
@@ -681,9 +747,11 @@ Constructor()
     [Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"), "[G][Р]", "◌̢", UniTrim(CharCodes.rhookbelow[1])],
     ["", "", "", ""],
     ["", "Win Alt F3", "", ""],
+    [Map("ru", "Астериск сверху", "en", "Asterisk Above"), "[a][ф]", "◌⃰", UniTrim(CharCodes.asteriskabove[1])],
+    [Map("ru", "Астериск снизу", "en", "Asterisk Below"), "[A][Ф]", "◌͙", UniTrim(CharCodes.asteriskbelow[1])],
     [Map("ru", "Мостик сверху", "en", "Bridge Above"), "[b][и]", "◌͆", UniTrim(CharCodes.bridgeabove[1])],
     [Map("ru", "Мостик снизу", "en", "Bridge Below"), "[B][И]", "◌̪", UniTrim(CharCodes.brevebelow[1])],
-    [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [B][И]", "◌̺", UniTrim(CharCodes.ibridgebelow[1])],
+    [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [b][и]", "◌̺", UniTrim(CharCodes.ibridgebelow[1])],
   ]
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
 
@@ -706,15 +774,20 @@ Constructor()
     [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", UniTrim(CharCodes.ensp[1])],
     [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", UniTrim(CharCodes.emsp13[1])],
     [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", UniTrim(CharCodes.emsp14[1])],
-    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[5]", "[ ]", UniTrim(CharCodes.thinsp[1])],
     [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", UniTrim(CharCodes.emsp16[1])],
-    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", UniTrim(CharCodes.thinsp[1])],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[7]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
     [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", UniTrim(CharCodes.hairsp[1])],
     [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", UniTrim(CharCodes.puncsp[1])],
     [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", UniTrim(CharCodes.zwsp[1])],
     [Map("ru", "Соединитель слов", "en", "Word Joiner"), "[-]", "[⁠]", UniTrim(CharCodes.wj[1])],
     [Map("ru", "Цифровой пробел", "en", "Figure Space"), "[=]", "[ ]", UniTrim(CharCodes.numsp[1])],
     [Map("ru", "Неразрывный пробел", "en", "No-Break Space"), "[Space]", "[ ]", UniTrim(CharCodes.nbsp[1])],
+    ["", "", "", ""],
+    ["", "Win Alt F6", "", ""],
+    [Map("ru", "Низкий астериск", "en", "Low Asterisk"), "[a][ф]", "⁎", UniTrim(CharCodes.lowasterisk[1])],
+    [Map("ru", "Два астериска", "en", "Two Asterisk"), "[A][Ф]", "⁑", UniTrim(CharCodes.twoasterisks[1])],
+    [Map("ru", "Астеризм", "en", "Asterism"), "LCtrl [a][ф]", "⁂", UniTrim(CharCodes.asterism[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].Spaces)
@@ -734,8 +807,8 @@ Constructor()
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
   DSLContent["en"].EntrydblClick := "2×LMB"
-  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи»."
-  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”"
+  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи».`nЛигатуризатор может соединять и некоторые небуквенные символы, например «-+» → «±», «-*» → «×», «***» → «⁂»."
+  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”`nLigaturiser can join some non-letter symbols, for example “-+” → “±”, “-*” → “×”, “***” → “⁂”."
   DSLContent["BindList"].Commands := [
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
@@ -767,6 +840,47 @@ Constructor()
 
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(5)
+  DSLContent["BindList"].LigaturesInput := [
+    [Map("ru", "Латинская заглавная буква AA", "en", "Latin Capital Letter Aa"), "AA", "Ꜳ", UniTrim(CharCodes.ligatures.capitalaa[1])],
+    [Map("ru", "Латинская строчная буква aa", "en", "Latin Small Letter Aa"), "aa", "ꜳ", UniTrim(CharCodes.ligatures.smalaa[1])],
+    [Map("ru", "Латинская заглавная буква AE", "en", "Latin Capital Letter Ae"), "AE", "Æ", UniTrim(CharCodes.ligatures.capitalae[1])],
+    [Map("ru", "Латинская строчная буква ae", "en", "Latin Small Letter Ae"), "ae", "æ", UniTrim(CharCodes.ligatures.smalae[1])],
+    [Map("ru", "Латинская заглавная буква AU", "en", "Latin Capital Letter Au"), "AU", "Ꜷ", UniTrim(CharCodes.ligatures.capitalau[1])],
+    [Map("ru", "Латинская строчная буква au", "en", "Latin Small Letter Au"), "au", "ꜷ", UniTrim(CharCodes.ligatures.smalau[1])],
+    [Map("ru", "Латинская заглавная буква OE", "en", "Latin Capital Letter Oe"), "OE", "Œ", UniTrim(CharCodes.ligatures.capitaloe[1])],
+    [Map("ru", "Латинская строчная буква oe", "en", "Latin Small Letter Oe"), "oe", "œ", UniTrim(CharCodes.ligatures.smaloe[1])],
+    [Map("ru", "Латинская строчная буква ff", "en", "Latin Small Letter Ff"), "ff", "ﬀ", UniTrim(CharCodes.ligatures.ff[1])],
+    [Map("ru", "Латинская строчная буква fl", "en", "Latin Small Letter Fl"), "fl", "ﬂ", UniTrim(CharCodes.ligatures.fl[1])],
+    [Map("ru", "Латинская строчная буква fi", "en", "Latin Small Letter Fi"), "fi", "ﬁ", UniTrim(CharCodes.ligatures.fi[1])],
+    [Map("ru", "Латинская строчная буква ft", "en", "Latin Small Letter Ft"), "ft", "ﬅ", UniTrim(CharCodes.ligatures.ft[1])],
+    [Map("ru", "Латинская строчная буква ffi", "en", "Latin Small Letter Ffi"), "ffi", "ﬃ", UniTrim(CharCodes.ligatures.ffi[1])],
+    [Map("ru", "Латинская строчная буква ffl", "en", "Latin Small Letter Ffl"), "ffl", "ﬄ", UniTrim(CharCodes.ligatures.ffl[1])],
+    [Map("ru", "Латинская строчная буква st", "en", "Latin Small Letter St"), "st", "ﬆ", UniTrim(CharCodes.ligatures.st[1])],
+    [Map("ru", "Латинская строчная буква ts", "en", "Latin Small Letter Ts"), "ts", "ʦ", UniTrim(CharCodes.ligatures.ts[1])],
+    [Map("ru", "Латинская заглавная буква IJ", "en", "Latin Capital Letter Ij"), "IJ", "Ĳ", UniTrim(CharCodes.ligatures.capitalij[1])],
+    [Map("ru", "Латинская строчная буква ij", "en", "Latin Small Letter Ij"), "ij", "ĳ", UniTrim(CharCodes.ligatures.smalij[1])],
+    [Map("ru", "Латинская заглавная буква LJ", "en", "Latin Capital Letter LJ"), "LJ", "Ǉ", UniTrim(CharCodes.ligatures.capitallj[1])],
+    [Map("ru", "Латинская заглавная буква L со строчной буквой j", "en", "Latin Capital Letter L with Small Letter J"), "Lj", "ǈ", UniTrim(CharCodes.ligatures.capsmallj[1])],
+    [Map("ru", "Латинская заглавная буква lj", "en", "Latin Capital Letter Lj"), "lj", "ǉ", UniTrim(CharCodes.ligatures.smallj[1])],
+    [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "Fs", "ẞ", UniTrim(CharCodes.ligatures.capitalfs[1])],
+    [Map("ru", "Латинская строчная буква эсцет (S острое)", "en", "Latin Small Letter Sharp S"), "fs", "ß", UniTrim(CharCodes.ligatures.smalfs[1])],
+  ]
+
+  LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
+
+  LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[3][1])
+  LigaturesLV.ModifyCol(1, ColumnWidths[1])
+  LigaturesLV.ModifyCol(2, 120)
+  LigaturesLV.ModifyCol(3, 100)
+  LigaturesLV.ModifyCol(4, ColumnWidths[4])
+
+  for item in DSLContent["BindList"].LigaturesInput
+  {
+    LigaturesLV.Add(, item[1], item[2], item[3], item[4])
+  }
+
+
+  Tab.UseTab(6)
   DSLContent["BindList"].FasKeysLV := [
     ["", "LCtrl LAlt", "", ""],
     [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", UniTrim(CharCodes.acute[1])],
@@ -787,9 +901,9 @@ Constructor()
     [Map("ru", "Полукруглая шпация", "en", "En Space"), "[2]", "[ ]", UniTrim(CharCodes.ensp[1])],
     [Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"), "[3]", "[ ]", UniTrim(CharCodes.emsp13[1])],
     [Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"), "[4]", "[ ]", UniTrim(CharCodes.emsp13[1])],
-    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[5]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
+    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[5]", "[ ]", UniTrim(CharCodes.thinsp[1])],
     [Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"), "[6]", "[ ]", UniTrim(CharCodes.emsp16[1])],
-    [Map("ru", "Узкий пробел", "en", "Thin Space"), "[7]", "[ ]", UniTrim(CharCodes.thinsp[1])],
+    [Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"), "[7]", "[ ]", UniTrim(CharCodes.nnbsp[1])],
     [Map("ru", "Волосяная шпация", "en", "Hair Space"), "[8]", "[ ]", UniTrim(CharCodes.hairsp[1])],
     [Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"), "[9]", "[ ]", UniTrim(CharCodes.puncsp[1])],
     [Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"), "[0]", "[​]", UniTrim(CharCodes.zwsp[1])],
@@ -800,6 +914,9 @@ Constructor()
     [Map("ru", "Верхний индекс", "en", "Superscript"), "LCtrl LAlt [1…0]", "¹²³⁴⁵⁶⁷⁸⁹⁰", ""],
     [Map("ru", "Нижний индекс", "en", "Subscript"), "LCtrl LAlt [1…0]", "₁₂₃₄₅₆₇₈₉₀", ""],
     ["", "", "", ""],
+    [Map("ru", "Дробная черта ✅", "en", "Fraction Slash ✅"), "LCtrl LAlt [Num/]", "⁄", UniTrim(CharCodes.fractionslash[1])],
+    [Map("ru", "Даггер ✅", "en", "Dagger ✅"), "RAlt [Num/]", "†", UniTrim(CharCodes.dagger[1])],
+    [Map("ru", "Двойной даггер ✅", "en", "Double Dagger ✅"), "RAlt RShift [Num/]", "‡", UniTrim(CharCodes.ddagger[1])],
     [Map("ru", "Соединитель графем ✅", "en", "Grapheme Joiner ✅"), "LShift RShift [g]", "◌͏", UniTrim(CharCodes.grapjoiner[1])],
   ]
 
@@ -817,7 +934,7 @@ Constructor()
   }
 
 
-  Tab.UseTab(6)
+  Tab.UseTab(7)
   DSLContent["ru"].About := {}
   DSLContent["ru"].About.AutoLoadAdd := "Добавить в автозагрузку"
   DSLContent["ru"].About.Title := "DSL KeyPad"
@@ -870,7 +987,7 @@ Constructor()
   BtnSwitchEN := DSLPadGUI.Add("Button", "x487 y63 w32 h32", "EN")
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
-  Tab.UseTab(7)
+  Tab.UseTab(8)
   DSLContent["ru"].Useful := {}
   DSLContent["ru"].Useful.Unicode := "Unicode-ресурсы"
   DSLContent["ru"].Useful.Dictionaries := "Словари"
@@ -900,6 +1017,7 @@ Constructor()
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   FasKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  LigaturesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   CommandsLV.OnEvent("DoubleClick", LV_RunCommand)
 
 
@@ -1139,9 +1257,9 @@ HandleFastKey(char)
 <^>!>+2:: HandleFastKey(CharCodes.ensp[1])
 <^>!>+3:: HandleFastKey(CharCodes.emsp13[1])
 <^>!>+4:: HandleFastKey(CharCodes.emsp14[1])
-<^>!>+5:: HandleFastKey(CharCodes.nnbsp[1])
+<^>!>+5:: HandleFastKey(CharCodes.thinsp[1])
 <^>!>+6:: HandleFastKey(CharCodes.emsp16[1])
-<^>!>+7:: HandleFastKey(CharCodes.thinsp[1])
+<^>!>+7:: HandleFastKey(CharCodes.nnbsp[1])
 <^>!>+8:: HandleFastKey(CharCodes.hairsp[1])
 <^>!>+9:: HandleFastKey(CharCodes.puncsp[1])
 <^>!>+0:: HandleFastKey(CharCodes.zwsp[1])
@@ -1155,8 +1273,8 @@ HandleFastKey(char)
 <^>!NumpadMult:: Send("{U+2051}") ; Double Asterisk
 <^>!>+NumpadMult:: Send("{U+2042}") ; Asterism
 <^>!<+NumpadMult:: Send("{U+204E}") ; Asterisk Below
-<^>!NumpadDiv:: Send("{U+2020}") ; Dagger
-<^>!>+NumpadDiv:: Send("{U+2021}") ; Double Dagger
+<^>!NumpadDiv:: Send(CharCodes.dagger[1]) ; Dagger
+<^>!>+NumpadDiv:: Send(CharCodes.ddagger[1]) ; Double Dagger
 
 <^>!NumpadSub:: Send("{U+00AD}") ; Soft hyphenation
 
@@ -1181,4 +1299,5 @@ HandleFastKey(char)
 <^<+<!x:: Send("{U+04AA}") ; CYRILLIC CAPITAL LETTER ES WITH DESCENDER
 
 
->+<+g:: Send("{U+034F}") ; Combining Grapheme Joiner
+>+<+g:: Send(CharCodes.grapjoiner[1])
+<^<!NumpadDiv:: Send(CharCodes.fractionslash[1])
