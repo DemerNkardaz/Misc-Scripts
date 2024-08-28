@@ -135,6 +135,7 @@ CharCodes.endash := ["{U+2013}", "&ndash;"]
 CharCodes.numdash := ["{U+2012}", "&#8210;"]
 CharCodes.twoemdash := ["{U+2E3A}", "&#11834;"]
 CharCodes.threemdash := ["{U+2E3B}", "&#11835;"]
+CharCodes.nbdash := ["{U+2011}", "&#8209;"]
 
 CharCodes.emsp := ["{U+2003}", "&emsp;"]
 CharCodes.ensp := ["{U+2002}", "&ensp;"]
@@ -411,9 +412,10 @@ LigaturesDictionary := [
   ["--", CharCodes.endash[1]],
   ["---", CharCodes.emdash[1]],
   ["----", CharCodes.twoemdash[1]],
-  ["2—", CharCodes.twoemdash[1]],
+  ["2-", CharCodes.twoemdash[1]],
   ["-----", CharCodes.threemdash[1]],
-  ["3—", CharCodes.threemdash[1]],
+  ["3-", CharCodes.threemdash[1]],
+  ["0-", CharCodes.nbdash[1]],
 ]
 
 InputBridge(BindsArray) {
@@ -950,8 +952,9 @@ Constructor()
     [Map("ru", "Цифровое тире", "en", "Figure Dash"), "n-", "‒", UniTrim(CharCodes.numdash[1])],
     [Map("ru", "Короткое тире", "en", "En Dash"), "--", "–", UniTrim(CharCodes.endash[1])],
     [Map("ru", "Длинное тире", "en", "Em Dash"), "---", "—", UniTrim(CharCodes.emdash[1])],
-    [Map("ru", "Двойное тире", "en", "Two-Em Dash"), "----, 2—", "⸺", UniTrim(CharCodes.twoemdash[1])],
-    [Map("ru", "Тройное тире", "en", "Three-Em Dash"), "-----, 3—", "⸻", UniTrim(CharCodes.threemdash[1])],
+    [Map("ru", "Двойное тире", "en", "Two-Em Dash"), "----, 2-", "⸺", UniTrim(CharCodes.twoemdash[1])],
+    [Map("ru", "Тройное тире", "en", "Three-Em Dash"), "-----, 3-", "⸻", UniTrim(CharCodes.threemdash[1])],
+    [Map("ru", "Неразрывный дефис", "en", "Non-Breaking Hyphen"), "0-", "‑", UniTrim(CharCodes.nbdash[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
@@ -1268,14 +1271,13 @@ ToggleInputHTMLEntities()
 }
 
 
-HandleFastKey(char)
+HandleFastKey(Character, CheckOff := False)
 {
   global FastKeysIsActive
-  if (FastKeysIsActive) {
-    Send(char)
+  if (FastKeysIsActive || CheckOff == True) {
+    Send(Character)
   }
 }
-
 
 <^<!a:: HandleFastKey(CharCodes.acute[1])
 <^<+<!a:: HandleFastKey(CharCodes.dacute[1])
@@ -1369,8 +1371,8 @@ HandleFastKey(char)
 <^>!NumpadMult:: Send("{U+2051}") ; Double Asterisk
 <^>!>+NumpadMult:: Send("{U+2042}") ; Asterism
 <^>!<+NumpadMult:: Send("{U+204E}") ; Asterisk Below
-<^>!NumpadDiv:: Send(CharCodes.dagger[1]) ; Dagger
-<^>!>+NumpadDiv:: Send(CharCodes.ddagger[1]) ; Double Dagger
+<^>!NumpadDiv:: HandleFastKey(CharCodes.dagger[1], True)
+<^>!>+NumpadDiv:: HandleFastKey(CharCodes.ddagger[1], True)
 
 <^>!NumpadSub:: Send("{U+00AD}") ; Soft hyphenation
 
@@ -1395,5 +1397,5 @@ HandleFastKey(char)
 <^<+<!x:: Send("{U+04AA}") ; CYRILLIC CAPITAL LETTER ES WITH DESCENDER
 
 
->+<+g:: Send(CharCodes.grapjoiner[1])
-<^<!NumpadDiv:: Send(CharCodes.fractionslash[1])
+>+<+g:: HandleFastKey(CharCodes.grapjoiner[1], True)
+<^<!NumpadDiv:: HandleFastKey(CharCodes.fractionslash[1], True)
