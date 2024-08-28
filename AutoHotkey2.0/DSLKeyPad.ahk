@@ -11,6 +11,7 @@ InputHTMLEntities := False
 DefaultConfig := [
   ["Settings", "FastKeysIsActive", "False"],
   ["Settings", "InputHTMLEntities", "False"],
+  ["Settings", "UserLanguage", ""],
   ["LatestPrompts", "Unicode", ""],
   ["LatestPrompts", "Altcode", ""],
   ["LatestPrompts", "Search", ""],
@@ -29,11 +30,35 @@ if FileExist(ConfigFile) {
   }
 }
 
-GetSystemLanguage()
+
+GetLanguageCode()
 {
-  langID := RegRead("HKEY_CURRENT_USER\Control Panel\International", "LocaleName")
-  langID := SubStr(langID, 1, 2)
-  return langID ? langID : "en"
+  SupportedLanguages := [
+    "en",
+    "ru",
+  ]
+
+  ValidateLanguage(LanguageSource) {
+    for language in SupportedLanguages {
+      if (LanguageSource = language) {
+        return language
+      }
+    }
+
+    return "en"
+  }
+
+  UserLanguageKey := IniRead(ConfigFile, "Settings", "UserLanguage", "")
+
+  if (UserLanguageKey != "") {
+    return ValidateLanguage(UserLanguageKey)
+  }
+  else {
+    SysLanguageKey := RegRead("HKEY_CURRENT_USER\Control Panel\International", "LocaleName")
+    SysLanguageKey := SubStr(SysLanguageKey, 1, 2)
+
+    return ValidateLanguage(SysLanguageKey)
+  }
 }
 
 CtrlA := Chr(1)
@@ -332,7 +357,7 @@ CombineArrays(destinationArray, sourceArray*)
 }
 
 SearchKey() {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -344,7 +369,7 @@ SearchKey() {
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Search", "")
   SearchOfArray := []
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -381,7 +406,7 @@ SearchKey() {
 }
 
 InsertUnicodeKey() {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -392,7 +417,7 @@ InsertUnicodeKey() {
   Labels["en"].WindowPrompt := "Enter code ID"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Unicode", "")
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -434,7 +459,7 @@ ScriptConverter(Dictionary, FromValue) {
 }
 
 SwitchToScript(scriptMode) {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -452,7 +477,7 @@ SwitchToScript(scriptMode) {
 
   PromptValue := ""
 
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92")
+  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92")
   if IB.Result = "Cancel"
     return
   else {
@@ -468,7 +493,7 @@ SwitchToScript(scriptMode) {
 }
 
 InsertAltCodeKey() {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -481,7 +506,7 @@ InsertAltCodeKey() {
   Labels["en"].Err := "Enter numeric values separated by spaces"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
   if IB.Result = "Cancel"
     return
   else
@@ -495,7 +520,7 @@ InsertAltCodeKey() {
     if (code ~= "^\d+$") {
       SendAltNumpad(code)
     } else {
-      MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+      MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
       return
     }
   }
@@ -511,7 +536,7 @@ SendAltNumpad(CharacterCode) {
 }
 
 Ligaturise() {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -524,7 +549,7 @@ Ligaturise() {
   Labels["en"].Err := "Ligatures not found"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
-  IB := InputBox(Labels[SystemLanguage].WindowPrompt, Labels[SystemLanguage].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
   if IB.Result = "Cancel"
     return
   else
@@ -539,7 +564,7 @@ Ligaturise() {
     }
   }
   if (!Found) {
-    MsgBox(Labels[SystemLanguage].Err, Labels[SystemLanguage].SearchTitle, 0x30)
+    MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
   }
 }
 
@@ -561,7 +586,7 @@ Ligaturise() {
 LocaliseArrayKeys(ObjectPath) {
   for index, item in ObjectPath {
     if IsObject(item[1]) {
-      item[1] := item[1][GetSystemLanguage()]
+      item[1] := item[1][GetLanguageCode()]
     }
   }
 }
@@ -578,6 +603,19 @@ DSLPadTitle := "DSL KeyPad (αλφα)"
     DSLPadGUI := Constructor()
     DSLPadGUI.Show()
   }
+}
+
+
+SwitchLanguage(LanguageCode) {
+  IniWrite LanguageCode, ConfigFile, "Settings", "UserLanguage"
+
+  if (IsGuiOpen(DSLPadTitle))
+  {
+    WinClose(DSLPadTitle)
+  }
+
+  DSLPadGUI := Constructor()
+  DSLPadGUI.Show()
 }
 
 Constructor()
@@ -601,9 +639,10 @@ Constructor()
   ]
   LocaliseArrayKeys(DSLContent["UI"].TabsNCols)
 
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
 
   DSLPadGUI := Gui()
+
 
   ColumnWidths := [300, 140, 60, 85]
   ThreeColumnWidths := [300, 140, 145]
@@ -698,8 +737,8 @@ Constructor()
   DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи»."
   DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”"
   DSLContent["BindList"].Commands := [
-    [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[SystemLanguage].EntrydblClick, ""],
-    [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[SystemLanguage].EntrydblClick, ""],
+    [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
+    [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
@@ -724,7 +763,7 @@ Constructor()
   }
 
   DSLPadGUI.SetFont("s9")
-  DSLPadGUI.Add("Text", "w600", DSLContent[SystemLanguage].CommandsNote)
+  DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(5)
@@ -810,21 +849,26 @@ Constructor()
   ]
 
   DSLPadGUI.SetFont("s16")
-  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.Title)
+  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].About.Title)
   DSLPadGUI.SetFont("s11")
-  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].About.SubTitle)
+  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].About.SubTitle)
 
-  for item in DSLContent[SystemLanguage].About.Texts
+  for item in DSLContent[LanguageCode].About.Texts
   {
     DSLPadGUI.Add("Text", "w600", item)
   }
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
 
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
 
-  ButtonOK := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[SystemLanguage].About.AutoLoadAdd)
-  ButtonOK.OnEvent("Click", AddScriptToAutoload)
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[LanguageCode].About.AutoLoadAdd)
+  BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
 
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x454 y63 w32 h32", "РУ")
+  BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
+
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x487 y63 w32 h32", "EN")
+  BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
   Tab.UseTab(7)
   DSLContent["ru"].Useful := {}
@@ -836,21 +880,22 @@ Constructor()
 
 
   DSLContent["en"].Useful := {}
+  DSLContent["en"].Useful.Unicode := "Unicode-Resources"
   DSLContent["en"].Useful.Dictionaries := "Dictionaries"
   DSLContent["en"].Useful.JPnese := "Japanese: "
   DSLContent["en"].Useful.CHnese := "Chinese: "
   DSLContent["en"].Useful.VTnese := "Vietnamese: "
 
   DSLPadGUI.SetFont("s13")
-  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].Useful.Unicode)
+  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].Useful.Unicode)
   DSLPadGUI.SetFont("s11")
   DSLPadGUI.Add("Link", "w600", '<a href="https://symbl.cc/">Symbl.cc</a> <a href="https://www.compart.com/en/unicode/">Compart</a>')
   DSLPadGUI.SetFont("s13")
-  DSLPadGUI.Add("Text", , DSLContent[SystemLanguage].Useful.Dictionaries)
+  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].Useful.Dictionaries)
   DSLPadGUI.SetFont("s11")
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.JPnese . '<a href="https://yarxi.ru">ЯРКСИ</a> <a href="https://www.warodai.ruu">Warodai</a>')
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.CHnese . '<a href="https://bkrs.info">БКРС</a>')
-  DSLPadGUI.Add("Link", "w600", DSLContent[SystemLanguage].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.JPnese . '<a href="https://yarxi.ru">ЯРКСИ</a> <a href="https://www.warodai.ruu">Warodai</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.CHnese . '<a href="https://bkrs.info">БКРС</a>')
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
 
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
@@ -876,9 +921,9 @@ Constructor()
 
 LV_OpenUnicodeWebsite(LV, RowNumber)
 {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   SelectedRow := LV.GetText(RowNumber, 4)
-  URIComponent := "https://symbl.cc/" . SystemLanguage . "/" . SelectedRow
+  URIComponent := "https://symbl.cc/" . LanguageCode . "/" . SelectedRow
   if (SelectedRow != "")
   {
     IsCtrlDown := GetKeyState("LControl")
@@ -936,7 +981,7 @@ LV_MouseMove(Control, x, y) {
 }
 
 AddScriptToAutoload(*) {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -954,7 +999,7 @@ AddScriptToAutoload(*) {
   Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
   RunWait(Command)
 
-  MsgBox(Labels[SystemLanguage].Success, DSLPadTitle, 0x40)
+  MsgBox(Labels[LanguageCode].Success, DSLPadTitle, 0x40)
 }
 
 IsGuiOpen(title)
@@ -968,7 +1013,7 @@ IsGuiOpen(title)
 
 ToggleFastKeys()
 {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   global FastKeysIsActive, ConfigFile
   FastKeysIsActive := !FastKeysIsActive
   IniWrite (FastKeysIsActive ? "True" : "False"), ConfigFile, "Settings", "FastKeysIsActive"
@@ -981,7 +1026,7 @@ ToggleFastKeys()
   ActivationMessage["ru"].Deactive := "Быстрые ключи деактивированы"
   ActivationMessage["en"].Active := "Fast keys activated"
   ActivationMessage["en"].Deactive := "Fast keys deactivated"
-  MsgBox(FastKeysIsActive ? ActivationMessage[SystemLanguage].Active : ActivationMessage[SystemLanguage].Deactive, "FastKeys", 0x40)
+  MsgBox(FastKeysIsActive ? ActivationMessage[LanguageCode].Active : ActivationMessage[LanguageCode].Deactive, "FastKeys", 0x40)
 
   return
 }
@@ -990,7 +1035,7 @@ ToggleFastKeys()
 
 ToggleInputHTMLEntities()
 {
-  SystemLanguage := GetSystemLanguage()
+  LanguageCode := GetLanguageCode()
   global InputHTMLEntities, ConfigFile
   InputHTMLEntities := !InputHTMLEntities
   IniWrite (InputHTMLEntities ? "True" : "False"), ConfigFile, "Settings", "InputHTMLEntities"
@@ -1003,7 +1048,7 @@ ToggleInputHTMLEntities()
   ActivationMessage["ru"].Deactive := "Ввод HTML-энтити деактивирован"
   ActivationMessage["en"].Active := "Input HTML entities activated"
   ActivationMessage["en"].Deactive := "Input HTML entities deactivated"
-  MsgBox(InputHTMLEntities ? ActivationMessage[SystemLanguage].Active : ActivationMessage[SystemLanguage].Deactive, "HTML-Entities", 0x40)
+  MsgBox(InputHTMLEntities ? ActivationMessage[LanguageCode].Active : ActivationMessage[LanguageCode].Deactive, "HTML-Entities", 0x40)
 
   return
 }
