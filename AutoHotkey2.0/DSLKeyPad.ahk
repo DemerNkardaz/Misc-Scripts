@@ -168,6 +168,14 @@ CharCodes.ligatures.capsmallj := ["{U+01C8}", "&#456;"]
 CharCodes.ligatures.smallj := ["{U+01C9}", "&#457;"]
 CharCodes.ligatures.capitalfs := ["{U+1E9E}", "&#7838;"]
 CharCodes.ligatures.smalfs := ["{U+00DF}", "&#223;"]
+CharCodes.ligatures.smalue := ["{U+1D6B}", "&#7531;"]
+CharCodes.ligatures.capitaloo := ["{U+A74E}", "&#42830;"]
+CharCodes.ligatures.smaloo := ["{U+A74F}", "&#42831;"]
+CharCodes.ligatures.smalie := ["{U+AB61}", "&#43873;"]
+
+
+CharCodes.ligatures.smalie := ["{U+AB61}", "&#43873;"]
+
 
 UniTrim(str) {
   return SubStr(str, 4, StrLen(str) - 4)
@@ -329,10 +337,10 @@ LigaturesDictionary := [
   ["lj", CharCodes.ligatures.smallj[1]],
   ["Fs", CharCodes.ligatures.capitalfs[1]],
   ["fs", CharCodes.ligatures.smalfs[1]],
-  ["ue", "{U+1D6B}"],
-  ["OO", "{U+A74E}"],
-  ["oo", "{U+A74F}"],
-  ["іe", "{U+AB61}"],
+  ["ue", CharCodes.ligatures.smalue[1]],
+  ["OO", CharCodes.ligatures.capitaloo[1]],
+  ["oo", CharCodes.ligatures.smaloo[1]],
+  ["ie", CharCodes.ligatures.smalie[1]],
   ["ІЄ", "{U+0464}"],
   ["І-Э", "{U+0464}"],
   ["іє", "{U+0465}"],
@@ -351,6 +359,8 @@ LigaturesDictionary := [
   ["ІАТ", "{U+0468}"],
   ["іѧ", "{U+0469}"],
   ["іат", "{U+0469}"],
+  ["АТ", "{U+0466}"],
+  ["ат", "{U+0467}"],
   ["-Ь", "{U+0462}"],
   ["-ь", "{U+0463}"],
   ["-+", "{U+00B1}"],
@@ -474,8 +484,8 @@ InsertUnicodeKey() {
   Labels["en"] := {}
   Labels["ru"].SearchTitle := "UNICODE"
   Labels["en"].SearchTitle := "UNICODE"
-  Labels["ru"].WindowPrompt := "Введите кодовое обозначение"
-  Labels["en"].WindowPrompt := "Enter code ID"
+  Labels["ru"].WindowPrompt := "Введите кодовые обозначения"
+  Labels["en"].WindowPrompt := "Enter code IDs"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Unicode", "")
   IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
@@ -561,10 +571,10 @@ InsertAltCodeKey() {
   Labels["en"] := {}
   Labels["ru"].SearchTitle := "Альт-коды"
   Labels["en"].SearchTitle := "Alt Codes"
-  Labels["ru"].WindowPrompt := "Введите кодовые обозначения через пробел"
-  Labels["en"].WindowPrompt := "Enter code IDs separated by spaces"
-  Labels["ru"].Err := "Введите числовые значения через пробел"
-  Labels["en"].Err := "Enter numeric values separated by spaces"
+  Labels["ru"].WindowPrompt := "Введите кодовые обозначения"
+  Labels["en"].WindowPrompt := "Enter code IDs"
+  Labels["ru"].Err := "Введите числовые значения"
+  Labels["en"].Err := "Enter numeric values separated"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
   IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
@@ -602,12 +612,12 @@ Ligaturise() {
   Labels[] := Map()
   Labels["ru"] := {}
   Labels["en"] := {}
-  Labels["ru"].SearchTitle := "Лигатуризатор"
-  Labels["en"].SearchTitle := "Ligaturise"
-  Labels["ru"].WindowPrompt := "Введите комбинацию для лигатуры"
-  Labels["en"].WindowPrompt := "Enter combination for ligature"
-  Labels["ru"].Err := "Лигатуры не найдено"
-  Labels["en"].Err := "Ligatures not found"
+  Labels["ru"].SearchTitle := "Сплавить знаки"
+  Labels["en"].SearchTitle := "Symbols melt"
+  Labels["ru"].WindowPrompt := "Вставьте ингредиенты"
+  Labels["en"].WindowPrompt := "Insert ingredients"
+  Labels["ru"].Err := "Рецепт не найдено"
+  Labels["en"].Err := "Recipe not found"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
   IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
@@ -691,16 +701,16 @@ Constructor()
 
   DSLContent["UI"].TabsNCols := [
     [Map(
-      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Лигатуры", "Быстрые ключи", "О программе", "Полезное"],
-      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Ligatures", "Fast Keys", "About", "Useful"]
+      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Плавильня", "Быстрые ключи", "О программе", "Полезное"],
+      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Smelting", "Fast Keys", "About", "Useful"]
     )],
     [Map(
       "ru", ["Имя", "Ключ", "Вид", "Unicode"],
       "en", ["Name", "Key", "View", "Unicode"]
     )],
     [Map(
-      "ru", ["Имя", "Ввод", "Вид", "Unicode"],
-      "en", ["Name", "Input", "View", "Unicode"]
+      "ru", ["Имя", "Рецепт", "Результат", "Unicode"],
+      "en", ["Name", "Recipe", "Result", "Unicode"]
     )],
   ]
   LocaliseArrayKeys(DSLContent["UI"].TabsNCols)
@@ -807,15 +817,15 @@ Constructor()
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
   DSLContent["en"].EntrydblClick := "2×LMB"
-  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи».`nЛигатуризатор может соединять и некоторые небуквенные символы, например «-+» → «±», «-*» → «×», «***» → «⁂»."
-  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”`nLigaturiser can join some non-letter symbols, for example “-+” → “±”, “-*” → “×”, “***” → “⁂”."
+  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи».`n«Плавильня» может создавать не только лигатуры, например «-+» → «±», «-*» → «×», «***» → «⁂»."
+  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”`n“Smelter” can to smelt no only ligatures, for example “-+” → “±”, “-*” → “×”, “***” → “⁂”."
   DSLContent["BindList"].Commands := [
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
-    [Map("ru", "Вставить лигатуру", "en", "Insert ligature"), "Win Alt L", "AE → Æ, OE → Œ"],
+    [Map("ru", "Выплавка символа", "en", "Symbol Smelter"), "Win Alt L", "AE → Æ, OE → Œ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
@@ -864,13 +874,17 @@ Constructor()
     [Map("ru", "Латинская заглавная буква lj", "en", "Latin Capital Letter Lj"), "lj", "ǉ", UniTrim(CharCodes.ligatures.smallj[1])],
     [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "Fs", "ẞ", UniTrim(CharCodes.ligatures.capitalfs[1])],
     [Map("ru", "Латинская строчная буква эсцет (S острое)", "en", "Latin Small Letter Sharp S"), "fs", "ß", UniTrim(CharCodes.ligatures.smalfs[1])],
+    [Map("ru", "Латинская строчная буква ue", "en", "Latin Small Letter Ue"), "ue", "ᵫ", UniTrim(CharCodes.ligatures.smalue[1])],
+    [Map("ru", "Латинская заглавная буква OO", "en", "Latin Capital Letter Oo"), "OO", "Ꝏ", UniTrim(CharCodes.ligatures.capitaloo[1])],
+    [Map("ru", "Латинская строчная буква oo", "en", "Latin Small Letter Oo"), "oo", "ꝏ", UniTrim(CharCodes.ligatures.smaloo[1])],
+    [Map("ru", "Латинская строчная Йотированная буква e", "en", "Latin Small Letter Iotified E"), "ie", "ꭡ", UniTrim(CharCodes.ligatures.smalie[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
 
   LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[3][1])
   LigaturesLV.ModifyCol(1, ColumnWidths[1])
-  LigaturesLV.ModifyCol(2, 120)
+  LigaturesLV.ModifyCol(2, 110)
   LigaturesLV.ModifyCol(3, 100)
   LigaturesLV.ModifyCol(4, ColumnWidths[4])
 
@@ -989,6 +1003,8 @@ Constructor()
 
   Tab.UseTab(8)
   DSLContent["ru"].Useful := {}
+  DSLContent["ru"].Useful.Typography := "Типографика"
+  DSLContent["ru"].Useful.TypographyLayout := '<a href="https://ilyabirman.ru/typography-layout/">«Типографская раскладка»</a>'
   DSLContent["ru"].Useful.Unicode := "Unicode-ресурсы"
   DSLContent["ru"].Useful.Dictionaries := "Словари"
   DSLContent["ru"].Useful.JPnese := "Японский: "
@@ -997,12 +1013,18 @@ Constructor()
 
 
   DSLContent["en"].Useful := {}
+  DSLContent["en"].Useful.Typography := "Typography"
+  DSLContent["en"].Useful.TypographyLayout := '<a href="https://ilyabirman.net/typography-layout/">“Typography Layout”</a>'
   DSLContent["en"].Useful.Unicode := "Unicode-Resources"
   DSLContent["en"].Useful.Dictionaries := "Dictionaries"
   DSLContent["en"].Useful.JPnese := "Japanese: "
   DSLContent["en"].Useful.CHnese := "Chinese: "
   DSLContent["en"].Useful.VTnese := "Vietnamese: "
 
+  DSLPadGUI.SetFont("s13")
+  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].Useful.Typography)
+  DSLPadGUI.SetFont("s11")
+  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.TypographyLayout)
   DSLPadGUI.SetFont("s13")
   DSLPadGUI.Add("Text", , DSLContent[LanguageCode].Useful.Unicode)
   DSLPadGUI.SetFont("s11")
