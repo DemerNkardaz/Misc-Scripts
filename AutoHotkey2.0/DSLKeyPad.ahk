@@ -378,16 +378,16 @@ LigaturesDictionary := [
   ["ІЭ", CharCodes.smelter.cyrillic_Capital_ie[1]],
   ["іє", CharCodes.smelter.cyrillic_Small_ie[1]],
   ["іэ", CharCodes.smelter.cyrillic_Small_ie[1]],
-  ["-Ь", CharCodes.smelter.cyrillic_Captial_Yat[1]],
-  ["-ь", CharCodes.smelter.cyrillic_Small_Yar[1]],
+  ["ТЬ", CharCodes.smelter.cyrillic_Captial_Yat[1]],
+  ["ть", CharCodes.smelter.cyrillic_Small_Yar[1]],
   ["УЖ", CharCodes.smelter.cyrillic_Capital_Big_Yus[1]],
   ["уж", CharCodes.smelter.cyrillic_Small_Big_Yus[1]],
   ["АТ", CharCodes.smelter.cyrillic_Capital_Little_Yus[1]],
   ["ат", CharCodes.smelter.cyrillic_Small_Little_Yus[1]],
   ["ІѢ", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
-  ["І-Ь", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
+  ["ІТЬ", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
   ["іѣ", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
-  ["і-ь", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
+  ["іть", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
   ["ІА", CharCodes.smelter.cyrillic_Captial_A_Iotified[1]],
   ["іа", CharCodes.smelter.cyrillic_Small_A_Iotified[1]],
   ["ІѪ", CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
@@ -488,6 +488,9 @@ SearchKey() {
     return
   else
     PromptValue := IB.Value
+
+  if (PromptValue = "\")
+    Reload
 
   CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindDiacriticF3, BindSpecialF6, BindSpaces)
 
@@ -648,8 +651,8 @@ SendAltNumpad(CharacterCode) {
   Send("{Alt Up}")
 }
 
-Ligaturise() {
-  LanguageCode := GetLanguageCode()
+
+LigaturiserLabels() {
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
@@ -661,24 +664,51 @@ Ligaturise() {
   Labels["ru"].Err := "Рецепт не найдено"
   Labels["en"].Err := "Recipe not found"
 
-  PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
-  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
-  if IB.Result = "Cancel"
-    return
-  else
-    PromptValue := IB.Value
+  return Labels
+}
+
+Ligaturise(SmeltingMode := "InputBox") {
+  LanguageCode := GetLanguageCode()
+  Labels := LigaturiserLabels()
+  BackupCLipboard := ""
+
+  if (SmeltingMode = "InputBox") {
+    PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
+    IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
+    if IB.Result = "Cancel"
+      return
+    else
+      PromptValue := IB.Value
+  } else if (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace") {
+    BackupCLipboard := A_Clipboard
+    A_Clipboard := ""
+
+    if (SmeltingMode = "Backspace") {
+      Send("^+{Left}")
+      Sleep 120
+    }
+    Send("^c")
+    Sleep 50
+    PromptValue := A_Clipboard
+    Sleep 50
+  }
+
   Found := False
   for index, pair in LigaturesDictionary {
     if (PromptValue == pair[1]) {
       Send(pair[2])
       IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
       Found := True
-      return
     }
   }
   if (!Found) {
     MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
   }
+
+  if (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace") {
+    A_Clipboard := BackupCLipboard
+  }
+  return
 }
 
 
@@ -691,6 +721,8 @@ Ligaturise() {
 <#<!u:: InsertUnicodeKey()
 <#<!a:: InsertAltCodeKey()
 <#<!l:: Ligaturise()
+<#<^l:: Ligaturise("Clipboard")
+<#<^Backspace:: Ligaturise("Backspace")
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 
@@ -868,6 +900,9 @@ Constructor()
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
     [Map("ru", "Выплавка символа", "en", "Symbol Smelter"), "Win Alt L", "AE → Æ, OE → Œ"],
+    [Map("ru", "Выплавка символа в тексте", "en", "Melt symbol in text"), "", ""],
+    [Map("ru", " (выделить)", "en", " (select)"), "Win Ctrl L", "ІУЖ → Ѭ, ІЭ → Ѥ"],
+    [Map("ru", " (установить курсор справа от символов)", "en", " (set cursor to the right of the symbols)"), "Win Ctrl Backspace", "st → ﬆ, іат → ѩ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
@@ -923,16 +958,16 @@ Constructor()
     ["", "", "", ""],
     [Map("ru", "Кириллическая заглавная буква якорное Е", "en", "Cyrillic Capital Letter Ukrainian Ie"), "Э", "Є", UniTrim(CharCodes.smelter.cyrillic_Capital_Ukraine_E[1])],
     [Map("ru", "Кириллическая строчная буква якорное е", "en", "Cyrillic Small Letter Ukrainian Ie"), "э", "є", UniTrim(CharCodes.smelter.cyrillic_Small_Ukraine_E[1])],
-    [Map("ru", "Кириллическая заглавная буква Ять", "en", "Cyrillic Capital Letter Yat"), "-Ь", "Ѣ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat[1])],
-    [Map("ru", "Кириллическая строчная буква ять", "en", "Cyrillic Small Letter Yat"), "-ь", "ѣ", UniTrim(CharCodes.smelter.cyrillic_Small_Yar[1])],
+    [Map("ru", "Кириллическая заглавная буква Ять", "en", "Cyrillic Capital Letter Yat"), "ТЬ", "Ѣ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat[1])],
+    [Map("ru", "Кириллическая строчная буква ять", "en", "Cyrillic Small Letter Yat"), "ть", "ѣ", UniTrim(CharCodes.smelter.cyrillic_Small_Yar[1])],
     [Map("ru", "Кириллическая заглавная буква большой Юс", "en", "Cyrillic Capital Letter Big Yus"), "УЖ", "Ѫ", UniTrim(CharCodes.smelter.cyrillic_Capital_Big_Yus[1])],
     [Map("ru", "Кириллическая строчная буква большой юс", "en", "Cyrillic Small Letter Big Yus"), "уж", "ѫ", UniTrim(CharCodes.smelter.cyrillic_Small_Big_Yus[1])],
     [Map("ru", "Кириллическая заглавная буква малый Юс", "en", "Cyrillic Capital Letter Little Yus"), "АТ", "Ѧ", UniTrim(CharCodes.smelter.cyrillic_Capital_Little_Yus[1])],
     [Map("ru", "Кириллическая строчная буква малый юс", "en", "Cyrillic Small Letter Little Yus"), "ат", "ѧ", UniTrim(CharCodes.smelter.cyrillic_Small_Little_Yus[1])],
     [Map("ru", "Кириллическая заглавная буква Е йотированное", "en", "Cyrillic Capital Letter Iotified E"), "ІЄ, ІЭ", "Ѥ", UniTrim(CharCodes.smelter.cyrillic_Capital_ie[1])],
     [Map("ru", "Кириллическая строчная буква е йотированное", "en", "Cyrillic Small Letter Iotified E"), "іє, іэ", "ѥ", UniTrim(CharCodes.smelter.cyrillic_Small_ie[1])],
-    [Map("ru", "Кириллическая заглавная буква Ять йотированный", "en", "Cyrillic Capital Letter Iotified Yat"), "Іѣ, І-Ь", "Ꙓ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1])],
-    [Map("ru", "Кириллическая строчная буква ять йотированный", "en", "Cyrillic Small Letter Iotified Yat"), "іѣ, і-ь", "ꙓ", UniTrim(CharCodes.smelter.cyrillic_Small_Yat_Iotified[1])],
+    [Map("ru", "Кириллическая заглавная буква Ять йотированный", "en", "Cyrillic Capital Letter Iotified Yat"), "Іѣ, ІТЬ", "Ꙓ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1])],
+    [Map("ru", "Кириллическая строчная буква ять йотированный", "en", "Cyrillic Small Letter Iotified Yat"), "іѣ, іть", "ꙓ", UniTrim(CharCodes.smelter.cyrillic_Small_Yat_Iotified[1])],
     [Map("ru", "Кириллическая заглавная буква А йотированное", "en", "Cyrillic Capital Letter Iotified A"), "ІА", "Ꙗ", UniTrim(CharCodes.smelter.cyrillic_Captial_A_Iotified[1])],
     [Map("ru", "Кириллическая строчная буква а йотированное", "en", "Cyrillic Small Letter Iotified A"), "іа", "ꙗ", UniTrim(CharCodes.smelter.cyrillic_Small_A_Iotified[1])],
     [Map("ru", "Кириллическая заглавная буква йотированный большой Юс", "en", "Cyrillic Capital Letter Iotified Big Yus"), "ІѪ, ІУЖ", "Ѭ", UniTrim(CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1])],
@@ -1399,3 +1434,17 @@ HandleFastKey(Character, CheckOff := False)
 
 >+<+g:: HandleFastKey(CharCodes.grapjoiner[1], True)
 <^<!NumpadDiv:: HandleFastKey(CharCodes.fractionslash[1], True)
+
+
+ShowRunMessage() {
+  LanguageCode := GetLanguageCode()
+  Labels := {}
+  Labels[] := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+  Labels["ru"].RunMessage := "Приложение запущено`nНажмите Win Alt Home для расширенных сведений."
+  Labels["en"].RunMessage := "Application started`nPress Win Alt Home for extended information."
+  TrayTip Labels[LanguageCode].RunMessage, DSLPadTitle, "Iconi"
+}
+
+ShowRunMessage()
