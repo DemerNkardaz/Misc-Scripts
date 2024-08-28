@@ -609,8 +609,8 @@ Constructor()
   ThreeColumnWidths := [300, 140, 145]
   ColumnAreaWidth := "w620"
   ColumnAreaHeight := "h510"
-  ColumnAreaSorting := "+NoSort"
-  ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaSorting
+  ColumnAreaRules := "+NoSort -Multi"
+  ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
 
   Tab := DSLPadGUI.Add("Tab3", "w650 h550", DSLContent["UI"].TabsNCols[1][1])
   DSLPadGUI.SetFont("s11")
@@ -695,8 +695,8 @@ Constructor()
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
   DSLContent["en"].EntrydblClick := "2×LMB"
-  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃»"
-  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃”"
+  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи»."
+  DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”"
   DSLContent["BindList"].Commands := [
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[SystemLanguage].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[SystemLanguage].EntrydblClick, ""],
@@ -707,12 +707,12 @@ Constructor()
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
-    [Map("ru", "Активировать ввод HTML-энтити", "en", "Activate input of HTML entities"), "RAlt RShift Home", ""],
+    [Map("ru", "Активировать ввод HTML-энтити", "en", "Activate input of HTML entities"), "RAlt RShift Home", "á → a&#769;"],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].Commands)
 
-  CommandsLV := DSLPadGUI.Add("ListView", ColumnAreaWidth . " h450 " . ColumnAreaSorting,
+  CommandsLV := DSLPadGUI.Add("ListView", ColumnAreaWidth . " h450 " . ColumnAreaRules,
     [DSLContent["UI"].TabsNCols[2][1][1], DSLContent["UI"].TabsNCols[2][1][2], DSLContent["UI"].TabsNCols[2][1][3]])
   CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
   CommandsLV.ModifyCol(2, ThreeColumnWidths[2])
@@ -726,7 +726,7 @@ Constructor()
   DSLPadGUI.SetFont("s9")
   DSLPadGUI.Add("Text", "w600", DSLContent[SystemLanguage].CommandsNote)
 
-
+  DSLPadGUI.SetFont("s11")
   Tab.UseTab(5)
   DSLContent["BindList"].FasKeysLV := [
     ["", "LCtrl LAlt", "", ""],
@@ -885,6 +885,7 @@ LV_OpenUnicodeWebsite(LV, RowNumber)
     if (IsCtrlDown) {
       UnicodeCodePoint := "0x" . SelectedRow
       A_Clipboard := Chr(UnicodeCodePoint)
+      SoundPlay("C:\Windows\Media\Speech On.wav")
     }
     else {
       Run(URIComponent)
