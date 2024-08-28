@@ -143,38 +143,55 @@ CharCodes.wj := ["{U+2060}", "&NoBreak;"]
 CharCodes.numsp := ["{U+2007}", "&numsp;"]
 CharCodes.nbsp := ["{U+00A0}", "&nbsp;"]
 
-CharCodes.ligatures := {}
-CharCodes.ligatures.capitalaa := ["{U+A732}", "&#42802;"]
-CharCodes.ligatures.smalaa := ["{U+A733}", "&#42803;"]
-CharCodes.ligatures.capitalae := ["{U+00C6}", "&#198;"]
-CharCodes.ligatures.smalae := ["{U+00E6}", "U+00E6"]
-CharCodes.ligatures.capitalau := ["{U+A736}", "&#42806;"]
-CharCodes.ligatures.smalau := ["{U+A737}", "&#42807;"]
-CharCodes.ligatures.capitaloe := ["{U+0152}", "&#338;"]
-CharCodes.ligatures.smaloe := ["{U+0153}", "&#339;"]
-CharCodes.ligatures.ff := ["{U+FB00}", "&#64256;"]
-CharCodes.ligatures.fl := ["{U+FB02}", "&#64258;"]
-CharCodes.ligatures.fi := ["{U+FB01}", "&#64257;"]
-CharCodes.ligatures.ft := ["{U+FB05}", "&#64261;"]
-CharCodes.ligatures.ffi := ["{U+FB03}", "&#64259;"]
-CharCodes.ligatures.ffl := ["{U+FB04}", "&#64260;"]
-CharCodes.ligatures.st := ["{U+FB06}", "&#64262;"]
-CharCodes.ligatures.ts := ["{U+02A6}", "&#678;"]
+CharCodes.smelter := {}
+CharCodes.smelter.latin_Capital_AA := ["{U+A732}", "&#42802;"]
+CharCodes.smelter.latin_Small_AA := ["{U+A733}", "&#42803;"]
+CharCodes.smelter.latin_Capital_AE := ["{U+00C6}", "&#198;"]
+CharCodes.smelter.latin_Small_AE := ["{U+00E6}", "U+00E6"]
+CharCodes.smelter.latin_Capital_AU := ["{U+A736}", "&#42806;"]
+CharCodes.smelter.latin_Small_AU := ["{U+A737}", "&#42807;"]
+CharCodes.smelter.latin_Capital_OE := ["{U+0152}", "&#338;"]
+CharCodes.smelter.latin_Small_OE := ["{U+0153}", "&#339;"]
+CharCodes.smelter.ff := ["{U+FB00}", "&#64256;"]
+CharCodes.smelter.fl := ["{U+FB02}", "&#64258;"]
+CharCodes.smelter.fi := ["{U+FB01}", "&#64257;"]
+CharCodes.smelter.ft := ["{U+FB05}", "&#64261;"]
+CharCodes.smelter.ffi := ["{U+FB03}", "&#64259;"]
+CharCodes.smelter.ffl := ["{U+FB04}", "&#64260;"]
+CharCodes.smelter.st := ["{U+FB06}", "&#64262;"]
+CharCodes.smelter.ts := ["{U+02A6}", "&#678;"]
 
-CharCodes.ligatures.capitalij := ["{U+0132}", "&#306;"]
-CharCodes.ligatures.smalij := ["{U+0133}", "&#307;"]
-CharCodes.ligatures.capitallj := ["{U+01C7}", "&#455;"]
-CharCodes.ligatures.capsmallj := ["{U+01C8}", "&#456;"]
-CharCodes.ligatures.smallj := ["{U+01C9}", "&#457;"]
-CharCodes.ligatures.capitalfs := ["{U+1E9E}", "&#7838;"]
-CharCodes.ligatures.smalfs := ["{U+00DF}", "&#223;"]
-CharCodes.ligatures.smalue := ["{U+1D6B}", "&#7531;"]
-CharCodes.ligatures.capitaloo := ["{U+A74E}", "&#42830;"]
-CharCodes.ligatures.smaloo := ["{U+A74F}", "&#42831;"]
-CharCodes.ligatures.smalie := ["{U+AB61}", "&#43873;"]
+CharCodes.smelter.latin_Capital_ij := ["{U+0132}", "&#306;"]
+CharCodes.smelter.latin_Small_ij := ["{U+0133}", "&#307;"]
+CharCodes.smelter.latin_Capital_LJ := ["{U+01C7}", "&#455;"]
+CharCodes.smelter.latin_Capital_L_Small_j := ["{U+01C8}", "&#456;"]
+CharCodes.smelter.latin_Small_LJ := ["{U+01C9}", "&#457;"]
+CharCodes.smelter.latin_Capital_Fs := ["{U+1E9E}", "&#7838;"]
+CharCodes.smelter.latin_Small_Fs := ["{U+00DF}", "&#223;"]
+CharCodes.smelter.latin_Small_UE := ["{U+1D6B}", "&#7531;"]
+CharCodes.smelter.latin_Capital_OO := ["{U+A74E}", "&#42830;"]
+CharCodes.smelter.latin_Small_OO := ["{U+A74F}", "&#42831;"]
+CharCodes.smelter.latin_Small_ie := ["{U+AB61}", "&#43873;"]
 
 
-CharCodes.ligatures.smalie := ["{U+AB61}", "&#43873;"]
+CharCodes.smelter.cyrillic_Capital_ie := ["{U+0464}", "&#1124;"]
+CharCodes.smelter.cyrillic_Small_ie := ["{U+0465}", "&#1125;"]
+CharCodes.smelter.cyrillic_Capital_Ukraine_E := ["{U+0404}", "&#1028;"]
+CharCodes.smelter.cyrillic_Small_Ukraine_E := ["{U+0454}", "&#1108;"]
+CharCodes.smelter.cyrillic_Captial_Yat := ["{U+0462}", "&#1122;"]
+CharCodes.smelter.cyrillic_Small_Yar := ["{U+0463}", "&#1123;"]
+CharCodes.smelter.cyrillic_Capital_Big_Yus := ["{U+046A}", "&#1130;"]
+CharCodes.smelter.cyrillic_Small_Big_Yus := ["{U+046B}", "&#1131;"]
+CharCodes.smelter.cyrillic_Capital_Little_Yus := ["{U+0466}", "&#1126;"]
+CharCodes.smelter.cyrillic_Small_Little_Yus := ["{U+0467}", "&#1127;"]
+CharCodes.smelter.cyrillic_Captial_Yat_Iotified := ["{U+A652}", "&#42578;"]
+CharCodes.smelter.cyrillic_Small_Yat_Iotified := ["{U+A653}", "&#42579;"]
+CharCodes.smelter.cyrillic_Captial_A_Iotified := ["{U+A656}", "&#42582;"]
+CharCodes.smelter.cyrillic_Small_A_Iotified := ["{U+A657}", "&#42583;"]
+CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified := ["{U+046C}", "&#1132;"]
+CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified := ["{U+046D}", "&#1133;"]
+CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified := ["{U+0468}", "&#1128;"]
+CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified := ["{U+0469}", "&#1129;"]
 
 
 UniTrim(str) {
@@ -314,55 +331,60 @@ SubscriptDictionary := [
 ]
 
 LigaturesDictionary := [
-  ["AA", CharCodes.ligatures.capitalaa[1]],
-  ["aa", CharCodes.ligatures.smalaa[1]],
-  ["AE", CharCodes.ligatures.capitalae[1]],
-  ["ae", CharCodes.ligatures.smalae[1]],
-  ["AU", CharCodes.ligatures.capitalau[1]],
-  ["au", CharCodes.ligatures.smalau[1]],
-  ["OE", CharCodes.ligatures.capitaloe[1]],
-  ["oe", CharCodes.ligatures.smaloe[1]],
-  ["ff", CharCodes.ligatures.ff[1]],
-  ["fl", CharCodes.ligatures.fl[1]],
-  ["fi", CharCodes.ligatures.fi[1]],
-  ["ft", CharCodes.ligatures.ft[1]],
-  ["ffi", CharCodes.ligatures.ffi[1]],
-  ["ffl", CharCodes.ligatures.ffl[1]],
-  ["st", CharCodes.ligatures.st[1]],
-  ["ts", CharCodes.ligatures.ts[1]],
-  ["IJ", CharCodes.ligatures.capitalij[1]],
-  ["ij", CharCodes.ligatures.smalij[1]],
-  ["LJ", CharCodes.ligatures.capitallj[1]],
-  ["Lj", CharCodes.ligatures.capsmallj[1]],
-  ["lj", CharCodes.ligatures.smallj[1]],
-  ["Fs", CharCodes.ligatures.capitalfs[1]],
-  ["fs", CharCodes.ligatures.smalfs[1]],
-  ["ue", CharCodes.ligatures.smalue[1]],
-  ["OO", CharCodes.ligatures.capitaloo[1]],
-  ["oo", CharCodes.ligatures.smaloo[1]],
-  ["ie", CharCodes.ligatures.smalie[1]],
-  ["ІЄ", "{U+0464}"],
-  ["І-Э", "{U+0464}"],
-  ["іє", "{U+0465}"],
-  ["і-э", "{U+0465}"],
-  ["Іѣ", "{U+A652}"],
-  ["І-Ь", "{U+A652}"],
-  ["іѣ", "{U+A653}"],
-  ["і-ь", "{U+A653}"],
-  ["ІА", "{U+A656}"],
-  ["іа", "{U+A657}"],
-  ["ІѪ", "{U+046C}"],
-  ["ІУЖ", "{U+046C}"],
-  ["іѫ", "{U+046D}"],
-  ["іуж", "{U+046D}"],
-  ["ІѦ", "{U+0468}"],
-  ["ІАТ", "{U+0468}"],
-  ["іѧ", "{U+0469}"],
-  ["іат", "{U+0469}"],
-  ["АТ", "{U+0466}"],
-  ["ат", "{U+0467}"],
-  ["-Ь", "{U+0462}"],
-  ["-ь", "{U+0463}"],
+  ["AA", CharCodes.smelter.latin_Capital_AA[1]],
+  ["aa", CharCodes.smelter.latin_Small_AA[1]],
+  ["AE", CharCodes.smelter.latin_Capital_AE[1]],
+  ["ae", CharCodes.smelter.latin_Small_AE[1]],
+  ["AU", CharCodes.smelter.latin_Capital_AU[1]],
+  ["au", CharCodes.smelter.latin_Small_AU[1]],
+  ["OE", CharCodes.smelter.latin_Capital_OE[1]],
+  ["oe", CharCodes.smelter.latin_Small_OE[1]],
+  ["ff", CharCodes.smelter.ff[1]],
+  ["fl", CharCodes.smelter.fl[1]],
+  ["fi", CharCodes.smelter.fi[1]],
+  ["ft", CharCodes.smelter.ft[1]],
+  ["ffi", CharCodes.smelter.ffi[1]],
+  ["ffl", CharCodes.smelter.ffl[1]],
+  ["st", CharCodes.smelter.st[1]],
+  ["ts", CharCodes.smelter.ts[1]],
+  ["IJ", CharCodes.smelter.latin_Capital_ij[1]],
+  ["ij", CharCodes.smelter.latin_Small_ij[1]],
+  ["LJ", CharCodes.smelter.latin_Capital_LJ[1]],
+  ["Lj", CharCodes.smelter.latin_Capital_L_Small_j[1]],
+  ["lj", CharCodes.smelter.latin_Small_LJ[1]],
+  ["Fs", CharCodes.smelter.latin_Capital_Fs[1]],
+  ["fs", CharCodes.smelter.latin_Small_Fs[1]],
+  ["ue", CharCodes.smelter.latin_Small_UE[1]],
+  ["OO", CharCodes.smelter.latin_Capital_OO[1]],
+  ["oo", CharCodes.smelter.latin_Small_OO[1]],
+  ["ie", CharCodes.smelter.latin_Small_ie[1]],
+  ; Cyrillic
+  ["Э", CharCodes.smelter.cyrillic_Capital_Ukraine_E[1]],
+  ["э", CharCodes.smelter.cyrillic_Small_Ukraine_E[1]],
+  ["ІЄ", CharCodes.smelter.cyrillic_Capital_ie[1]],
+  ["ІЭ", CharCodes.smelter.cyrillic_Capital_ie[1]],
+  ["іє", CharCodes.smelter.cyrillic_Small_ie[1]],
+  ["іэ", CharCodes.smelter.cyrillic_Small_ie[1]],
+  ["-Ь", CharCodes.smelter.cyrillic_Captial_Yat[1]],
+  ["-ь", CharCodes.smelter.cyrillic_Small_Yar[1]],
+  ["УЖ", CharCodes.smelter.cyrillic_Capital_Big_Yus[1]],
+  ["уж", CharCodes.smelter.cyrillic_Small_Big_Yus[1]],
+  ["АТ", CharCodes.smelter.cyrillic_Capital_Little_Yus[1]],
+  ["ат", CharCodes.smelter.cyrillic_Small_Little_Yus[1]],
+  ["ІѢ", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
+  ["І-Ь", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
+  ["іѣ", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
+  ["і-ь", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
+  ["ІА", CharCodes.smelter.cyrillic_Captial_A_Iotified[1]],
+  ["іа", CharCodes.smelter.cyrillic_Small_A_Iotified[1]],
+  ["ІѪ", CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
+  ["ІУЖ", CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
+  ["іѫ", CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
+  ["іуж", CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
+  ["ІѦ", CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
+  ["ІАТ", CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
+  ["іѧ", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
+  ["іат", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
   ["-+", "{U+00B1}"],
   ["-*", "{U+00D7}"],
   ["**", "{U+2051}"],
@@ -851,33 +873,52 @@ Constructor()
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(5)
   DSLContent["BindList"].LigaturesInput := [
-    [Map("ru", "Латинская заглавная буква AA", "en", "Latin Capital Letter Aa"), "AA", "Ꜳ", UniTrim(CharCodes.ligatures.capitalaa[1])],
-    [Map("ru", "Латинская строчная буква aa", "en", "Latin Small Letter Aa"), "aa", "ꜳ", UniTrim(CharCodes.ligatures.smalaa[1])],
-    [Map("ru", "Латинская заглавная буква AE", "en", "Latin Capital Letter Ae"), "AE", "Æ", UniTrim(CharCodes.ligatures.capitalae[1])],
-    [Map("ru", "Латинская строчная буква ae", "en", "Latin Small Letter Ae"), "ae", "æ", UniTrim(CharCodes.ligatures.smalae[1])],
-    [Map("ru", "Латинская заглавная буква AU", "en", "Latin Capital Letter Au"), "AU", "Ꜷ", UniTrim(CharCodes.ligatures.capitalau[1])],
-    [Map("ru", "Латинская строчная буква au", "en", "Latin Small Letter Au"), "au", "ꜷ", UniTrim(CharCodes.ligatures.smalau[1])],
-    [Map("ru", "Латинская заглавная буква OE", "en", "Latin Capital Letter Oe"), "OE", "Œ", UniTrim(CharCodes.ligatures.capitaloe[1])],
-    [Map("ru", "Латинская строчная буква oe", "en", "Latin Small Letter Oe"), "oe", "œ", UniTrim(CharCodes.ligatures.smaloe[1])],
-    [Map("ru", "Латинская строчная буква ff", "en", "Latin Small Letter Ff"), "ff", "ﬀ", UniTrim(CharCodes.ligatures.ff[1])],
-    [Map("ru", "Латинская строчная буква fl", "en", "Latin Small Letter Fl"), "fl", "ﬂ", UniTrim(CharCodes.ligatures.fl[1])],
-    [Map("ru", "Латинская строчная буква fi", "en", "Latin Small Letter Fi"), "fi", "ﬁ", UniTrim(CharCodes.ligatures.fi[1])],
-    [Map("ru", "Латинская строчная буква ft", "en", "Latin Small Letter Ft"), "ft", "ﬅ", UniTrim(CharCodes.ligatures.ft[1])],
-    [Map("ru", "Латинская строчная буква ffi", "en", "Latin Small Letter Ffi"), "ffi", "ﬃ", UniTrim(CharCodes.ligatures.ffi[1])],
-    [Map("ru", "Латинская строчная буква ffl", "en", "Latin Small Letter Ffl"), "ffl", "ﬄ", UniTrim(CharCodes.ligatures.ffl[1])],
-    [Map("ru", "Латинская строчная буква st", "en", "Latin Small Letter St"), "st", "ﬆ", UniTrim(CharCodes.ligatures.st[1])],
-    [Map("ru", "Латинская строчная буква ts", "en", "Latin Small Letter Ts"), "ts", "ʦ", UniTrim(CharCodes.ligatures.ts[1])],
-    [Map("ru", "Латинская заглавная буква IJ", "en", "Latin Capital Letter Ij"), "IJ", "Ĳ", UniTrim(CharCodes.ligatures.capitalij[1])],
-    [Map("ru", "Латинская строчная буква ij", "en", "Latin Small Letter Ij"), "ij", "ĳ", UniTrim(CharCodes.ligatures.smalij[1])],
-    [Map("ru", "Латинская заглавная буква LJ", "en", "Latin Capital Letter LJ"), "LJ", "Ǉ", UniTrim(CharCodes.ligatures.capitallj[1])],
-    [Map("ru", "Латинская заглавная буква L со строчной буквой j", "en", "Latin Capital Letter L with Small Letter J"), "Lj", "ǈ", UniTrim(CharCodes.ligatures.capsmallj[1])],
-    [Map("ru", "Латинская заглавная буква lj", "en", "Latin Capital Letter Lj"), "lj", "ǉ", UniTrim(CharCodes.ligatures.smallj[1])],
-    [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "Fs", "ẞ", UniTrim(CharCodes.ligatures.capitalfs[1])],
-    [Map("ru", "Латинская строчная буква эсцет (S острое)", "en", "Latin Small Letter Sharp S"), "fs", "ß", UniTrim(CharCodes.ligatures.smalfs[1])],
-    [Map("ru", "Латинская строчная буква ue", "en", "Latin Small Letter Ue"), "ue", "ᵫ", UniTrim(CharCodes.ligatures.smalue[1])],
-    [Map("ru", "Латинская заглавная буква OO", "en", "Latin Capital Letter Oo"), "OO", "Ꝏ", UniTrim(CharCodes.ligatures.capitaloo[1])],
-    [Map("ru", "Латинская строчная буква oo", "en", "Latin Small Letter Oo"), "oo", "ꝏ", UniTrim(CharCodes.ligatures.smaloo[1])],
-    [Map("ru", "Латинская строчная Йотированная буква e", "en", "Latin Small Letter Iotified E"), "ie", "ꭡ", UniTrim(CharCodes.ligatures.smalie[1])],
+    [Map("ru", "Латинская заглавная буква AA", "en", "Latin Capital Letter Aa"), "AA", "Ꜳ", UniTrim(CharCodes.smelter.latin_Capital_AA[1])],
+    [Map("ru", "Латинская строчная буква aa", "en", "Latin Small Letter Aa"), "aa", "ꜳ", UniTrim(CharCodes.smelter.latin_Small_AA[1])],
+    [Map("ru", "Латинская заглавная буква AE", "en", "Latin Capital Letter Ae"), "AE", "Æ", UniTrim(CharCodes.smelter.latin_Capital_AE[1])],
+    [Map("ru", "Латинская строчная буква ae", "en", "Latin Small Letter Ae"), "ae", "æ", UniTrim(CharCodes.smelter.latin_Small_AE[1])],
+    [Map("ru", "Латинская заглавная буква AU", "en", "Latin Capital Letter Au"), "AU", "Ꜷ", UniTrim(CharCodes.smelter.latin_Capital_AU[1])],
+    [Map("ru", "Латинская строчная буква au", "en", "Latin Small Letter Au"), "au", "ꜷ", UniTrim(CharCodes.smelter.latin_Small_AU[1])],
+    [Map("ru", "Латинская заглавная буква OE", "en", "Latin Capital Letter Oe"), "OE", "Œ", UniTrim(CharCodes.smelter.latin_Capital_OE[1])],
+    [Map("ru", "Латинская строчная буква oe", "en", "Latin Small Letter Oe"), "oe", "œ", UniTrim(CharCodes.smelter.latin_Small_OE[1])],
+    [Map("ru", "Латинская строчная буква ff", "en", "Latin Small Letter Ff"), "ff", "ﬀ", UniTrim(CharCodes.smelter.ff[1])],
+    [Map("ru", "Латинская строчная буква fl", "en", "Latin Small Letter Fl"), "fl", "ﬂ", UniTrim(CharCodes.smelter.fl[1])],
+    [Map("ru", "Латинская строчная буква fi", "en", "Latin Small Letter Fi"), "fi", "ﬁ", UniTrim(CharCodes.smelter.fi[1])],
+    [Map("ru", "Латинская строчная буква ft", "en", "Latin Small Letter Ft"), "ft", "ﬅ", UniTrim(CharCodes.smelter.ft[1])],
+    [Map("ru", "Латинская строчная буква ffi", "en", "Latin Small Letter Ffi"), "ffi", "ﬃ", UniTrim(CharCodes.smelter.ffi[1])],
+    [Map("ru", "Латинская строчная буква ffl", "en", "Latin Small Letter Ffl"), "ffl", "ﬄ", UniTrim(CharCodes.smelter.ffl[1])],
+    [Map("ru", "Латинская строчная буква st", "en", "Latin Small Letter St"), "st", "ﬆ", UniTrim(CharCodes.smelter.st[1])],
+    [Map("ru", "Латинская строчная буква ts", "en", "Latin Small Letter Ts"), "ts", "ʦ", UniTrim(CharCodes.smelter.ts[1])],
+    [Map("ru", "Латинская заглавная буква IJ", "en", "Latin Capital Letter Ij"), "IJ", "Ĳ", UniTrim(CharCodes.smelter.latin_Capital_ij[1])],
+    [Map("ru", "Латинская строчная буква ij", "en", "Latin Small Letter Ij"), "ij", "ĳ", UniTrim(CharCodes.smelter.latin_Small_ij[1])],
+    [Map("ru", "Латинская заглавная буква LJ", "en", "Latin Capital Letter LJ"), "LJ", "Ǉ", UniTrim(CharCodes.smelter.latin_Capital_LJ[1])],
+    [Map("ru", "Латинская заглавная буква L со строчной буквой j", "en", "Latin Capital Letter L with Small Letter J"), "Lj", "ǈ", UniTrim(CharCodes.smelter.latin_Capital_L_Small_j[1])],
+    [Map("ru", "Латинская заглавная буква lj", "en", "Latin Capital Letter Lj"), "lj", "ǉ", UniTrim(CharCodes.smelter.latin_Small_LJ[1])],
+    [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "Fs", "ẞ", UniTrim(CharCodes.smelter.latin_Capital_Fs[1])],
+    [Map("ru", "Латинская строчная буква эсцет (S острое)", "en", "Latin Small Letter Sharp S"), "fs", "ß", UniTrim(CharCodes.smelter.latin_Small_Fs[1])],
+    [Map("ru", "Латинская строчная буква ue", "en", "Latin Small Letter Ue"), "ue", "ᵫ", UniTrim(CharCodes.smelter.latin_Small_UE[1])],
+    [Map("ru", "Латинская заглавная буква OO", "en", "Latin Capital Letter Oo"), "OO", "Ꝏ", UniTrim(CharCodes.smelter.latin_Capital_OO[1])],
+    [Map("ru", "Латинская строчная буква oo", "en", "Latin Small Letter Oo"), "oo", "ꝏ", UniTrim(CharCodes.smelter.latin_Small_OO[1])],
+    [Map("ru", "Латинская строчная буква e йотированное", "en", "Latin Small Letter Iotified E"), "ie", "ꭡ", UniTrim(CharCodes.smelter.latin_Small_ie[1])],
+    ["", "", "", ""],
+    [Map("ru", "Кириллическая заглавная буква якорное Е", "en", "Cyrillic Capital Letter Ukrainian Ie"), "Э", "Є", UniTrim(CharCodes.smelter.cyrillic_Capital_Ukraine_E[1])],
+    [Map("ru", "Кириллическая строчная буква якорное е", "en", "Cyrillic Small Letter Ukrainian Ie"), "э", "є", UniTrim(CharCodes.smelter.cyrillic_Small_Ukraine_E[1])],
+    [Map("ru", "Кириллическая заглавная буква Ять", "en", "Cyrillic Capital Letter Yat"), "-Ь", "Ѣ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat[1])],
+    [Map("ru", "Кириллическая строчная буква ять", "en", "Cyrillic Small Letter Yat"), "-ь", "ѣ", UniTrim(CharCodes.smelter.cyrillic_Small_Yar[1])],
+    [Map("ru", "Кириллическая заглавная буква большой Юс", "en", "Cyrillic Capital Letter Big Yus"), "УЖ", "Ѫ", UniTrim(CharCodes.smelter.cyrillic_Capital_Big_Yus[1])],
+    [Map("ru", "Кириллическая строчная буква большой юс", "en", "Cyrillic Small Letter Big Yus"), "уж", "ѫ", UniTrim(CharCodes.smelter.cyrillic_Small_Big_Yus[1])],
+    [Map("ru", "Кириллическая заглавная буква малый Юс", "en", "Cyrillic Capital Letter Little Yus"), "АТ", "Ѧ", UniTrim(CharCodes.smelter.cyrillic_Capital_Little_Yus[1])],
+    [Map("ru", "Кириллическая строчная буква малый юс", "en", "Cyrillic Small Letter Little Yus"), "ат", "ѧ", UniTrim(CharCodes.smelter.cyrillic_Small_Little_Yus[1])],
+    [Map("ru", "Кириллическая заглавная буква Е йотированное", "en", "Cyrillic Capital Letter Iotified E"), "ІЄ, ІЭ", "Ѥ", UniTrim(CharCodes.smelter.cyrillic_Capital_ie[1])],
+    [Map("ru", "Кириллическая строчная буква е йотированное", "en", "Cyrillic Small Letter Iotified E"), "іє, іэ", "ѥ", UniTrim(CharCodes.smelter.cyrillic_Small_ie[1])],
+    [Map("ru", "Кириллическая заглавная буква Ять йотированный", "en", "Cyrillic Capital Letter Iotified Yat"), "Іѣ, І-Ь", "Ꙓ", UniTrim(CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1])],
+    [Map("ru", "Кириллическая строчная буква ять йотированный", "en", "Cyrillic Small Letter Iotified Yat"), "іѣ, і-ь", "ꙓ", UniTrim(CharCodes.smelter.cyrillic_Small_Yat_Iotified[1])],
+    [Map("ru", "Кириллическая заглавная буква А йотированное", "en", "Cyrillic Capital Letter Iotified A"), "ІА", "Ꙗ", UniTrim(CharCodes.smelter.cyrillic_Captial_A_Iotified[1])],
+    [Map("ru", "Кириллическая строчная буква а йотированное", "en", "Cyrillic Small Letter Iotified A"), "іа", "ꙗ", UniTrim(CharCodes.smelter.cyrillic_Small_A_Iotified[1])],
+    [Map("ru", "Кириллическая заглавная буква йотированный большой Юс", "en", "Cyrillic Capital Letter Iotified Big Yus"), "ІѪ, ІУЖ", "Ѭ", UniTrim(CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1])],
+    [Map("ru", "Кириллическая строчная буква йотированный большой юс", "en", "Cyrillic Small Letter Iotified Big Yus"), "іѫ, іуж", "ѭ", UniTrim(CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1])],
+    [Map("ru", "Кириллическая заглавная буква йотированный малый Юс", "en", "Cyrillic Capital Letter Iotified Little Yus"), "ІѦ, ІАТ", "Ѩ", UniTrim(CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1])],
+    [Map("ru", "Кириллическая строчная буква йотированный малый юс", "en", "Cyrillic Small Letter Iotified Little Yus"), "іѧ, іат", "ѩ", UniTrim(CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
