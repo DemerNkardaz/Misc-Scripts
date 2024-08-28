@@ -399,6 +399,7 @@ LigaturesDictionary := [
   ["іѧ", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
   ["іат", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
   ; Other
+  [["-----", "3-"], CharCodes.threemdash[1]],
   ["-+", CharCodes.plusminus[1]],
   ["-*", CharCodes.multiplication[1]],
   ["*", CharCodes.lowasterisk[1]],
@@ -413,8 +414,6 @@ LigaturesDictionary := [
   ["---", CharCodes.emdash[1]],
   ["----", CharCodes.twoemdash[1]],
   ["2-", CharCodes.twoemdash[1]],
-  ["-----", CharCodes.threemdash[1]],
-  ["3-", CharCodes.threemdash[1]],
   ["0-", CharCodes.nbdash[1]],
 ]
 
@@ -456,7 +455,6 @@ InputBridge(BindsArray) {
   }
   ih.Stop()
 }
-
 
 CombineArrays(destinationArray, sourceArray*)
 {
@@ -628,10 +626,8 @@ InsertAltCodeKey() {
   else
     PromptValue := IB.Value
 
-  ; Разделяем введенные значения на массив
   AltCodes := StrSplit(PromptValue, " ")
 
-  ; Отправляем каждый код поочередно
   for code in AltCodes {
     if (code ~= "^\d+$") {
       SendAltNumpad(code)
@@ -651,7 +647,6 @@ SendAltNumpad(CharacterCode) {
   Send("{Alt Up}")
 }
 
-
 LigaturiserLabels() {
   Labels := {}
   Labels[] := Map()
@@ -670,7 +665,7 @@ LigaturiserLabels() {
 Ligaturise(SmeltingMode := "InputBox") {
   LanguageCode := GetLanguageCode()
   Labels := LigaturiserLabels()
-  BackupCLipboard := ""
+  BackupClipboard := ""
 
   if (SmeltingMode = "InputBox") {
     PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
@@ -680,7 +675,7 @@ Ligaturise(SmeltingMode := "InputBox") {
     else
       PromptValue := IB.Value
   } else if (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace") {
-    BackupCLipboard := A_Clipboard
+    BackupClipboard := A_Clipboard
     A_Clipboard := ""
 
     if (SmeltingMode = "Backspace") {
@@ -688,25 +683,67 @@ Ligaturise(SmeltingMode := "InputBox") {
       Sleep 120
     }
     Send("^c")
-    Sleep 50
+    Sleep 120
     PromptValue := A_Clipboard
     Sleep 50
   }
 
   Found := False
+  OriginalValue := PromptValue
+  NewValue := ""
   for index, pair in LigaturesDictionary {
-    if (PromptValue == pair[1]) {
+    if IsObject(pair[1]) {
+      for _, key in pair[1] {
+        if (PromptValue == key) {
+          Send(pair[2])
+          IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
+          Found := True
+        }
+      }
+    }
+    else if (PromptValue == pair[1]) {
       Send(pair[2])
       IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
       Found := True
     }
   }
+
+
+  if (!Found && (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace")) {
+    SplitWords := StrSplit(OriginalValue, " ")
+
+    for i, word in SplitWords {
+      TempValue := word
+      for index, pair in LigaturesDictionary {
+        if IsObject(pair[1]) {
+          for _, key in pair[1] {
+            if InStr(TempValue, key, true) {
+              TempValue := StrReplace(TempValue, key, pair[2])
+            }
+          }
+        } else {
+          if InStr(TempValue, pair[1], true) {
+            TempValue := StrReplace(TempValue, pair[1], pair[2])
+          }
+        }
+      }
+      NewValue .= TempValue . " "
+    }
+
+    NewValue := RTrim(NewValue)
+
+    if (NewValue != OriginalValue) {
+      Send(NewValue)
+      Found := True
+    }
+  }
+
   if (!Found) {
     MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
   }
 
   if (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace") {
-    A_Clipboard := BackupCLipboard
+    A_Clipboard := BackupClipboard
   }
   return
 }
@@ -721,8 +758,8 @@ Ligaturise(SmeltingMode := "InputBox") {
 <#<!u:: InsertUnicodeKey()
 <#<!a:: InsertAltCodeKey()
 <#<!l:: Ligaturise()
-<#<^l:: Ligaturise("Clipboard")
-<#<^Backspace:: Ligaturise("Backspace")
+>+l:: Ligaturise("Clipboard")
+>+Backspace:: Ligaturise("Backspace")
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 
@@ -901,8 +938,8 @@ Constructor()
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
     [Map("ru", "Выплавка символа", "en", "Symbol Smelter"), "Win Alt L", "AE → Æ, OE → Œ"],
     [Map("ru", "Выплавка символа в тексте", "en", "Melt symbol in text"), "", ""],
-    [Map("ru", " (выделить)", "en", " (select)"), "Win Ctrl L", "ІУЖ → Ѭ, ІЭ → Ѥ"],
-    [Map("ru", " (установить курсор справа от символов)", "en", " (set cursor to the right of the symbols)"), "Win Ctrl Backspace", "st → ﬆ, іат → ѩ"],
+    [Map("ru", " (выделить)", "en", " (select)"), "RShift L", "ІУЖ → Ѭ, ІЭ → Ѥ"],
+    [Map("ru", " (установить курсор справа от символов)", "en", " (set cursor to the right of the symbols)"), "RShift Backspace", "st → ﬆ, іат → ѩ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
