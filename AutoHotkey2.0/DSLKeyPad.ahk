@@ -128,6 +128,13 @@ CharCodes.ddagger := ["{U+2021}", "&#8225;"]
 CharCodes.asterism := ["{U+2042}", "&#8258;"]
 CharCodes.twoasterisks := ["{U+2051}", "&#8273;"]
 CharCodes.lowasterisk := ["{U+204E}", "&#8270;"]
+CharCodes.dash := ["{U+2010}", "&dash;"]
+CharCodes.softhyphen := ["{U+00AD}", "&shy;"]
+CharCodes.emdash := ["{U+2014}", "&mdash;"]
+CharCodes.endash := ["{U+2013}", "&ndash;"]
+CharCodes.numdash := ["{U+2012}", "&#8210;"]
+CharCodes.twoemdash := ["{U+2E3A}", "&#11834;"]
+CharCodes.threemdash := ["{U+2E3B}", "&#11835;"]
 
 CharCodes.emsp := ["{U+2003}", "&emsp;"]
 CharCodes.ensp := ["{U+2002}", "&ensp;"]
@@ -142,6 +149,11 @@ CharCodes.zwsp := ["{U+200B}", "&#8203;"]
 CharCodes.wj := ["{U+2060}", "&NoBreak;"]
 CharCodes.numsp := ["{U+2007}", "&numsp;"]
 CharCodes.nbsp := ["{U+00A0}", "&nbsp;"]
+
+CharCodes.plusminus := ["{U+00B1}", "&#177;"]
+CharCodes.multiplication := ["{U+00D7}", "&#215;"]
+CharCodes.twodotleader := ["{U+2025}", "&nldr;"]
+CharCodes.ellipsis := ["{U+2026}", "&mldr;"]
 
 CharCodes.smelter := {}
 CharCodes.smelter.latin_Capital_AA := ["{U+A732}", "&#42802;"]
@@ -385,17 +397,23 @@ LigaturesDictionary := [
   ["ІАТ", CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
   ["іѧ", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
   ["іат", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
-  ["-+", "{U+00B1}"],
-  ["-*", "{U+00D7}"],
-  ["**", "{U+2051}"],
-  ["***", "{U+2042}"],
-  ["..", "{U+2025}"],
-  ["...", "{U+2026}"],
-  [".-", "{U+2010}"],
-  ["--", "{U+2013}"],
-  ["---", "{U+2014}"],
-  ["----", "{U+2E3A}"],
-  ["-----", "{U+2E3B}"],
+  ; Other
+  ["-+", CharCodes.plusminus[1]],
+  ["-*", CharCodes.multiplication[1]],
+  ["*", CharCodes.lowasterisk[1]],
+  ["**", CharCodes.twoasterisks[1]],
+  ["***", CharCodes.asterism[1]],
+  ["..", CharCodes.twodotleader[1]],
+  ["...", CharCodes.ellipsis[1]],
+  ["-", CharCodes.softhyphen[1]],
+  [".-", CharCodes.dash[1]],
+  ["n-", CharCodes.numdash[1]],
+  ["--", CharCodes.endash[1]],
+  ["---", CharCodes.emdash[1]],
+  ["----", CharCodes.twoemdash[1]],
+  ["2—", CharCodes.twoemdash[1]],
+  ["-----", CharCodes.threemdash[1]],
+  ["3—", CharCodes.threemdash[1]],
 ]
 
 InputBridge(BindsArray) {
@@ -919,6 +937,21 @@ Constructor()
     [Map("ru", "Кириллическая строчная буква йотированный большой юс", "en", "Cyrillic Small Letter Iotified Big Yus"), "іѫ, іуж", "ѭ", UniTrim(CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1])],
     [Map("ru", "Кириллическая заглавная буква йотированный малый Юс", "en", "Cyrillic Capital Letter Iotified Little Yus"), "ІѦ, ІАТ", "Ѩ", UniTrim(CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1])],
     [Map("ru", "Кириллическая строчная буква йотированный малый юс", "en", "Cyrillic Small Letter Iotified Little Yus"), "іѧ, іат", "ѩ", UniTrim(CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1])],
+    ["", "", "", ""],
+    [Map("ru", "Плюс-минус", "en", "Plus minus"), "-+", "±", UniTrim(CharCodes.plusminus[1])],
+    [Map("ru", "Умножение", "en", "Multiplication"), "-*", "×", UniTrim(CharCodes.multiplication[1])],
+    [Map("ru", "Нижний астериск", "en", "Low Asterisk"), "*", "⁎", UniTrim(CharCodes.lowasterisk[1])],
+    [Map("ru", "Два астериска", "en", "Two Asterisks"), "**", "⁑", UniTrim(CharCodes.twoasterisks[1])],
+    [Map("ru", "Астеризм", "en", "Asterism"), "***", "⁂", UniTrim(CharCodes.asterism[1])],
+    [Map("ru", "Двухточечный пунктир", "en", "Two Dot Leader"), "..", "‥", UniTrim(CharCodes.twodotleader[1])],
+    [Map("ru", "Многоточие", "en", "Horizontal Ellipsis"), "...", "…", UniTrim(CharCodes.ellipsis[1])],
+    [Map("ru", "Мягкий перенос", "en", "Soft Hyphen"), "-", "", UniTrim(CharCodes.softhyphen[1])],
+    [Map("ru", "Дефис", "en", "Hyphen"), ".-", "‐", UniTrim(CharCodes.dash[1])],
+    [Map("ru", "Цифровое тире", "en", "Figure Dash"), "n-", "‒", UniTrim(CharCodes.numdash[1])],
+    [Map("ru", "Короткое тире", "en", "En Dash"), "--", "–", UniTrim(CharCodes.endash[1])],
+    [Map("ru", "Длинное тире", "en", "Em Dash"), "---", "—", UniTrim(CharCodes.emdash[1])],
+    [Map("ru", "Двойное тире", "en", "Two-Em Dash"), "----, 2—", "⸺", UniTrim(CharCodes.twoemdash[1])],
+    [Map("ru", "Тройное тире", "en", "Three-Em Dash"), "-----, 3—", "⸻", UniTrim(CharCodes.threemdash[1])],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
