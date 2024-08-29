@@ -5,6 +5,11 @@
 
 ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
+OpenConfigFile() {
+  global ConfigFile
+  Run(ConfigFile)
+}
+
 FastKeysIsActive := False
 InputHTMLEntities := False
 SkipGroupMessage := False
@@ -94,18 +99,93 @@ CtrlZ := Chr(26)
 SpaceKey := Chr(32)
 
 
+Characters := Map(
+  "", { unicode: "", html: "", titles: Map("ru", "", "en", ""), tags: [] },
+    "acute", {
+      unicode: "{U+0301}", html: "&#769;",
+      titles: Map("ru", "Акут", "en", "Acute"),
+      tags: ["acute", "акут", "ударение"],
+      group: ["Diacritics Primary", ["a", "ф"]],
+    },
+    "acute_double", {
+      unicode: "{U+030B}", html: "&#779;",
+      titles: Map("ru", "Двойной акут", "en", "Double Acute"),
+      tags: ["double acute", "двойной акут", "двойное ударение"],
+      group: ["Diacritics Primary", ["A", "Ф"]],
+    },
+    "acute_below", {
+      unicode: "{U+0317}", html: "&#791;",
+      titles: Map("ru", "Акут снизу", "en", "Acute Below"),
+      tags: ["acute below", "акут снизу"]
+    },
+    ;
+    ;
+    "asterisk_above", {
+      unicode: "{U+20F0}", html: "&#8432;",
+      titles: Map("ru", "Астериск сверху", "en", "Asterisk Above"),
+      tags: ["asterisk above", "астериск сверху"]
+    },
+    "asterisk_below", {
+      unicode: "{U+0359}", html: "&#857;",
+      titles: Map("ru", "Астериск снизу", "en", "Asterisk Below"),
+      tags: ["asterisk below", "астериск снизу"]
+    },
+    ;
+    ;
+    "breve", {
+      unicode: "{U+0306}", html: "&#774;",
+      titles: Map("ru", "Кратка", "en", "Breve"),
+      tags: ["breve", "бреве", "кратка"]
+    },
+    "breve_below", {
+      unicode: "{U+032E}", html: "&#814;",
+      titles: Map("ru", "Кратка снизу", "en", "Breve Below"),
+      tags: ["breve below", "бреве снизу", "кратка снизу"]
+    },
+    "breve_inverted", {
+      unicode: "{U+0311}", html: "&#785;",
+      titles: Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"),
+      tags: ["inverted breve", "перевёрнутое бреве", "перевёрнутая кратка"]
+    },
+    "breve_inverted_below", {
+      unicode: "{U+032F}", html: "&#815;",
+      titles: Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"),
+      tags: ["inverted breve below", "перевёрнутое бреве снизу", "перевёрнутая кратка снизу"]
+    },
+    ;
+    ;
+    "circumflex", {
+      unicode: "{U+0302}", html: "&#770;",
+      titles: Map("ru", "Циркумфлекс", "en", "Circumflex"),
+      tags: ["circumflex", "циркумфлекс"]
+    },
+    "circumflex_below", {
+      unicode: "{U+032D}", html: "&#813;",
+      titles: Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"),
+      tags: ["circumflex below", "циркумфлекс снизу"]
+    },
+    ;
+    ;
+)
+
+
 CharCodes := {}
 CharCodes.acute := ["{U+0301}", "&#769;"]
 CharCodes.dacute := ["{U+030B}", "&#779;"]
 CharCodes.acutebelow := ["{U+0317}", "&#791;"]
+
 CharCodes.asteriskabove := ["{U+20F0}", "&#8432;"]
 CharCodes.asteriskbelow := ["{U+0359}", "&#857;"]
+
 CharCodes.breve := ["{U+0306}", "&#774;"]
 CharCodes.brevebelow := ["{U+032E}", "&#814;"]
 CharCodes.ibreve := ["{U+0311}", "&#785;"]
 CharCodes.ibrevebelow := ["{U+032F}", "&#815;"]
+
 CharCodes.circumflex := ["{U+0302}", "&#770;"]
 CharCodes.circumflexbelow := ["{U+032D}", "&#813;"]
+
+
 CharCodes.caron := ["{U+030C}", "&#780;"]
 CharCodes.caronbelow := ["{U+032C}", "&#812;"]
 CharCodes.diaeresis := ["{U+0308}", "&#776;"]
@@ -216,10 +296,10 @@ UniTrim(str) {
 }
 
 BindDiacriticF1 := [
-  [["a", "ф"], CharCodes.acute, ["Акут", "Acute", "Ударение"]],
-  [["A", "Ф"], CharCodes.dacute, ["2Акут", "2Acute", "Двойной Акут", "Double Acute", "Двойное ударение"]],
-  [["b", "и"], CharCodes.breve, ["Бреве", "Бревис", "Breve", "Кратка"]],
-  [["B", "И"], CharCodes.ibreve, ["Перевёрнутый бреве", "Перевёрнутый бревис", "Inverted Breve", "Перевёрнутая кратка"]],
+  [["a", "ф"], [Characters["acute"].unicode, Characters["acute"].html], Characters["acute"].tags],
+  [["A", "Ф"], [Characters["acute_double"].unicode, Characters["acute_double"].html], Characters["acute_double"].tags],
+  [["b", "и"], [Characters["breve"].unicode, Characters["breve"].html], Characters["breve"].tags],
+  [["B", "И"], [Characters["breve_inverted"].unicode, Characters["breve_inverted"].html], Characters["breve_inverted"].tags],
   [["c", "с"], CharCodes.circumflex, ["Циркумфлекс", "Circumflex", "Крышечка", "Домик"]],
   [["C", "С"], CharCodes.caron, ["Карон", "Caron", "Гачек", "Hachek", "Hacek"]],
   [["d", "в"], CharCodes.dotabove, ["Точка сверху", "Dot Above"]],
@@ -450,6 +530,37 @@ InputBridge(BindsArray) {
   }
   ih.Stop()
 }
+InputBridge2(GroupKey) {
+  ih := InputHook("L1 C M", "L")
+  ih.Start()
+  ih.Wait()
+  keyPressed := ih.Input
+
+
+  for characterEntry, value in Characters {
+    if (HasProp(value, "group") && value.group[1] == GroupKey) {
+      characterKeys := value.group[2]
+      characterCodes := [value.unicode, value.html]
+
+      if IsObject(characterKeys) {
+        for _, key in characterKeys {
+          if (keyPressed == key) {
+            InputHTMLEntities ? SendText(characterCodes[2]) : Send(characterCodes[1])
+            break
+          }
+        }
+      } else {
+        if (keyPressed == characterKeys) {
+          InputHTMLEntities ? SendText(characterCodes[2]) : Send(characterCodes[1])
+          break
+        }
+      }
+    }
+  }
+
+  ih.Stop()
+  return
+}
 
 CombineArrays(destinationArray, sourceArray*)
 {
@@ -474,7 +585,6 @@ SearchKey() {
   Labels["en"].WindowPrompt := "Enter symbol name"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Search", "")
-  SearchOfArray := []
   IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
@@ -482,29 +592,23 @@ SearchKey() {
   else
     PromptValue := IB.Value
 
-  if (PromptValue = "\")
+  if (PromptValue = "\") {
     Reload
-
-  CombineArrays(SearchOfArray, BindDiacriticF1, BindDiacriticF2, BindDiacriticF3, BindSpecialF6, BindSpaces)
+    return
+  }
 
   Found := False
-  for index, pair in SearchOfArray {
-    if IsObject(pair[3]) {
-      for _, key in pair[3] {
-        if (StrLower(PromptValue) = StrLower(key)) {
-          if IsObject(pair[2]) {
-            if InputHTMLEntities {
-              SendText(pair[2][2])
-            } else {
-              Send(pair[2][1])
-            }
-          } else {
-            Send(pair[2])
-          }
-          IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
-          Found := True
-          break 2
+  for key, values in Characters {
+    for _, tag in values.tags {
+      if (StrLower(PromptValue) = StrLower(tag)) {
+        if InputHTMLEntities {
+          SendText(values.html)
+        } else {
+          Send(values.unicode)
         }
+        IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
+        Found := True
+        break 2
       }
     }
   }
@@ -513,6 +617,7 @@ SearchKey() {
     MsgBox "Знак не найден."
   }
 }
+
 
 InsertUnicodeKey() {
   LanguageCode := GetLanguageCode()
@@ -745,7 +850,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 
 <#<!F1:: {
   ShowInfoMessage(["Активна первая группа диакритики", "Primary diacritics group has been activated"], "[F1] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge(BindDiacriticF1)
+  InputBridge2("Diacritics Primary")
 }
 <#<!F2:: {
   ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, SkipGroupMessage)
@@ -873,7 +978,7 @@ Constructor()
   Tab.UseTab(1)
   DSLContent["BindList"].Diacritics := [
     ["", "Win Alt F1", "", ""],
-    [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", UniTrim(CharCodes.acute[1])],
+    [Characters["acute"].titles, "[a][ф]", "◌́", UniTrim(Characters["acute"].unicode)],
     [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", UniTrim(CharCodes.dacute[1])],
     [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", UniTrim(CharCodes.breve[1])],
     [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", UniTrim(CharCodes.ibreve[1])],
@@ -960,6 +1065,7 @@ Constructor()
   DSLContent["en"].EntrydblClick := "2×LMB"
   DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи».`n«Плавильня» может создавать не только лигатуры, например «-+» → «±», «-*» → «×», «***» → «⁂»."
   DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”`n“Smelter” can to smelt no only ligatures, for example “-+” → “±”, “-*” → “×”, “***” → “⁂”."
+
   DSLContent["BindList"].Commands := [
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
@@ -990,10 +1096,17 @@ Constructor()
     CommandsLV.Add(, item[1], item[2], item[3])
   }
 
+
   DSLPadGUI.SetFont("s9")
   DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
+  DSLPadGUI.SetFont("s13")
+  ConfigFileBtn := DSLPadGUI.Add("Button", "x622 y519 w32 h32", "⚙️")
+  ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
+
+
   DSLPadGUI.SetFont("s11")
+
   Tab.UseTab(5)
   DSLContent["BindList"].LigaturesInput := [
     [Map("ru", "Латинская заглавная буква AA", "en", "Latin Capital Letter Aa"), "AA", "Ꜳ", UniTrim(CharCodes.smelter.latin_Capital_AA[1])],
@@ -1139,7 +1252,7 @@ Constructor()
     "Версия: Альфа от 27.08.2024",
     "Автор: Демер Нкардаз",
     "Примечание: Использовать на русской и английской раскладках",
-    "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если для него существует горячая клавиша, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
+    "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если он есть в библиотеке, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
     "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа.",
     "Режимы`nОбычный — требует «активации» группы знаков: Win Alt [Группа] (F1, Space…) необходимо нажать, но не удерживать, после чего нажать на символ ключа нужного знака.`nБыстрые ключи — необходимо удерживать модифицирующие клавиши, например, LCtrl LAlt + m, что бы ввести знак макрона [◌̄].`nБыстрые ключи, отмеченные ✅, активны всегда."
   ]
@@ -1154,7 +1267,7 @@ Constructor()
     "Version: Alpha at 27/08/2024",
     "Author: Demer Nkardaz",
     "Note: Use on Russian or English keyboard layout",
-    "This program is created to assist in entering special characters, such as diacritics signs, whitespace characters, and modified letters. You can use hotkeys, insert a symbol by name (Win Alt F), if a hotkey exists for it, or enter the “raw” Unicode key (Win Alt U) of any symbol.",
+    "This program is created to assist in entering special characters, such as diacritics signs, whitespace characters, and modified letters. You can use hotkeys, insert a symbol by name (Win Alt F), if it exists in library, or enter the “raw” Unicode key (Win Alt U) of any symbol.",
     "This window displays all available key combinations. Double-clicking the LMB on any line containing Unicode will take you to the Symbl.cc site with an overview of the corresponding symbol.",
     "Modes`nCommon: requires “activation” of characters groups: Win Alt [Groups] (F1, Space…) must be pressed, but not held, after which to enter the macro [◌̄].`nFast keys: must be held down modifier keys, for example, LCtrl LAlt + m, to enter the macro [◌̄].`nFast keys, marked ✅, always active."
   ]
