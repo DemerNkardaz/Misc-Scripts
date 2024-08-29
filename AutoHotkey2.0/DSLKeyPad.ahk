@@ -128,7 +128,11 @@ FormatHotKey(HKey, Modifier := "") {
 }
 
 
-InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False, ShowRecipes := False) {
+InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False, ShowRecipes := False) {
+  if GroupName == "" {
+    return
+  }
+
   LanguageCode := GetLanguageCode()
   TermporaryArray := []
 
@@ -174,8 +178,13 @@ InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator :
         TermporaryArray.Push([value.titles[LanguageCode], characterBinding, characterSymbol, UniTrim(value.unicode)])
     }
   }
-  for element in TermporaryArray {
-    TargetArray.Push(element)
+
+  if TargetArray == "" {
+    return TermporaryArray
+  } else {
+    for element in TermporaryArray {
+      TargetArray.Push(element)
+    }
   }
 }
 
@@ -197,7 +206,6 @@ Characters := Map(
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
       show_on_fast_keys: True,
-      recipe: "a'",
       symbol: "◌́"
     },
     "acute_double", {
@@ -212,7 +220,16 @@ Characters := Map(
     "acute_below", {
       unicode: "{U+0317}", html: "&#791;",
       titles: Map("ru", "Акут снизу", "en", "Acute Below"),
-      tags: ["acute below", "акут снизу"]
+      tags: ["acute below", "акут снизу"],
+      group: ["Diacritics Secondary", ["a", "ф"]],
+      symbol: "◌̗"
+    },
+    "acute_tone_vietnamese", {
+      unicode: "{U+0341}", html: "&#833;",
+      titles: Map("ru", "Акут тона (Вьетнам)", "en", "Acute Tone (Vietnam)"),
+      tags: ["acute tone", "акут тона"],
+      group: ["Diacritics Secondary", ["A", "Ф"]],
+      symbol: "◌́"
     },
     ;
     ;
@@ -953,7 +970,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 }
 <#<!F2:: {
   ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge(BindDiacriticF2)
+  InputBridge2("Diacritics Secondary")
 }
 <#<!F3:: {
   ShowInfoMessage(["Активна третья группа диакритики", "Tertiary diacritics group has been activated"], "[F3] " . DSLPadTitle, SkipGroupMessage)
@@ -1110,7 +1127,7 @@ Constructor()
   ]
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
 
-  InsertCharactersGroups(DSLContent["BindList"].Diacritics, "Diacritics Primary", "GroupHotKey", True)
+  InsertCharactersGroups(DSLContent["BindList"].Diacritics, "Diacritics Primary", "Win Alt F1", True)
 
   DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   DiacriticLV.ModifyCol(1, ColumnWidths[1])
@@ -1118,7 +1135,14 @@ Constructor()
   DiacriticLV.ModifyCol(3, ColumnWidths[3])
   DiacriticLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent["BindList"].Diacritics
+
+  DSLContent["BindList"].TabDiacritics := []
+
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Primary", "Win Alt F1", False)
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Secondary", "Win Alt F2")
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Tertiary", "Win Alt F3")
+
+  for item in DSLContent["BindList"].TabDiacritics
   {
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
