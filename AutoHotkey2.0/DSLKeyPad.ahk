@@ -128,19 +128,23 @@ FormatHotKey(HKey, Modifier := "") {
 }
 
 
-InsertCharactersGroups(TargetArray, GroupHotKey, GroupName, AddSeparator := True, ShowModifier := False) {
+InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False) {
   LanguageCode := GetLanguageCode()
   TermporaryArray := []
 
   if AddSeparator
     TermporaryArray.Push(["", "", "", ""])
-  TermporaryArray.Push(["", GroupHotKey, "", ""])
+  if GroupHotKey != ""
+    TermporaryArray.Push(["", GroupHotKey, "", ""])
 
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupName) {
       characterSymbol := HasProp(value, "symbol") ? value.symbol : ""
-      modifier := (HasProp(value, "modifier") && ShowModifier) ? value.modifier : ""
-      TermporaryArray.Push([value.titles[LanguageCode], FormatHotKey(value.group[2], modifier), characterSymbol, UniTrim(value.unicode)])
+      characterModifier := (HasProp(value, "modifier") && ShowOnFastKeys) ? value.modifier : ""
+      characterBinding := (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys : FormatHotKey(value.group[2], characterModifier)
+
+      if !ShowOnFastKeys || ShowOnFastKeys && (HasProp(value, "show_on_fast_keys") && value.show_on_fast_keys)
+        TermporaryArray.Push([value.titles[LanguageCode], characterBinding, characterSymbol, UniTrim(value.unicode)])
     }
   }
   for element in TermporaryArray {
@@ -155,6 +159,7 @@ Characters := Map(
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
+      show_on_fast_keys: True,
       symbol: "◌́"
     },
     "acute_double", {
@@ -163,6 +168,7 @@ Characters := Map(
       tags: ["double acute", "двойной акут", "двойное ударение"],
       group: ["Diacritics Primary", ["A", "Ф"]],
       modifier: "LShift",
+      show_on_fast_keys: True,
       symbol: "◌̋"
     },
     "acute_below", {
@@ -187,7 +193,11 @@ Characters := Map(
     "breve", {
       unicode: "{U+0306}", html: "&#774;",
       titles: Map("ru", "Кратка", "en", "Breve"),
-      tags: ["breve", "бреве", "кратка"]
+      tags: ["breve", "бреве", "кратка"],
+      group: ["Diacritics Primary", ["b", "и"]],
+      show_on_fast_keys: True,
+      alt_on_fast_keys: "LAlt B",
+      symbol: "◌̆"
     },
     "breve_below", {
       unicode: "{U+032E}", html: "&#814;",
@@ -1062,7 +1072,7 @@ Constructor()
   ]
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
 
-  InsertCharactersGroups(DSLContent["BindList"].Diacritics, "GroupHotKey", "Diacritics Primary", True)
+  InsertCharactersGroups(DSLContent["BindList"].Diacritics, "Diacritics Primary", "GroupHotKey", True)
 
   DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   DiacriticLV.ModifyCol(1, ColumnWidths[1])
