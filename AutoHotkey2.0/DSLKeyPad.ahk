@@ -200,7 +200,7 @@ Characters := Map(
     alt_on_fast_keys: "",
     symbol: "",
   },
-    "acute", {
+    "0000_acute", {
       unicode: "{U+0301}", html: "&#769;",
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
@@ -208,7 +208,7 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌́"
     },
-    "acute_double", {
+    "0001_acute_double", {
       unicode: "{U+030B}", html: "&#779;",
       titles: Map("ru", "Двойной акут", "en", "Double Acute"),
       tags: ["double acute", "двойной акут", "двойное ударение"],
@@ -217,14 +217,14 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌̋"
     },
-    "acute_below", {
+    "0002_acute_below", {
       unicode: "{U+0317}", html: "&#791;",
       titles: Map("ru", "Акут снизу", "en", "Acute Below"),
       tags: ["acute below", "акут снизу"],
       group: ["Diacritics Secondary", ["a", "ф"]],
       symbol: "◌̗"
     },
-    "acute_tone_vietnamese", {
+    "0003_acute_tone_vietnamese", {
       unicode: "{U+0341}", html: "&#833;",
       titles: Map("ru", "Акут тона (Вьетнам)", "en", "Acute Tone (Vietnam)"),
       tags: ["acute tone", "акут тона"],
@@ -233,53 +233,84 @@ Characters := Map(
     },
     ;
     ;
-    "asterisk_above", {
+    "0004_asterisk_above", {
       unicode: "{U+20F0}", html: "&#8432;",
       titles: Map("ru", "Астериск сверху", "en", "Asterisk Above"),
-      tags: ["asterisk above", "астериск сверху"]
+      tags: ["asterisk above", "астериск сверху"],
+      group: ["Diacritics Tertiary", ["a", "ф"]],
+      symbol: "◌⃰"
     },
-    "asterisk_below", {
+    "0005_asterisk_below", {
       unicode: "{U+0359}", html: "&#857;",
       titles: Map("ru", "Астериск снизу", "en", "Asterisk Below"),
-      tags: ["asterisk below", "астериск снизу"]
+      tags: ["asterisk below", "астериск снизу"],
+      group: ["Diacritics Tertiary", ["A", "Ф"]],
+      symbol: "◌͙"
     },
     ;
     ;
-    "breve", {
+    "0006_breve", {
       unicode: "{U+0306}", html: "&#774;",
       titles: Map("ru", "Кратка", "en", "Breve"),
       tags: ["breve", "бреве", "кратка"],
       group: ["Diacritics Primary", ["b", "и"]],
       show_on_fast_keys: True,
-      alt_on_fast_keys: "LAlt B",
       symbol: "◌̆"
     },
-    "breve_below", {
-      unicode: "{U+032E}", html: "&#814;",
-      titles: Map("ru", "Кратка снизу", "en", "Breve Below"),
-      tags: ["breve below", "бреве снизу", "кратка снизу"]
-    },
-    "breve_inverted", {
+    "0007_breve_inverted", {
       unicode: "{U+0311}", html: "&#785;",
       titles: Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"),
-      tags: ["inverted breve", "перевёрнутое бреве", "перевёрнутая кратка"]
+      tags: ["inverted breve", "перевёрнутое бреве", "перевёрнутая кратка"],
+      group: ["Diacritics Primary", ["B", "И"]],
+      modifier: "LShift",
+      show_on_fast_keys: True,
+      symbol: "◌̑"
     },
-    "breve_inverted_below", {
+    "0008_breve_below", {
+      unicode: "{U+032E}", html: "&#814;",
+      titles: Map("ru", "Кратка снизу", "en", "Breve Below"),
+      tags: ["breve below", "бреве снизу", "кратка снизу"],
+      group: ["Diacritics Secondary", ["b", "и"]],
+      symbol: "◌̮"
+    },
+    "0009_breve_inverted_below", {
       unicode: "{U+032F}", html: "&#815;",
       titles: Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"),
-      tags: ["inverted breve below", "перевёрнутое бреве снизу", "перевёрнутая кратка снизу"]
+      tags: ["inverted breve below", "перевёрнутое бреве снизу", "перевёрнутая кратка снизу"],
+      group: ["Diacritics Secondary", ["B", "И"]],
+      symbol: "◌̯"
     },
     ;
     ;
-    "circumflex", {
+    "0010_circumflex", {
       unicode: "{U+0302}", html: "&#770;",
       titles: Map("ru", "Циркумфлекс", "en", "Circumflex"),
-      tags: ["circumflex", "циркумфлекс"]
+      tags: ["circumflex", "циркумфлекс"],
+      group: ["Diacritics Primary", ["c", "с"]],
+      show_on_fast_keys: True,
+      symbol: "◌̂"
     },
-    "circumflex_below", {
+    "0011_caron", {
+      unicode: "{U+0302}", html: "&#770;",
+      titles: Map("ru", "Гачек", "en", "Caron"),
+      tags: ["caron", "карон", "гачек"],
+      group: ["Diacritics Primary", ["C", "С"]],
+      show_on_fast_keys: True,
+      symbol: "◌̌"
+    },
+    "0012_circumflex_below", {
       unicode: "{U+032D}", html: "&#813;",
       titles: Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"),
-      tags: ["circumflex below", "циркумфлекс снизу"]
+      tags: ["circumflex below", "циркумфлекс снизу"],
+      group: ["Diacritics Secondary", ["c", "с"]],
+      symbol: "◌̭"
+    },
+    "0013_caron_below", {
+      unicode: "{U+0302}", html: "&#770;",
+      titles: Map("ru", "Гачек снизу", "en", "Caron Below"),
+      tags: ["caron below", "карон снизу", "гачек снизу"],
+      group: ["Diacritics Secondary", ["C", "С"]],
+      symbol: "◌̬"
     },
     ;
     ;
@@ -410,7 +441,7 @@ CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified := ["{U+0469}", "&#1129;"]
 UniTrim(str) {
   return SubStr(str, 4, StrLen(str) - 4)
 }
-
+/*
 BindDiacriticF1 := [
   [["a", "ф"], [Characters["acute"].unicode, Characters["acute"].html], Characters["acute"].tags],
   [["A", "Ф"], [Characters["acute_double"].unicode, Characters["acute_double"].html], Characters["acute_double"].tags],
@@ -425,7 +456,7 @@ BindDiacriticF1 := [
   [["G", "П"], CharCodes.dgrave, ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
   [["h", "р"], CharCodes.hookabove, ["Хвостик сверху", "Hook Above"]],
   [["H", "Р"], CharCodes.horn, ["Рожок", "Horn"]],
-]
+]*/
 
 BindDiacriticF2 := [
   [["a", "ф"], CharCodes.acutebelow, ["Акут снизу", "Acute Below", "Ударение снизу"]],
@@ -1094,7 +1125,7 @@ Constructor()
   Tab.UseTab(1)
   DSLContent["BindList"].Diacritics := [
     ["", "Win Alt F1", "", ""],
-    [Characters["acute"].titles, "[a][ф]", "◌́", UniTrim(Characters["acute"].unicode)],
+    ;[Characters["acute"].titles, "[a][ф]", "◌́", UniTrim(Characters["acute"].unicode)],
     [Map("ru", "Двойной Акут", "en", "Double Acute"), "[A][Ф]", "◌̋", UniTrim(CharCodes.dacute[1])],
     [Map("ru", "Кратка", "en", "Breve"), "[b][и]", "◌̆", UniTrim(CharCodes.breve[1])],
     [Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"), "[B][И]", "◌̑", UniTrim(CharCodes.ibreve[1])],
