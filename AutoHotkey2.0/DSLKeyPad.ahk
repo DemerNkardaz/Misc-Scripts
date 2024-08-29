@@ -128,9 +128,32 @@ FormatHotKey(HKey, Modifier := "") {
 }
 
 
-InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False) {
+InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False, ShowRecipes := False) {
   LanguageCode := GetLanguageCode()
   TermporaryArray := []
+
+  RecipesMicroController(recipeEntry) {
+    RecipeString := ""
+    if IsObject(recipeEntry) {
+      totalCount := 0
+      for index in recipeEntry {
+        totalCount++
+      }
+
+      currentIndex := 0
+      for index, recipe in recipeEntry {
+        RecipeString .= recipe
+        currentIndex++
+        if (currentIndex < totalCount) {
+          RecipeString .= ", "
+        }
+      }
+    } else {
+      RecipeString := recipeEntry
+    }
+    return RecipeString
+  }
+
 
   if AddSeparator
     TermporaryArray.Push(["", "", "", ""])
@@ -139,9 +162,13 @@ InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator :
 
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupName) {
-      characterSymbol := HasProp(value, "symbol") ? value.symbol : ""
+      characterSymbol :=
+        HasProp(value, "symbol") ? value.symbol : ""
       characterModifier := (HasProp(value, "modifier") && ShowOnFastKeys) ? value.modifier : ""
-      characterBinding := (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys : FormatHotKey(value.group[2], characterModifier)
+      characterBinding :=
+        (HasProp(value, "recipe") && ShowRecipes) ? RecipesMicroController(value.recipe) :
+          (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys :
+            FormatHotKey(value.group[2], characterModifier)
 
       if !ShowOnFastKeys || ShowOnFastKeys && (HasProp(value, "show_on_fast_keys") && value.show_on_fast_keys)
         TermporaryArray.Push([value.titles[LanguageCode], characterBinding, characterSymbol, UniTrim(value.unicode)])
@@ -153,13 +180,24 @@ InsertCharactersGroups(TargetArray, GroupName, GroupHotKey := "", AddSeparator :
 }
 
 Characters := Map(
-  "", { unicode: "", html: "", titles: Map("ru", "", "en", ""), tags: [] },
+  "", {
+    unicode: "", html: "",
+    titles: Map("ru", "", "en", ""),
+    tags: [""],
+    group: ["", ""],
+    modifier: "",
+    recipe: "",
+    show_on_fast_keys: False,
+    alt_on_fast_keys: "",
+    symbol: "",
+  },
     "acute", {
       unicode: "{U+0301}", html: "&#769;",
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
       show_on_fast_keys: True,
+      recipe: "a'",
       symbol: "◌́"
     },
     "acute_double", {
