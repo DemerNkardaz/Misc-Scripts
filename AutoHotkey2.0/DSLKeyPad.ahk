@@ -99,6 +99,55 @@ CtrlZ := Chr(26)
 SpaceKey := Chr(32)
 
 
+FormatHotKey(HKey, Modifier := "") {
+  MakeString := ""
+
+  SpecialCommandsMap := Map(
+    CtrlA, "Ctrl [a][ф]", CtrlB, "Ctrl [b][и]", CtrlC, "Ctrl [c][с]", CtrlD, "Ctrl [d][в]", CtrlE, "Ctrl [e][у]", CtrlF, "Ctrl [f][а]", CtrlG, "Ctrl [g][п]",
+    CtrlH, "Ctrl [h][р]", CtrlI, "Ctrl [i][ш]", CtrlJ, "Ctrl [j][о]", CtrlK, "Ctrl [k][л]", CtrlL, "Ctrl [l][д]", CtrlM, "Ctrl [m][ь]", CtrlN, "Ctrl [n][т]",
+    CtrlO, "Ctrl [o][щ]", CtrlP, "Ctrl [p][з]", CtrlQ, "Ctrl [q][й]", CtrlR, "Ctrl [r][к]", CtrlS, "Ctrl [s][ы]", CtrlT, "Ctrl [t][е]", CtrlU, "Ctrl [u][г]",
+    CtrlV, "Ctrl [v][м]", CtrlW, "Ctrl [w][ц]", CtrlX, "Ctrl [x][ч]", CtrlY, "Ctrl [y][н]", CtrlZ, "Ctrl [z][я]", SpaceKey, "[Space]",
+  )
+
+  for key, value in SpecialCommandsMap {
+    if (HKey = key)
+      return value
+  }
+
+  if IsObject(HKey) {
+    for keys in HKey {
+      MakeString .= FormatHotKey(keys)
+    }
+  } else {
+    MakeString := "[" . HKey . "]"
+  }
+
+  MakeString := Modifier != "" ? (Modifier . " " . MakeString) : MakeString
+
+  return MakeString
+}
+
+
+InsertCharactersGroups(TargetArray, GroupHotKey, GroupName, AddSeparator := True, ShowModifier := False) {
+  LanguageCode := GetLanguageCode()
+  TermporaryArray := []
+
+  if AddSeparator
+    TermporaryArray.Push(["", "", "", ""])
+  TermporaryArray.Push(["", GroupHotKey, "", ""])
+
+  for characterEntry, value in Characters {
+    if (HasProp(value, "group") && value.group[1] == GroupName) {
+      characterSymbol := HasProp(value, "symbol") ? value.symbol : ""
+      modifier := (HasProp(value, "modifier") && ShowModifier) ? value.modifier : ""
+      TermporaryArray.Push([value.titles[LanguageCode], FormatHotKey(value.group[2], modifier), characterSymbol, UniTrim(value.unicode)])
+    }
+  }
+  for element in TermporaryArray {
+    TargetArray.Push(element)
+  }
+}
+
 Characters := Map(
   "", { unicode: "", html: "", titles: Map("ru", "", "en", ""), tags: [] },
     "acute", {
@@ -106,12 +155,15 @@ Characters := Map(
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
+      symbol: "◌́"
     },
     "acute_double", {
       unicode: "{U+030B}", html: "&#779;",
       titles: Map("ru", "Двойной акут", "en", "Double Acute"),
       tags: ["double acute", "двойной акут", "двойное ударение"],
       group: ["Diacritics Primary", ["A", "Ф"]],
+      modifier: "LShift",
+      symbol: "◌̋"
     },
     "acute_below", {
       unicode: "{U+0317}", html: "&#791;",
@@ -167,7 +219,6 @@ Characters := Map(
     ;
     ;
 )
-
 
 CharCodes := {}
 CharCodes.acute := ["{U+0301}", "&#769;"]
@@ -1010,6 +1061,8 @@ Constructor()
     [Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"), "LCtrl [b][и]", "◌̺", UniTrim(CharCodes.ibridgebelow[1])],
   ]
   LocaliseArrayKeys(DSLContent["BindList"].Diacritics)
+
+  InsertCharactersGroups(DSLContent["BindList"].Diacritics, "GroupHotKey", "Diacritics Primary", True)
 
   DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   DiacriticLV.ModifyCol(1, ColumnWidths[1])
