@@ -7,10 +7,12 @@ ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
 FastKeysIsActive := False
 InputHTMLEntities := False
+SkipGroupMessage := False
 
 DefaultConfig := [
   ["Settings", "FastKeysIsActive", "False"],
   ["Settings", "InputHTMLEntities", "False"],
+  ["Settings", "SkipGroupMessage", "False"],
   ["Settings", "UserLanguage", ""],
   ["LatestPrompts", "Unicode", ""],
   ["LatestPrompts", "Altcode", ""],
@@ -21,9 +23,11 @@ DefaultConfig := [
 if FileExist(ConfigFile) {
   isFastKeysEnabled := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
   isInputHTMLEntities := IniRead(ConfigFile, "Settings", "InputHTMLEntities", "False")
+  isSkipGroupMessage := IniRead(ConfigFile, "Settings", "SkipGroupMessage", "False")
 
   FastKeysIsActive := (isFastKeysEnabled = "True")
   InputHTMLEntities := (isInputHTMLEntities = "True")
+  SkipGroupMessage := (isSkipGroupMessage = "True")
 } else {
   for index, config in DefaultConfig {
     IniWrite config[3], ConfigFile, config[1], config[2]
@@ -365,7 +369,7 @@ LigaturesDictionary := [
   ["LJ", CharCodes.smelter.latin_Capital_LJ[1]],
   ["Lj", CharCodes.smelter.latin_Capital_L_Small_j[1]],
   ["lj", CharCodes.smelter.latin_Small_LJ[1]],
-  ["Fs", CharCodes.smelter.latin_Capital_Fs[1]],
+  ["FS", CharCodes.smelter.latin_Capital_Fs[1]],
   ["fs", CharCodes.smelter.latin_Small_Fs[1]],
   ["ue", CharCodes.smelter.latin_Small_UE[1]],
   ["OO", CharCodes.smelter.latin_Capital_OO[1]],
@@ -374,46 +378,37 @@ LigaturesDictionary := [
   ; Cyrillic
   ["Э", CharCodes.smelter.cyrillic_Capital_Ukraine_E[1]],
   ["э", CharCodes.smelter.cyrillic_Small_Ukraine_E[1]],
-  ["ІЄ", CharCodes.smelter.cyrillic_Capital_ie[1]],
-  ["ІЭ", CharCodes.smelter.cyrillic_Capital_ie[1]],
-  ["іє", CharCodes.smelter.cyrillic_Small_ie[1]],
-  ["іэ", CharCodes.smelter.cyrillic_Small_ie[1]],
+  [["ІЄ", "ІЭ"], CharCodes.smelter.cyrillic_Capital_ie[1]],
+  [["іє", "іэ"], CharCodes.smelter.cyrillic_Small_ie[1]],
   ["ТЬ", CharCodes.smelter.cyrillic_Captial_Yat[1]],
   ["ть", CharCodes.smelter.cyrillic_Small_Yar[1]],
   ["УЖ", CharCodes.smelter.cyrillic_Capital_Big_Yus[1]],
   ["уж", CharCodes.smelter.cyrillic_Small_Big_Yus[1]],
   ["АТ", CharCodes.smelter.cyrillic_Capital_Little_Yus[1]],
   ["ат", CharCodes.smelter.cyrillic_Small_Little_Yus[1]],
-  ["ІѢ", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
-  ["ІТЬ", CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
-  ["іѣ", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
-  ["іть", CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
+  [["ІѢ", "ІТЬ"], CharCodes.smelter.cyrillic_Captial_Yat_Iotified[1]],
+  [["іѣ", "іть"], CharCodes.smelter.cyrillic_Small_Yat_Iotified[1]],
   ["ІА", CharCodes.smelter.cyrillic_Captial_A_Iotified[1]],
   ["іа", CharCodes.smelter.cyrillic_Small_A_Iotified[1]],
-  ["ІѪ", CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
-  ["ІУЖ", CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
-  ["іѫ", CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
-  ["іуж", CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
-  ["ІѦ", CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
-  ["ІАТ", CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
-  ["іѧ", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
-  ["іат", CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
+  [["ІѪ", "ІУЖ"], CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified[1]],
+  [["іѫ", "іуж"], CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
+  [["ІѦ", "ІАТ"], CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
+  [["іѧ", "іат"], CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
   ; Other
   [["-----", "3-"], CharCodes.threemdash[1]],
+  [["----", "2-"], CharCodes.twoemdash[1]],
+  ["---", CharCodes.emdash[1]],
+  ["--", CharCodes.endash[1]],
   ["-+", CharCodes.plusminus[1]],
   ["-*", CharCodes.multiplication[1]],
-  ["*", CharCodes.lowasterisk[1]],
-  ["**", CharCodes.twoasterisks[1]],
   ["***", CharCodes.asterism[1]],
-  ["..", CharCodes.twodotleader[1]],
+  ["**", CharCodes.twoasterisks[1]],
+  ["*", CharCodes.lowasterisk[1]],
   ["...", CharCodes.ellipsis[1]],
+  ["..", CharCodes.twodotleader[1]],
   ["-", CharCodes.softhyphen[1]],
   [".-", CharCodes.dash[1]],
   ["n-", CharCodes.numdash[1]],
-  ["--", CharCodes.endash[1]],
-  ["---", CharCodes.emdash[1]],
-  ["----", CharCodes.twoemdash[1]],
-  ["2-", CharCodes.twoemdash[1]],
   ["0-", CharCodes.nbdash[1]],
 ]
 
@@ -748,12 +743,26 @@ Ligaturise(SmeltingMode := "InputBox") {
   return
 }
 
-
-<#<!F1:: InputBridge(BindDiacriticF1)
-<#<!F2:: InputBridge(BindDiacriticF2)
-<#<!F3:: InputBridge(BindDiacriticF3)
-<#<!F6:: InputBridge(BindSpecialF6)
-<#<!Space:: InputBridge(BindSpaces)
+<#<!F1:: {
+  ShowInfoMessage(["Активна первая группа диакритики", "Primary diacritics group has been activated"], "[F1] " . DSLPadTitle, SkipGroupMessage)
+  InputBridge(BindDiacriticF1)
+}
+<#<!F2:: {
+  ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, SkipGroupMessage)
+  InputBridge(BindDiacriticF2)
+}
+<#<!F3:: {
+  ShowInfoMessage(["Активна третья группа диакритики", "Tertiary diacritics group has been activated"], "[F3] " . DSLPadTitle, SkipGroupMessage)
+  InputBridge(BindDiacriticF3)
+}
+<#<!F6:: {
+  ShowInfoMessage(["Активна группа специальных символов", "Special characters group has been activated"], "[F6] " . DSLPadTitle, SkipGroupMessage)
+  InputBridge(BindSpecialF6)
+}
+<#<!Space:: {
+  ShowInfoMessage(["Активна группа шпаций", "Space group has been activated"], "[Space] " . DSLPadTitle, SkipGroupMessage)
+  InputBridge(BindSpaces)
+}
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
 <#<!a:: InsertAltCodeKey()
@@ -763,6 +772,27 @@ Ligaturise(SmeltingMode := "InputBox") {
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 
+<#<!m:: ToggleGroupMessage()
+
+ToggleGroupMessage()
+{
+  LanguageCode := GetLanguageCode()
+  global SkipGroupMessage, ConfigFile
+  SkipGroupMessage := !SkipGroupMessage
+  IniWrite (SkipGroupMessage ? "True" : "False"), ConfigFile, "Settings", "SkipGroupMessage"
+
+  ActivationMessage := {}
+  ActivationMessage[] := Map()
+  ActivationMessage["ru"] := {}
+  ActivationMessage["en"] := {}
+  ActivationMessage["ru"].Active := "Сообщения активации групп включены"
+  ActivationMessage["ru"].Deactive := "Сообщения активации групп отключены"
+  ActivationMessage["en"].Active := "Activation messages for groups enabled"
+  ActivationMessage["en"].Deactive := "Activation messages for groups disabled"
+  MsgBox(SkipGroupMessage ? ActivationMessage[LanguageCode].Deactive : ActivationMessage[LanguageCode].Active, DSLPadTitle, 0x40)
+
+  return
+}
 
 ; Setting up of Diacritics-Spaces-Letters KeyPad
 
@@ -942,8 +972,9 @@ Constructor()
     [Map("ru", " (установить курсор справа от символов)", "en", " (set cursor to the right of the symbols)"), "RShift Backspace", "st → ﬆ, іат → ѩ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
-    [Map("ru", "Активировать быстрые ключи", "en", "Activate fastkeys"), "RAlt Home", ""],
-    [Map("ru", "Активировать ввод HTML-энтити", "en", "Activate input of HTML entities"), "RAlt RShift Home", "á → a&#769;"],
+    [Map("ru", "Активация «Быстрых ключей»", "en", "Toggle FastKeys"), "RAlt Home", ""],
+    [Map("ru", "Активация ввода HTML-энтити", "en", "Toggle of HTML entities input"), "RAlt RShift Home", "á → a&#769;"],
+    [Map("ru", "Оповещения активации групп", "en", "Groups activation notification toggle"), "Win Alt M", ""],
   ]
 
   LocaliseArrayKeys(DSLContent["BindList"].Commands)
@@ -986,7 +1017,7 @@ Constructor()
     [Map("ru", "Латинская заглавная буква LJ", "en", "Latin Capital Letter LJ"), "LJ", "Ǉ", UniTrim(CharCodes.smelter.latin_Capital_LJ[1])],
     [Map("ru", "Латинская заглавная буква L со строчной буквой j", "en", "Latin Capital Letter L with Small Letter J"), "Lj", "ǈ", UniTrim(CharCodes.smelter.latin_Capital_L_Small_j[1])],
     [Map("ru", "Латинская заглавная буква lj", "en", "Latin Capital Letter Lj"), "lj", "ǉ", UniTrim(CharCodes.smelter.latin_Small_LJ[1])],
-    [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "Fs", "ẞ", UniTrim(CharCodes.smelter.latin_Capital_Fs[1])],
+    [Map("ru", "Латинская заглавная буква эсцет (S острое)", "en", "Latin Capital Letter Sharp S"), "FS", "ẞ", UniTrim(CharCodes.smelter.latin_Capital_Fs[1])],
     [Map("ru", "Латинская строчная буква эсцет (S острое)", "en", "Latin Small Letter Sharp S"), "fs", "ß", UniTrim(CharCodes.smelter.latin_Small_Fs[1])],
     [Map("ru", "Латинская строчная буква ue", "en", "Latin Small Letter Ue"), "ue", "ᵫ", UniTrim(CharCodes.smelter.latin_Small_UE[1])],
     [Map("ru", "Латинская заглавная буква OO", "en", "Latin Capital Letter Oo"), "OO", "Ꝏ", UniTrim(CharCodes.smelter.latin_Capital_OO[1])],
@@ -1244,6 +1275,9 @@ LV_RunCommand(LV, RowNumber)
   if (Shortcut = "Win Alt L")
     Ligaturise()
 
+  if (Shortcut = "Win Alt M")
+    ToggleGroupMessage()
+
   if (Shortcut = "Win LAlt 1")
     SwitchToScript("sup")
 
@@ -1473,15 +1507,18 @@ HandleFastKey(Character, CheckOff := False)
 <^<!NumpadDiv:: HandleFastKey(CharCodes.fractionslash[1], True)
 
 
-ShowRunMessage() {
+ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) {
+  if SkipMessage == True
+    return
   LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
   Labels["ru"] := {}
   Labels["en"] := {}
-  Labels["ru"].RunMessage := "Приложение запущено`nНажмите Win Alt Home для расширенных сведений."
-  Labels["en"].RunMessage := "Application started`nPress Win Alt Home for extended information."
-  TrayTip Labels[LanguageCode].RunMessage, DSLPadTitle, "Iconi"
+  Labels["ru"].RunMessage := MessagePost[1]
+  Labels["en"].RunMessage := MessagePost[2]
+  TrayTip Labels[LanguageCode].RunMessage, MessageTitle, "Iconi"
+
 }
 
-ShowRunMessage()
+ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
