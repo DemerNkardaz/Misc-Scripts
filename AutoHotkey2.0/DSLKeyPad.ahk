@@ -211,7 +211,7 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌́"
     },
-    "0000 acute_double", {
+    "0001 acute_double", {
       unicode: "{U+030B}", html: "&#779;",
       titles: Map("ru", "Двойной акут", "en", "Double Acute"),
       tags: ["double acute", "двойной акут", "двойное ударение"],
@@ -220,14 +220,14 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌̋"
     },
-    "0000 acute_below", {
+    "0002 acute_below", {
       unicode: "{U+0317}", html: "&#791;",
       titles: Map("ru", "Акут снизу", "en", "Acute Below"),
       tags: ["acute below", "акут снизу"],
       group: ["Diacritics Secondary", ["a", "ф"]],
       symbol: "◌̗"
     },
-    "0000 acute_tone_vietnamese", {
+    "0003 acute_tone_vietnamese", {
       unicode: "{U+0341}", html: "&#833;",
       titles: Map("ru", "Акут тона (Вьетнам)", "en", "Acute Tone (Vietnam)"),
       tags: ["acute tone", "акут тона"],
@@ -236,14 +236,14 @@ Characters := Map(
     },
     ;
     ;
-    "0000 asterisk_above", {
+    "0004 asterisk_above", {
       unicode: "{U+20F0}", html: "&#8432;",
       titles: Map("ru", "Астериск сверху", "en", "Asterisk Above"),
       tags: ["asterisk above", "астериск сверху"],
       group: ["Diacritics Tertiary", ["a", "ф"]],
       symbol: "◌⃰"
     },
-    "0000 asterisk_below", {
+    "0005 asterisk_below", {
       unicode: "{U+0359}", html: "&#857;",
       titles: Map("ru", "Астериск снизу", "en", "Asterisk Below"),
       tags: ["asterisk below", "астериск снизу"],
@@ -252,7 +252,7 @@ Characters := Map(
     },
     ;
     ;
-    "0000 breve", {
+    "0006 breve", {
       unicode: "{U+0306}", html: "&#774;",
       titles: Map("ru", "Кратка", "en", "Breve"),
       tags: ["breve", "бреве", "кратка"],
@@ -260,7 +260,7 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌̆"
     },
-    "0000 breve_inverted", {
+    "0007 breve_inverted", {
       unicode: "{U+0311}", html: "&#785;",
       titles: Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"),
       tags: ["inverted breve", "перевёрнутое бреве", "перевёрнутая кратка"],
@@ -269,14 +269,14 @@ Characters := Map(
       show_on_fast_keys: True,
       symbol: "◌̑"
     },
-    "0000 breve_below", {
+    "0008 breve_below", {
       unicode: "{U+032E}", html: "&#814;",
       titles: Map("ru", "Кратка снизу", "en", "Breve Below"),
       tags: ["breve below", "бреве снизу", "кратка снизу"],
       group: ["Diacritics Secondary", ["b", "и"]],
       symbol: "◌̮"
     },
-    "0000 breve_inverted_below", {
+    "0009 breve_inverted_below", {
       unicode: "{U+032F}", html: "&#815;",
       titles: Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"),
       tags: ["inverted breve below", "перевёрнутое бреве снизу", "перевёрнутая кратка снизу"],
@@ -338,6 +338,20 @@ Characters := Map(
       group: ["Diacritics Secondary", ["C", "С"]],
       symbol: "◌̬"
     },
+    "0000 cedilla", {
+      unicode: "{U+0327}", html: "&#807;",
+      titles: Map("ru", "Седиль", "en", "Cedilla"),
+      tags: ["cedilla", "седиль"],
+      group: ["Diacritics Tertiary", ["c", "с"]],
+      symbol: "◌̧"
+    },
+    "0000 candrabindu", {
+      unicode: "{U+0310}", html: "&#784;",
+      titles: Map("ru", "Чандрабинду", "en", "Candrabindu"),
+      tags: ["candrabindu", "карон снизу"],
+      group: ["Diacritics Tertiary", ["C", "С"]],
+      symbol: "◌̐"
+    },
     ;
     ;
     "0000 dot_above", {
@@ -376,7 +390,7 @@ Characters := Map(
       unicode: "{U+0352}", html: "&#850;",
       titles: Map("ru", "Фермата", "en", "Fermata"),
       tags: ["fermata", "фермата"],
-      group: ["Diacritics Primary", ["f", "а"]],
+      group: ["Diacritics Tertiary", ["F", "А"]],
       show_on_fast_keys: True,
       symbol: "◌͒"
     },
@@ -440,7 +454,7 @@ Characters := Map(
     "0000 retroflex_hook_below", {
       unicode: "{U+0322}", html: "&#802;",
       titles: Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"),
-      tags: ["retroflex hook belo", "ретрофлексный крюк"],
+      tags: ["retroflex hook below", "ретрофлексный крюк"],
       group: ["Diacritics Secondary", ["H", "Р"]],
       symbol: "◌̢"
     },
@@ -777,7 +791,7 @@ LigaturesDictionary := [
   ["0-", CharCodes.nbdash[1]],
 ]
 
-InputBridge(BindsArray) {
+InputBridgeOld(BindsArray) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
   ih.Wait()
@@ -815,7 +829,7 @@ InputBridge(BindsArray) {
   }
   ih.Stop()
 }
-InputBridge2(GroupKey) {
+InputBridge(GroupKey) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
   ih.Wait()
@@ -1135,23 +1149,23 @@ Ligaturise(SmeltingMode := "InputBox") {
 
 <#<!F1:: {
   ShowInfoMessage(["Активна первая группа диакритики", "Primary diacritics group has been activated"], "[F1] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge2("Diacritics Primary")
+  InputBridge("Diacritics Primary")
 }
 <#<!F2:: {
   ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge2("Diacritics Secondary")
+  InputBridge("Diacritics Secondary")
 }
 <#<!F3:: {
   ShowInfoMessage(["Активна третья группа диакритики", "Tertiary diacritics group has been activated"], "[F3] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge(BindDiacriticF3)
+  InputBridge("Diacritics Tertiary")
 }
 <#<!F6:: {
   ShowInfoMessage(["Активна группа специальных символов", "Special characters group has been activated"], "[F6] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge(BindSpecialF6)
+  InputBridgeOld(BindSpecialF6)
 }
 <#<!Space:: {
   ShowInfoMessage(["Активна группа шпаций", "Space group has been activated"], "[Space] " . DSLPadTitle, SkipGroupMessage)
-  InputBridge(BindSpaces)
+  InputBridgeOld(BindSpaces)
 }
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
@@ -1756,10 +1770,10 @@ HandleFastKey(Character, CheckOff := False)
   }
 }
 
-<^<!a:: HandleFastKey(CharCodes.acute[1])
-<^<+<!a:: HandleFastKey(CharCodes.dacute[1])
-<^<!b:: HandleFastKey(CharCodes.breve[1])
-<^<+<!b:: HandleFastKey(CharCodes.ibreve[1])
+<^<!a:: HandleFastKey(Characters["0000 acute"].unicode)
+<^<+<!a:: HandleFastKey(Characters["0001 acute_double"].unicode)
+<^<!b:: HandleFastKey(Characters["0006 breve"].unicode)
+<^<+<!b:: HandleFastKey(Characters["0007 breve_inverted"].unicode)
 <^<!c:: HandleFastKey(CharCodes.circumflex[1])
 <^<+<!c:: HandleFastKey(CharCodes.caron[1])
 <^<!d:: HandleFastKey(CharCodes.dotabove[1])
