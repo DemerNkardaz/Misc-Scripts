@@ -209,7 +209,6 @@ Characters := Map(
   },
     "0000 acute", {
       unicode: "{U+0301}", html: "&#769;",
-      latex: "\' \acute",
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
@@ -1864,50 +1863,75 @@ Constructor()
   CommandsLV.OnEvent("DoubleClick", LV_RunCommand)
 
   DiacriticLV.OnEvent("ItemFocus", (LV, RowNumber) =>
-    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+    LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "DiacriticSymbol",
       "DiacriticTitle",
       "DiacriticAlt",
       "DiacriticUnicode",
       "DiacriticHTML",
-      GrouBoxDiacritic
+      GrouBoxDiacritic]
     ))
   LettersLV.OnEvent("ItemFocus", (LV, RowNumber) =>
-    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+    LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "LettersSymbol",
       "LettersTitle",
       "LettersAlt",
       "LettersUnicode",
       "LettersHTML",
-      GrouBoxLetters
+      GrouBoxLetters]
     ))
   SpacesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
-    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+    LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "SpacesSymbol",
       "SpacesTitle",
       "SpacesAlt",
       "SpacesUnicode",
       "SpacesHTML",
-      GrouBoxSpaces
+      GrouBoxSpaces]
     ))
   FastKeysLV.OnEvent("ItemFocus", (LV, RowNumber) =>
-    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+    LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "FastKeysSymbol",
       "FastKeysTitle",
       "FastKeysAlt",
       "FastKeysUnicode",
       "FastKeysHTML",
-      GrouBoxFastKeys
+      GrouBoxFastKeys]
     ))
   LigaturesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
-    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+    LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "LigaturesSymbol",
       "LigaturesTitle",
       "LigaturesAlt",
       "LigaturesUnicode",
       "LigaturesHTML",
-      GrouBoxLigatures
+      GrouBoxLigatures]
     ))
+
+
+  CharacterPreviewRandomCode := ""
+
+  uniStore := []
+  for characterEntry, value in Characters {
+    uniStore.Push(value.unicode)
+  }
+  CharacterPreviewRandomCode := uniStore[Random(uniStore.Length)]
+
+  CharacterPreviewRandomCodes := []
+
+  CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Diacritics Primary", "Diacritics Secondary", "Diacritics Tertiary"]))
+  CharacterPreviewRandomCodes.Push("")
+  CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Spaces", "Special Characters"]))
+  CharacterPreviewRandomCodes.Push("")
+  CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Diacritics Primary", "Spaces", "Special Characters"]))
+
+
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
+
 
   DSLPadGUI.Title := DSLPadTitle
 
@@ -1925,16 +1949,39 @@ Constructor()
   return DSLPadGUI
 }
 
-LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
+GetRandomByGroups(GroupNames) {
+  TemporaryStorage := []
+  for characterEntry, value in Characters {
+    if (HasProp(value, "group")) {
+      for group in GroupNames {
+        if (value.group[1] == group) {
+          TemporaryStorage.Push(value.unicode)
+          break
+        }
+      }
+    }
+  }
+  if TemporaryStorage.Length > 0 {
+    return TemporaryStorage[Random(TemporaryStorage.Length)]
+  } else {
+    return ""
+  }
+}
+
+SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
   LanguageCode := GetLanguageCode()
-  UnicodeKey := LV.GetText(RowNumber, 4)
+
   if (UnicodeKey != "") {
     for characterEntry, value in Characters {
-      if (UnicodeKey == UniTrim(value.unicode)) {
-        if (StrLen(value.symbol) > 3) {
-          TargetGroup[PreviewObject].Text := SubStr(value.symbol, 1, 1)
-        } else {
-          TargetGroup[PreviewObject].Text := value.symbol
+      if (
+        (UnicodeKey == UniTrim(value.unicode)) ||
+        (UnicodeKey == value.unicode)) {
+        if (HasProp(value, "symbol")) {
+          if (StrLen(value.symbol) > 3) {
+            TargetGroup[PreviewObject].Text := SubStr(value.symbol, 1, 1)
+          } else {
+            TargetGroup[PreviewObject].Text := value.symbol
+          }
         }
 
         if (StrLen(TargetGroup[PreviewObject].Text) > 2) {
@@ -1969,6 +2016,14 @@ LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, Pre
       }
     }
   }
+}
+
+LV_CharacterDetails(LV, RowNumber, SetupArray) {
+  UnicodeKey := LV.GetText(RowNumber, 4)
+  SetCharacterInfoPanel(UnicodeKey,
+    SetupArray[1], SetupArray[2], SetupArray[3],
+    SetupArray[4], SetupArray[5], SetupArray[6],
+    SetupArray[7])
 }
 
 
