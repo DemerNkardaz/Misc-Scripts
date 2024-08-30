@@ -101,7 +101,11 @@ CtrlX := Chr(24)
 CtrlY := Chr(25)
 CtrlZ := Chr(26)
 SpaceKey := Chr(32)
-
+ExclamationMark := Chr(33)
+CommercialAt := Chr(64)
+QuotationDouble := Chr(34)
+Solidus := Chr(47)
+ReverseSolidus := Chr(92)
 
 FormatHotKey(HKey, Modifier := "") {
   MakeString := ""
@@ -110,7 +114,7 @@ FormatHotKey(HKey, Modifier := "") {
     CtrlA, "LCtrl [a][ф]", CtrlB, "LCtrl [b][и]", CtrlC, "LCtrl [c][с]", CtrlD, "LCtrl [d][в]", CtrlE, "LCtrl [e][у]", CtrlF, "LCtrl [f][а]", CtrlG, "LCtrl [g][п]",
     CtrlH, "LCtrl [h][р]", CtrlI, "LCtrl [i][ш]", CtrlJ, "LCtrl [j][о]", CtrlK, "LCtrl [k][л]", CtrlL, "LCtrl [l][д]", CtrlM, "LCtrl [m][ь]", CtrlN, "LCtrl [n][т]",
     CtrlO, "LCtrl [o][щ]", CtrlP, "LCtrl [p][з]", CtrlQ, "LCtrl [q][й]", CtrlR, "LCtrl [r][к]", CtrlS, "LCtrl [s][ы]", CtrlT, "LCtrl [t][е]", CtrlU, "LCtrl [u][г]",
-    CtrlV, "LCtrl [v][м]", CtrlW, "LCtrl [w][ц]", CtrlX, "LCtrl [x][ч]", CtrlY, "LCtrl [y][н]", CtrlZ, "LCtrl [z][я]", SpaceKey, "[Space]",
+    CtrlV, "LCtrl [v][м]", CtrlW, "LCtrl [w][ц]", CtrlX, "LCtrl [x][ч]", CtrlY, "LCtrl [y][н]", CtrlZ, "LCtrl [z][я]", SpaceKey, "[Space]", ExclamationMark, "[!]", CommercialAt, "[@]", QuotationDouble, "[" . QuotationDouble . "]",
   )
   for key, value in SpecialCommandsMap {
     if (HKey = key)
@@ -317,7 +321,7 @@ Characters := Map(
       symbol: "◌̂"
     },
     "0000 caron", {
-      unicode: "{U+0302}", html: "&#770;",
+      unicode: "{U+030C}", html: "&#780;",
       titles: Map("ru", "Гачек", "en", "Caron"),
       tags: ["caron", "карон", "гачек"],
       group: ["Diacritics Primary", ["C", "С"]],
@@ -332,7 +336,7 @@ Characters := Map(
       symbol: "◌̭"
     },
     "0000 caron_below", {
-      unicode: "{U+0302}", html: "&#770;",
+      unicode: "{U+032C}", html: "&#812;",
       titles: Map("ru", "Гачек снизу", "en", "Caron Below"),
       tags: ["caron below", "карон снизу", "гачек снизу"],
       group: ["Diacritics Secondary", ["C", "С"]],
@@ -457,6 +461,98 @@ Characters := Map(
       tags: ["retroflex hook below", "ретрофлексный крюк"],
       group: ["Diacritics Secondary", ["H", "Р"]],
       symbol: "◌̢"
+    },
+    ;
+    ;
+    ; ? Шпации
+    "0000 emspace", {
+      unicode: "{U+2003}", html: "&#8195;",
+      titles: Map("ru", "Круглая шпация", "en", "Em Space"),
+      tags: ["em space", "emspace", "emsp", "круглая шпация"],
+      group: ["Spaces", "1"],
+      show_on_fast_keys: True,
+      symbol: "[ ]"
+    },
+    "0000 emquad", {
+      unicode: "{U+2001}", html: "&#8193;",
+      titles: Map("ru", "Em-квадрат", "en", "Em Quad"),
+      tags: ["em quad", "emquad", "emqd", "em-квадрат"],
+      group: ["Spaces", ExclamationMark],
+      show_on_fast_keys: True,
+      symbol: "[ ]"
+    },
+    "0000 ensp", {
+      unicode: "{U+2002}", html: "&#8194;",
+      titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
+      tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
+      group: ["Spaces", "2"],
+      symbol: "[ ]"
+    },
+    "0000 enquad", {
+      unicode: "{U+2000}", html: "&#8192;",
+      titles: Map("ru", "En-квадрат", "en", "En Quad"),
+      tags: ["en quad", "enquad", "enqd", "en-квадрат"],
+      group: ["Spaces", [CommercialAt, QuotationDouble]],
+      symbol: "[ ]"
+    },
+    ;
+    ;
+    ; ? Special Characters
+    "0000 low_asterisk", {
+      unicode: "{U+204E}", html: "&#8270;",
+      titles: Map("ru", "Нижний астериск", "en", "Low Asterisk"),
+      tags: ["low asterisk", "нижний астериск"],
+      group: ["Special Characters", ["a", "ф"]],
+      symbol: "⁎"
+    },
+    "0000 two_asterisks", {
+      unicode: "{U+2051}", html: "&#8273;",
+      titles: Map("ru", "Два астериска", "en", "Two Asterisks"),
+      tags: ["two asterisks", "два астериска"],
+      group: ["Special Characters", ["A", "Ф"]],
+      symbol: "⁑"
+    },
+    "0000 asterism", {
+      unicode: "{U+2042}", html: "&#8258;",
+      titles: Map("ru", "Астеризм", "en", "Asterism"),
+      tags: ["asterism", "астеризм"],
+      group: ["Special Characters", CtrlA],
+      symbol: "⁂"
+    },
+    "0000 dagger", {
+      unicode: "{U+2020}", html: "&dagger;",
+      titles: Map("ru", "Крест", "en", "Dagger"),
+      tags: ["dagger", "даггер", "крест"],
+      group: ["Special Characters", ["t", "е"]],
+      symbol: "†"
+    },
+    "0000 dagger_double", {
+      unicode: "{U+2021}", html: "&Dagger;",
+      titles: Map("ru", "Двойной крест", "en", "Double Dagger"),
+      tags: ["double dagger", "двойной даггер", "двойной крест"],
+      group: ["Special Characters", ["T", "Е"]],
+      symbol: "‡"
+    },
+    "0000 dagger_tripple", {
+      unicode: "{U+2E4B}", html: "&#11851;",
+      titles: Map("ru", "Тройной крест", "en", "Tripple Dagger"),
+      tags: ["tripple dagger", "тройной даггер", "тройной крест"],
+      group: ["Special Characters", CtrlT],
+      symbol: "⹋"
+    },
+    "0000 fraction_slash", {
+      unicode: "{U+2044}", html: "&#8260;",
+      titles: Map("ru", "Дробная черта", "en", "Fraction Slash"),
+      tags: ["fraction slash", "дробная черта"],
+      group: ["Special Characters", "/"],
+      symbol: "⁄ (½…)"
+    },
+    "0000 grapheme_joiner", {
+      unicode: "{U+034F}", html: "&#847;",
+      titles: Map("ru", "Соединитель графем", "en", "Grapheme Joiner"),
+      tags: ["grapheme joiner", "соединитель графем"],
+      group: ["Special Characters", ["g", "п"]],
+      symbol: "◌͏"
     },
     ;
     ;
@@ -829,6 +925,8 @@ InputBridgeOld(BindsArray) {
   }
   ih.Stop()
 }
+
+
 InputBridge(GroupKey) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
@@ -1161,11 +1259,11 @@ Ligaturise(SmeltingMode := "InputBox") {
 }
 <#<!F6:: {
   ShowInfoMessage(["Активна группа специальных символов", "Special characters group has been activated"], "[F6] " . DSLPadTitle, SkipGroupMessage)
-  InputBridgeOld(BindSpecialF6)
+  InputBridge("Special Characters")
 }
 <#<!Space:: {
   ShowInfoMessage(["Активна группа шпаций", "Space group has been activated"], "[Space] " . DSLPadTitle, SkipGroupMessage)
-  InputBridgeOld(BindSpaces)
+  InputBridge("Spaces")
 }
 <#<!f:: SearchKey()
 <#<!u:: InsertUnicodeKey()
@@ -1244,6 +1342,9 @@ Constructor()
   DSLContent["ru"] := {}
   DSLContent["en"] := {}
 
+  DSLContent["ru"].GBoxSelected := "Знак"
+  DSLContent["en"].GBoxSelected := "Character"
+
   DSLContent["UI"].TabsNCols := [
     [Map(
       "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Плавильня", "Быстрые ключи", "О программе", "Полезное"],
@@ -1272,7 +1373,7 @@ Constructor()
   ColumnAreaRules := "+NoSort -Multi"
   ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
 
-  Tab := DSLPadGUI.Add("Tab3", "w650 h550", DSLContent["UI"].TabsNCols[1][1])
+  Tab := DSLPadGUI.Add("Tab3", "w850 h550", DSLContent["UI"].TabsNCols[1][1])
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(1)
 
@@ -1293,7 +1394,38 @@ Constructor()
   {
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  CommonInfoBox := {
+    body: "x650 y35 w200 h510",
+    bodyText: DSLContent[LanguageCode].GBoxSelected,
+    previewFrame: "x685 y80 w128 h115 Center",
+    preview: "x685 y80 w128 h115 readonly Center -VScroll -HScroll",
+    previewText: "◌͏",
+    title: "x655 y200 w190 h150 Center",
+    titleText: "N/A",
+    unicode: "x685 y480 w128 h24 readonly Center -VScroll -HScroll",
+    unicodeText: "U+0000",
+    html: "x685 y510 w128 h24 readonly Center -VScroll -HScroll",
+    htmlText: "&#x0000;",
+  }
+
+  GrouBoxDiacritic := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
+    preview: DSLPadGUI.Add("Edit", "vDiacriticSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
+    title: DSLPadGUI.Add("Text", "vDiacriticTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    unicode: DSLPadGUI.Add("Edit", "vDiacriticUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    html: DSLPadGUI.Add("Edit", "vDiacriticHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+  }
+
+  GrouBoxDiacritic.preview.SetFont("s72")
+  GrouBoxDiacritic.title.SetFont("s14")
+  GrouBoxDiacritic.unicode.SetFont("s12")
+  GrouBoxDiacritic.html.SetFont("s12")
+
+
   Tab.UseTab(2)
+
 
   Tab.UseTab(3)
   DSLContent["BindList"].Spaces := [
@@ -1320,6 +1452,9 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].Spaces)
 
+  DSLContent["BindList"].TabSpaces := []
+  InsertCharactersGroups(DSLContent["BindList"].TabSpaces, "Spaces", "Win Alt Space", False)
+  InsertCharactersGroups(DSLContent["BindList"].TabSpaces, "Special Characters", "Win Alt F6")
 
   SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
   SpacesLV.ModifyCol(1, ColumnWidths[1])
@@ -1327,10 +1462,24 @@ Constructor()
   SpacesLV.ModifyCol(3, ColumnWidths[3])
   SpacesLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent["BindList"].Spaces
+  for item in DSLContent["BindList"].TabSpaces
   {
     SpacesLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  GrouBoxSpaces := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
+    preview: DSLPadGUI.Add("Edit", "vSpacesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
+    title: DSLPadGUI.Add("Text", "vSpacesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    unicode: DSLPadGUI.Add("Edit", "vSpacesUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    html: DSLPadGUI.Add("Edit", "vSpacesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+  }
+
+  GrouBoxSpaces.preview.SetFont("s72")
+  GrouBoxSpaces.title.SetFont("s14")
+  GrouBoxSpaces.unicode.SetFont("s12")
+  GrouBoxSpaces.html.SetFont("s12")
 
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
@@ -1373,7 +1522,7 @@ Constructor()
   DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
   DSLPadGUI.SetFont("s13")
-  ConfigFileBtn := DSLPadGUI.Add("Button", "x622 y519 w32 h32", "")
+  ConfigFileBtn := DSLPadGUI.Add("Button", "x622 y519 w32 h32", "⚙️")
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
 
 
@@ -1457,6 +1606,20 @@ Constructor()
   {
     LigaturesLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  GrouBoxLigatures := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
+    preview: DSLPadGUI.Add("Edit", "vLigaturesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
+    title: DSLPadGUI.Add("Text", "vLigaturesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    unicode: DSLPadGUI.Add("Edit", "vLigaturesUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    html: DSLPadGUI.Add("Edit", "vLigaturesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+  }
+
+  GrouBoxLigatures.preview.SetFont("s72")
+  GrouBoxLigatures.title.SetFont("s14")
+  GrouBoxLigatures.unicode.SetFont("s12")
+  GrouBoxLigatures.html.SetFont("s12")
 
 
   Tab.UseTab(6)
@@ -1607,13 +1770,37 @@ Constructor()
   LigaturesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   CommandsLV.OnEvent("DoubleClick", LV_RunCommand)
 
+  DiacriticLV.OnEvent("ItemFocus", (LV, RowNumber) =>
+    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+      "DiacriticSymbol",
+      "DiacriticTitle",
+      "DiacriticUnicode",
+      "DiacriticHTML",
+      GrouBoxDiacritic
+    ))
+  SpacesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
+    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+      "SpacesSymbol",
+      "SpacesTitle",
+      "SpacesUnicode",
+      "SpacesHTML",
+      GrouBoxSpaces
+    ))
+  LigaturesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
+    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+      "vLigaturesSymbol",
+      "vLigaturesTitle",
+      "vLigaturesUnicode",
+      "vLigaturesHTML",
+      GrouBoxLigatures
+    ))
 
   DSLPadGUI.Title := DSLPadTitle
 
   screenWidth := A_ScreenWidth
   screenHeight := A_ScreenHeight
 
-  windowWidth := 650
+  windowWidth := 850
   windowHeight := 562
   xPos := screenWidth - windowWidth - 40
   yPos := screenHeight - windowHeight - 75
@@ -1624,13 +1811,42 @@ Constructor()
   return DSLPadGUI
 }
 
+LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, PreviewUnicode, PreviewHTML, PreviewGroup) {
+  LanguageCode := GetLanguageCode()
+  UnicodeKey := LV.GetText(RowNumber, 4)
+  if (UnicodeKey != "") {
+    for characterEntry, value in Characters {
+      if (UnicodeKey == UniTrim(value.unicode)) {
+        if (StrLen(value.symbol) > 3) {
+          TargetGroup[PreviewObject].Text := SubStr(value.symbol, 1, 1)
+        } else {
+          TargetGroup[PreviewObject].Text := value.symbol
+        }
+
+        if (StrLen(TargetGroup[PreviewObject].Text) > 2) {
+          PreviewGroup.preview.SetFont("s45")
+        } else {
+          PreviewGroup.preview.SetFont("s72")
+        }
+
+        titleText := HasProp(value, "titlesAlt") ? value.titlesAlt[LanguageCode] : value.titles[LanguageCode]
+        TargetGroup[PreviewTitle].Text := titleText
+
+        TargetGroup[PreviewUnicode].Text := SubStr(value.unicode, 2, StrLen(value.unicode) - 2)
+
+        TargetGroup[PreviewHTML].Text := value.html
+      }
+    }
+  }
+}
+
+
 LV_OpenUnicodeWebsite(LV, RowNumber)
 {
   LanguageCode := GetLanguageCode()
   SelectedRow := LV.GetText(RowNumber, 4)
   URIComponent := "https://symbl.cc/" . LanguageCode . "/" . SelectedRow
-  if (SelectedRow != "")
-  {
+  if (SelectedRow != "") {
     IsCtrlDown := GetKeyState("LControl")
     if (IsCtrlDown) {
       UnicodeCodePoint := "0x" . SelectedRow
@@ -1908,5 +2124,5 @@ ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) 
 
 
 TraySetIcon(ApplicationIcon[1], ApplicationIcon[2])
-
+A_IconTip := DSLPadTitle
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
