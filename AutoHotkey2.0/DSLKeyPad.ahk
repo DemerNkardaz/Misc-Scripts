@@ -1426,6 +1426,33 @@ Constructor()
 
   Tab.UseTab(2)
 
+  LettersLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  LettersLV.ModifyCol(1, ColumnWidths[1])
+  LettersLV.ModifyCol(2, ColumnWidths[2])
+  LettersLV.ModifyCol(3, ColumnWidths[3])
+  LettersLV.ModifyCol(4, ColumnWidths[4])
+
+  DSLContent["BindList"].TabLetters := []
+
+  for item in DSLContent["BindList"].TabLetters
+  {
+    LettersLV.Add(, item[1], item[2], item[3], item[4])
+  }
+
+  GrouBoxLetters := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
+    preview: DSLPadGUI.Add("Edit", "vLettersSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
+    title: DSLPadGUI.Add("Text", "vLettersTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    unicode: DSLPadGUI.Add("Edit", "vLettersUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    html: DSLPadGUI.Add("Edit", "vLettersHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+  }
+
+  GrouBoxLetters.preview.SetFont("s72")
+  GrouBoxLetters.title.SetFont("s14")
+  GrouBoxLetters.unicode.SetFont("s12")
+  GrouBoxLetters.html.SetFont("s12")
+
 
   Tab.UseTab(3)
   DSLContent["BindList"].Spaces := [
@@ -1522,7 +1549,7 @@ Constructor()
   DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
   DSLPadGUI.SetFont("s13")
-  ConfigFileBtn := DSLPadGUI.Add("Button", "x622 y519 w32 h32", "⚙️")
+  ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32", "⚙️")
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
 
 
@@ -1623,7 +1650,7 @@ Constructor()
 
 
   Tab.UseTab(6)
-  DSLContent["BindList"].FasKeysLV := [
+  DSLContent["BindList"].FastKeysLV := [
     ["", "LCtrl LAlt", "", ""],
     [Map("ru", "Акут", "en", "Acute"), "[a][ф]", "◌́", UniTrim(CharCodes.acute[1])],
     [Map("ru", "Двойной Акут", "en", "Double Acute"), "LShift [a][ф]", "◌̋", UniTrim(CharCodes.dacute[1])],
@@ -1662,18 +1689,32 @@ Constructor()
     [Map("ru", "Соединитель графем ✅", "en", "Grapheme Joiner ✅"), "LShift RShift [g]", "◌͏", UniTrim(CharCodes.grapjoiner[1])],
   ]
 
-  LocaliseArrayKeys(DSLContent["BindList"].FasKeysLV)
+  LocaliseArrayKeys(DSLContent["BindList"].FastKeysLV)
 
-  FasKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
-  FasKeysLV.ModifyCol(1, ColumnWidths[1])
-  FasKeysLV.ModifyCol(2, ColumnWidths[2])
-  FasKeysLV.ModifyCol(3, ColumnWidths[3])
-  FasKeysLV.ModifyCol(4, ColumnWidths[4])
+  FastKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  FastKeysLV.ModifyCol(1, ColumnWidths[1])
+  FastKeysLV.ModifyCol(2, ColumnWidths[2])
+  FastKeysLV.ModifyCol(3, ColumnWidths[3])
+  FastKeysLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent["BindList"].FasKeysLV
+  for item in DSLContent["BindList"].FastKeysLV
   {
-    FasKeysLV.Add(, item[1], item[2], item[3], item[4])
+    FastKeysLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  GrouBoxFastKeys := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
+    preview: DSLPadGUI.Add("Edit", "vFastKeysSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
+    title: DSLPadGUI.Add("Text", "vFastKeysTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    unicode: DSLPadGUI.Add("Edit", "vFastKeysUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    html: DSLPadGUI.Add("Edit", "vFastKeysHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+  }
+
+  GrouBoxFastKeys.preview.SetFont("s72")
+  GrouBoxFastKeys.title.SetFont("s14")
+  GrouBoxFastKeys.unicode.SetFont("s12")
+  GrouBoxFastKeys.html.SetFont("s12")
 
 
   Tab.UseTab(7)
@@ -1720,13 +1761,13 @@ Constructor()
 
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
 
-  BtnAutoLoad := DSLPadGUI.Add("Button", "x454 y30 w200 h32", DSLContent[LanguageCode].About.AutoLoadAdd)
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x654 y30 w200 h32", DSLContent[LanguageCode].About.AutoLoadAdd)
   BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
 
-  BtnSwitchRU := DSLPadGUI.Add("Button", "x454 y63 w32 h32", "РУ")
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x654 y63 w32 h32", "РУ")
   BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
 
-  BtnSwitchEN := DSLPadGUI.Add("Button", "x487 y63 w32 h32", "EN")
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x687 y63 w32 h32", "EN")
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
   Tab.UseTab(8)
@@ -1765,8 +1806,9 @@ Constructor()
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
 
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  LettersLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   SpacesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
-  FasKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
+  FastKeysLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   LigaturesLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   CommandsLV.OnEvent("DoubleClick", LV_RunCommand)
 
@@ -1778,6 +1820,14 @@ Constructor()
       "DiacriticHTML",
       GrouBoxDiacritic
     ))
+  LettersLV.OnEvent("ItemFocus", (LV, RowNumber) =>
+    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+      "LettersSymbol",
+      "LettersTitle",
+      "LettersUnicode",
+      "LettersHTML",
+      GrouBoxLetters
+    ))
   SpacesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "SpacesSymbol",
@@ -1786,12 +1836,20 @@ Constructor()
       "SpacesHTML",
       GrouBoxSpaces
     ))
+  FastKeysLV.OnEvent("ItemFocus", (LV, RowNumber) =>
+    LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
+      "FastKeysSymbol",
+      "FastKeysTitle",
+      "FastKeysUnicode",
+      "FastKeysHTML",
+      GrouBoxFastKeys
+    ))
   LigaturesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
-      "vLigaturesSymbol",
-      "vLigaturesTitle",
-      "vLigaturesUnicode",
-      "vLigaturesHTML",
+      "LigaturesSymbol",
+      "LigaturesTitle",
+      "LigaturesUnicode",
+      "LigaturesHTML",
       GrouBoxLigatures
     ))
 
