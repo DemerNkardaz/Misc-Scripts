@@ -1579,15 +1579,37 @@ Constructor()
   }
 
 
+  DSLContent["ru"].AutoLoadAdd := "Добавить в автозагрузку"
+  DSLContent["en"].AutoLoadAdd := "Add to Autoload"
+
+
   DSLPadGUI.SetFont("s9")
   DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
-  DSLPadGUI.SetFont("s13")
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x410 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
+  BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
+
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x344 y519 w32 h32", "РУ")
+  BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
+
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x377 y519 w32 h32", "EN")
+  BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
+
   ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32", "⚙️")
+  ConfigFileBtn.SetFont("s13")
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
 
 
   DSLPadGUI.SetFont("s11")
+
+  CommandsInfoBox := {
+    bodyText: Map("ru", "Команда", "en", "Command"),
+  }
+
+  GrouBoxCommands := {
+    group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommandsInfoBox.bodyText[LanguageCode]),
+  }
+
 
   Tab.UseTab(5)
   DSLContent["BindList"].LigaturesInput := [
@@ -1769,7 +1791,6 @@ Constructor()
 
   Tab.UseTab(7)
   DSLContent["ru"].About := {}
-  DSLContent["ru"].About.AutoLoadAdd := "Добавить в автозагрузку"
   DSLContent["ru"].About.Title := "DSL KeyPad"
   DSLContent["ru"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
   DSLContent["ru"].About.Repository := "Папка AHK репозитория: "
@@ -1784,7 +1805,7 @@ Constructor()
   ]
 
   DSLContent["en"].About := {}
-  DSLContent["en"].About.AutoLoadAdd := "Add to Autoload"
+
   DSLContent["en"].About.Title := "DSL KeyPad"
   DSLContent["en"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
   DSLContent["en"].About.Repository := "AHK Folder on Repository: "
@@ -1811,14 +1832,6 @@ Constructor()
 
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
 
-  BtnAutoLoad := DSLPadGUI.Add("Button", "x654 y30 w200 h32", DSLContent[LanguageCode].About.AutoLoadAdd)
-  BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
-
-  BtnSwitchRU := DSLPadGUI.Add("Button", "x654 y63 w32 h32", "РУ")
-  BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
-
-  BtnSwitchEN := DSLPadGUI.Add("Button", "x687 y63 w32 h32", "EN")
-  BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
   Tab.UseTab(8)
   DSLContent["ru"].Useful := {}
@@ -1961,12 +1974,13 @@ GetRandomByGroups(GroupNames) {
       }
     }
   }
-  if TemporaryStorage.Length > 0 {
-    return TemporaryStorage[Random(TemporaryStorage.Length)]
-  } else {
-    return ""
+
+  if (TemporaryStorage.Length > 0) {
+    randomIndex := Random(1, TemporaryStorage.Length)
+    return TemporaryStorage[randomIndex]
   }
 }
+
 
 SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
   LanguageCode := GetLanguageCode()
