@@ -209,6 +209,7 @@ Characters := Map(
   },
     "0000 acute", {
       unicode: "{U+0301}", html: "&#769;",
+      latex: "\' \acute",
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
@@ -937,7 +938,8 @@ InputBridge(GroupKey) {
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupKey) {
       characterKeys := value.group[2]
-      characterCodes := [value.unicode, value.html]
+      characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
+      characterCodes := [value.unicode, characterEntity]
 
       if IsObject(characterKeys) {
         for _, key in characterKeys {
@@ -995,13 +997,14 @@ SearchKey() {
   }
 
   Found := False
-  for key, values in Characters {
-    for _, tag in values.tags {
+  for key, value in Characters {
+    for _, tag in value.tags {
       if (StrLower(PromptValue) = StrLower(tag)) {
         if InputHTMLEntities {
-          SendText(values.html)
+          characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
+          SendText(characterEntity)
         } else {
-          Send(values.unicode)
+          Send(value.unicode)
         }
         IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
         Found := True
@@ -1403,10 +1406,18 @@ Constructor()
     previewText: "◌͏",
     title: "x655 y200 w190 h150 Center",
     titleText: "N/A",
-    unicode: "x685 y480 w128 h24 readonly Center -VScroll -HScroll",
+    alt: "x685 y430 w128 h24 readonly Center -VScroll -HScroll",
+    altTitle: "x685 y415 w128 h24",
+    altTitleText: Map("ru", "Альт-код", "en", "Alt-code"),
+    altText: "N/A",
+    unicode: "x685 y470 w128 h24 readonly Center -VScroll -HScroll",
+    unicodeTitle: "x685 y455 w128 h24",
+    unicodeTitleText: Map("ru", "Юникод", "en", "Unicode"),
     unicodeText: "U+0000",
     html: "x685 y510 w128 h24 readonly Center -VScroll -HScroll",
     htmlText: "&#x0000;",
+    htmlTitle: "x685 y495 w128 h24",
+    htmlTitleText: Map("ru", "Сущность/Мнемоника", "en", "Entity"),
   }
 
   GrouBoxDiacritic := {
@@ -1414,12 +1425,20 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vDiacriticSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vDiacriticTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
+    alt: DSLPadGUI.Add("Edit", "vDiacriticAlt " . commonInfoBox.alt, CommonInfoBox.altText),
+    ;
+    unicodeTitle: DSLPadGUI.Add("Text", CommonInfoBox.unicodeTitle, CommonInfoBox.unicodeTitleText[LanguageCode]).SetFont("s9"),
     unicode: DSLPadGUI.Add("Edit", "vDiacriticUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    ;
+    htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vDiacriticHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
   GrouBoxDiacritic.preview.SetFont("s72")
   GrouBoxDiacritic.title.SetFont("s14")
+  GrouBoxDiacritic.alt.SetFont("s12")
   GrouBoxDiacritic.unicode.SetFont("s12")
   GrouBoxDiacritic.html.SetFont("s12")
 
@@ -1444,12 +1463,20 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vLettersSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vLettersTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
+    alt: DSLPadGUI.Add("Edit", "vLettersAlt " . commonInfoBox.alt, CommonInfoBox.altText),
+    ;
+    unicodeTitle: DSLPadGUI.Add("Text", CommonInfoBox.unicodeTitle, CommonInfoBox.unicodeTitleText[LanguageCode]).SetFont("s9"),
     unicode: DSLPadGUI.Add("Edit", "vLettersUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    ;
+    htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vLettersHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
   GrouBoxLetters.preview.SetFont("s72")
   GrouBoxLetters.title.SetFont("s14")
+  GrouBoxLetters.alt.SetFont("s12")
   GrouBoxLetters.unicode.SetFont("s12")
   GrouBoxLetters.html.SetFont("s12")
 
@@ -1499,12 +1526,20 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vSpacesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vSpacesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
+    alt: DSLPadGUI.Add("Edit", "vSpacesAlt " . commonInfoBox.alt, CommonInfoBox.altText),
+    ;
+    unicodeTitle: DSLPadGUI.Add("Text", CommonInfoBox.unicodeTitle, CommonInfoBox.unicodeTitleText[LanguageCode]).SetFont("s9"),
     unicode: DSLPadGUI.Add("Edit", "vSpacesUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    ;
+    htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vSpacesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
   GrouBoxSpaces.preview.SetFont("s72")
   GrouBoxSpaces.title.SetFont("s14")
+  GrouBoxSpaces.alt.SetFont("s12")
   GrouBoxSpaces.unicode.SetFont("s12")
   GrouBoxSpaces.html.SetFont("s12")
 
@@ -1639,12 +1674,20 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vLigaturesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vLigaturesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
+    alt: DSLPadGUI.Add("Edit", "vLigaturesAlt " . commonInfoBox.alt, CommonInfoBox.altText),
+    ;
+    unicodeTitle: DSLPadGUI.Add("Text", CommonInfoBox.unicodeTitle, CommonInfoBox.unicodeTitleText[LanguageCode]).SetFont("s9"),
     unicode: DSLPadGUI.Add("Edit", "vLigaturesUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    ;
+    htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vLigaturesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
   GrouBoxLigatures.preview.SetFont("s72")
   GrouBoxLigatures.title.SetFont("s14")
+  GrouBoxLigatures.alt.SetFont("s12")
   GrouBoxLigatures.unicode.SetFont("s12")
   GrouBoxLigatures.html.SetFont("s12")
 
@@ -1707,12 +1750,20 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vFastKeysSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vFastKeysTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
+    alt: DSLPadGUI.Add("Edit", "vFastKeysAlt " . commonInfoBox.alt, CommonInfoBox.altText),
+    ;
+    unicodeTitle: DSLPadGUI.Add("Text", CommonInfoBox.unicodeTitle, CommonInfoBox.unicodeTitleText[LanguageCode]).SetFont("s9"),
     unicode: DSLPadGUI.Add("Edit", "vFastKeysUnicode " . commonInfoBox.unicode, CommonInfoBox.unicodeText),
+    ;
+    htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vFastKeysHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
   GrouBoxFastKeys.preview.SetFont("s72")
   GrouBoxFastKeys.title.SetFont("s14")
+  GrouBoxFastKeys.alt.SetFont("s12")
   GrouBoxFastKeys.unicode.SetFont("s12")
   GrouBoxFastKeys.html.SetFont("s12")
 
@@ -1816,6 +1867,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "DiacriticSymbol",
       "DiacriticTitle",
+      "DiacriticAlt",
       "DiacriticUnicode",
       "DiacriticHTML",
       GrouBoxDiacritic
@@ -1824,6 +1876,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "LettersSymbol",
       "LettersTitle",
+      "LettersAlt",
       "LettersUnicode",
       "LettersHTML",
       GrouBoxLetters
@@ -1832,6 +1885,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "SpacesSymbol",
       "SpacesTitle",
+      "SpacesAlt",
       "SpacesUnicode",
       "SpacesHTML",
       GrouBoxSpaces
@@ -1840,6 +1894,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "FastKeysSymbol",
       "FastKeysTitle",
+      "FastKeysAlt",
       "FastKeysUnicode",
       "FastKeysHTML",
       GrouBoxFastKeys
@@ -1848,6 +1903,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, DSLPadGUI,
       "LigaturesSymbol",
       "LigaturesTitle",
+      "LigaturesAlt",
       "LigaturesUnicode",
       "LigaturesHTML",
       GrouBoxLigatures
@@ -1869,7 +1925,7 @@ Constructor()
   return DSLPadGUI
 }
 
-LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, PreviewUnicode, PreviewHTML, PreviewGroup) {
+LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
   LanguageCode := GetLanguageCode()
   UnicodeKey := LV.GetText(RowNumber, 4)
   if (UnicodeKey != "") {
@@ -1892,7 +1948,24 @@ LV_CharacterDetails(LV, RowNumber, TargetGroup, PreviewObject, PreviewTitle, Pre
 
         TargetGroup[PreviewUnicode].Text := SubStr(value.unicode, 2, StrLen(value.unicode) - 2)
 
-        TargetGroup[PreviewHTML].Text := value.html
+        if (HasProp(value, "entity")) {
+          TargetGroup[PreviewHTML].Text := value.html . " " . value.entity
+        } else {
+          TargetGroup[PreviewHTML].Text := value.html
+        }
+
+        if (StrLen(TargetGroup[PreviewHTML].Text) > 9
+          && StrLen(TargetGroup[PreviewHTML].Text) < 15) {
+          PreviewGroup.html.SetFont("s10")
+        } else if (StrLen(TargetGroup[PreviewHTML].Text) > 14) {
+          PreviewGroup.html.SetFont("s9")
+        } else {
+          PreviewGroup.html.SetFont("s12")
+        }
+
+        if (HasProp(value, "altcode")) {
+          TargetGroup[PreviewAlt].Text := value.altcode
+        }
       }
     }
   }
