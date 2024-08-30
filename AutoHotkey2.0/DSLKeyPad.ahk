@@ -1323,6 +1323,13 @@ DSLPadTitle := "DSL KeyPad (αλφα)"
 }
 
 
+CommonInfoFonts := {
+  preview: "Cambria",
+  previewSize: "s72",
+  previewSmaller: "s40",
+  titleSize: "s14",
+}
+
 SwitchLanguage(LanguageCode) {
   IniWrite LanguageCode, ConfigFile, "Settings", "UserLanguage"
 
@@ -1400,10 +1407,10 @@ Constructor()
   CommonInfoBox := {
     body: "x650 y35 w200 h510",
     bodyText: DSLContent[LanguageCode].GBoxSelected,
-    previewFrame: "x685 y80 w128 h115 Center",
-    preview: "x685 y80 w128 h115 readonly Center -VScroll -HScroll",
+    previewFrame: "x685 y80 w128 h128 Center",
+    preview: "x685 y80 w128 h128 readonly Center -VScroll -HScroll",
     previewText: "◌͏",
-    title: "x655 y200 w190 h150 Center",
+    title: "x655 y215 w190 h150 Center",
     titleText: "N/A",
     alt: "x685 y430 w128 h24 readonly Center -VScroll -HScroll",
     altTitle: "x685 y415 w128 h24",
@@ -1418,6 +1425,7 @@ Constructor()
     htmlTitle: "x685 y495 w128 h24",
     htmlTitleText: Map("ru", "Сущность/Мнемоника", "en", "Entity"),
   }
+
 
   GrouBoxDiacritic := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -1435,8 +1443,8 @@ Constructor()
     html: DSLPadGUI.Add("Edit", "vDiacriticHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
-  GrouBoxDiacritic.preview.SetFont("s72")
-  GrouBoxDiacritic.title.SetFont("s14")
+  GrouBoxDiacritic.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
+  GrouBoxDiacritic.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
   GrouBoxDiacritic.alt.SetFont("s12")
   GrouBoxDiacritic.unicode.SetFont("s12")
   GrouBoxDiacritic.html.SetFont("s12")
@@ -1473,8 +1481,8 @@ Constructor()
     html: DSLPadGUI.Add("Edit", "vLettersHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
-  GrouBoxLetters.preview.SetFont("s72")
-  GrouBoxLetters.title.SetFont("s14")
+  GrouBoxLetters.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
+  GrouBoxLetters.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
   GrouBoxLetters.alt.SetFont("s12")
   GrouBoxLetters.unicode.SetFont("s12")
   GrouBoxLetters.html.SetFont("s12")
@@ -1536,8 +1544,8 @@ Constructor()
     html: DSLPadGUI.Add("Edit", "vSpacesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
-  GrouBoxSpaces.preview.SetFont("s72")
-  GrouBoxSpaces.title.SetFont("s14")
+  GrouBoxSpaces.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
+  GrouBoxSpaces.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
   GrouBoxSpaces.alt.SetFont("s12")
   GrouBoxSpaces.unicode.SetFont("s12")
   GrouBoxSpaces.html.SetFont("s12")
@@ -1596,7 +1604,7 @@ Constructor()
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
   ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32", "⚙️")
-  ConfigFileBtn.SetFont("s13")
+  ConfigFileBtn.SetFont("s13",)
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
 
 
@@ -1706,8 +1714,8 @@ Constructor()
     html: DSLPadGUI.Add("Edit", "vLigaturesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
-  GrouBoxLigatures.preview.SetFont("s72")
-  GrouBoxLigatures.title.SetFont("s14")
+  GrouBoxLigatures.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
+  GrouBoxLigatures.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
   GrouBoxLigatures.alt.SetFont("s12")
   GrouBoxLigatures.unicode.SetFont("s12")
   GrouBoxLigatures.html.SetFont("s12")
@@ -1782,8 +1790,8 @@ Constructor()
     html: DSLPadGUI.Add("Edit", "vFastKeysHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
   }
 
-  GrouBoxFastKeys.preview.SetFont("s72")
-  GrouBoxFastKeys.title.SetFont("s14")
+  GrouBoxFastKeys.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
+  GrouBoxFastKeys.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
   GrouBoxFastKeys.alt.SetFont("s12")
   GrouBoxFastKeys.unicode.SetFont("s12")
   GrouBoxFastKeys.html.SetFont("s12")
@@ -1999,9 +2007,9 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
         }
 
         if (StrLen(TargetGroup[PreviewObject].Text) > 2) {
-          PreviewGroup.preview.SetFont("s45")
+          PreviewGroup.preview.SetFont(CommonInfoFonts.previewSmaller)
         } else {
-          PreviewGroup.preview.SetFont("s72")
+          PreviewGroup.preview.SetFont(CommonInfoFonts.previewSize)
         }
 
         titleText := HasProp(value, "titlesAlt") ? value.titlesAlt[LanguageCode] : value.titles[LanguageCode]
