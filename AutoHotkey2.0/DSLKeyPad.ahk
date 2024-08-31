@@ -75,11 +75,16 @@ GetLanguageCode()
     return ValidateLanguage(SysLanguageKey)
   }
 }
-AppVersion := [0, 1, 1]
+AppVersion := [0, 1, 0]
+CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
+UpdateVersionString := ""
 
+RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
+RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
+UpdateAvailable := False
 
 GetUpdate() {
-  global AppVersion
+  global AppVersion, RawSource
   LanguageCode := GetLanguageCode()
   Messages := Map()
   Messages["ru"] := {}
@@ -91,13 +96,9 @@ GetUpdate() {
   Messages["en"].UpdateSuccessful := "Update successful."
   Messages["en"].UpdateFailed := "Update failed."
   Messages["en"].NoAnyUpdates := "You already have the latest version."
-
-  RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
   CurrentPath := A_ScriptFullPath
-  CurrentPath2 := A_ScriptDir "\DSLKeyPad.ahk"
-  UpdatePath := CurrentPath2 . "-GettingUpdate"
+  UpdatePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
 
-  ; Загрузка файла с GitHub и сохранение его на диск
   http := ComObject("WinHttp.WinHttpRequest.5.1")
   http.Open("GET", RawSource, true)
   http.Send()
@@ -124,11 +125,11 @@ GetUpdate() {
 
   Loop 3 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
-      ; FileDelete(CurrentPath) ; Disabled during test
+      FileDelete(CurrentPath)
       FileAppend(FileContent, CurrentPath . "UpdateTest.ahk", "UTF-8")
       FileDelete(UpdatePath)
       MsgBox Messages[LanguageCode].UpdateSuccessful
-      ; Reload ; Disabled during test
+      Reload
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
       FileDelete(UpdatePath)
@@ -139,6 +140,34 @@ GetUpdate() {
   FileDelete(UpdatePath)
 }
 
+CheckUpdate() {
+  global AppVersion, RawSource, UpdateAvailable, UpdateVersionString
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  http.Open("GET", RawSource, true)
+  http.Send()
+  http.WaitForResponse()
+
+  if http.Status != 200 {
+    return
+  }
+
+  FileContent := http.ResponseText
+
+  if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+    return
+  }
+  NewVersion := [match[1], match[2], match[3]]
+  Loop 3 {
+    if NewVersion[A_Index] > AppVersion[A_Index] {
+      UpdateAvailable := True
+      UpdateVersionString := Format("{:d}.{:d}.{:d}", NewVersion[1], NewVersion[2], NewVersion[3])
+      return
+    } else if NewVersion[A_Index] < AppVersion[A_Index] {
+      return
+    }
+  }
+}
+CheckUpdate()
 
 CtrlA := Chr(1)
 CtrlB := Chr(2)
@@ -173,6 +202,7 @@ QuotationDouble := Chr(34)
 Backquote := Chr(96)
 Solidus := Chr(47)
 ReverseSolidus := Chr(92)
+InformationSymbol := "ⓘ"
 
 FormatHotKey(HKey, Modifier := "") {
   MakeString := ""
@@ -1579,7 +1609,7 @@ LocaliseArrayKeys(ObjectPath) {
   }
 }
 
-DSLPadTitle := "DSL KeyPad (αλφα)"
+DSLPadTitle := "DSL KeyPad (αλφα)" . " — " . CurrentVersionString
 <#<!Home::
 {
   if (IsGuiOpen(DSLPadTitle))
@@ -1890,24 +1920,42 @@ Constructor()
 
   DSLContent["ru"].AutoLoadAdd := "Добавить в автозагрузку"
   DSLContent["en"].AutoLoadAdd := "Add to Autoload"
-
+  DSLContent["ru"].GetUpdate := "Обновить"
+  DSLContent["en"].GetUpdate := "Get Update"
+  DSLContent["ru"].UpdateAvailable := "Доступно обновление: версия " . UpdateVersionString
+  DSLContent["en"].UpdateAvailable := "Update available: version " . UpdateVersionString
 
   DSLPadGUI.SetFont("s9")
-  DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
+  ;DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
-  BtnAutoLoad := DSLPadGUI.Add("Button", "x410 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x411 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
   BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
 
-  BtnSwitchRU := DSLPadGUI.Add("Button", "x344 y519 w32 h32", "РУ")
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x247 y519 w32 h32", "РУ")
   BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
 
-  BtnSwitchEN := DSLPadGUI.Add("Button", "x377 y519 w32 h32", "EN")
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x279 y519 w32 h32", "EN")
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
+
+  UpdateBtn := DSLPadGUI.Add("Button", "x311 y519 w100 h32", DSLContent[LanguageCode].GetUpdate)
+  UpdateBtn.OnEvent("Click", (*) => GetUpdate())
 
   ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32", "⚙️")
   ConfigFileBtn.SetFont("s13",)
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
 
+
+  UpdateNewIcon := DSLPadGUI.Add("Text", "vNewVersionIcon x22 y484 w40 h40 BackgroundTrans", "")
+  UpdateNewIcon.SetFont("s16")
+  UpdateNewVersion := DSLPadGUI.Add("Link", "vNewVersionAlert x38 y492 w300", "")
+  UpdateNewVersion.SetFont("s9")
+
+  if UpdateAvailable
+  {
+    DSLPadGUI["NewVersionAlert"].Text :=
+      DSLContent[LanguageCode].UpdateAvailable . ' (<a href="' . RepoSource . '">GitHub</a>)'
+    DSLPadGUI["NewVersionIcon"].Text := InformationSymbol
+  }
 
   DSLPadGUI.SetFont("s11")
 
