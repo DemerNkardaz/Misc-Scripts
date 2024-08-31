@@ -154,28 +154,29 @@ GetUpdate(TimeOut := 0) {
       FixTrimmedContent := ""
 
       for line in SplitContent {
-        if (InStr(line, ";ApplicationEnd")) {
+        if (InStr(line, ";Application" . "End")) {
           break
         }
         FixTrimmedContent .= line . "`n"
       }
 
-      if (InStr(FixTrimmedContent, ";ApplicationEnd")) {
-        FixTrimmedContent := RTrim(FixTrimmedContent, "`n")
-        FileOpen(UpdateFilePath, "w", "UTF-8").Write(FixTrimmedContent).Close()
-        UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
+      FixTrimmedContent := RTrim(FixTrimmedContent, "`n")
+      GettingUpdateFile := FileOpen(UpdateFilePath, "w", "UTF-8")
+      GettingUpdateFile.Write(FixTrimmedContent)
+      GettingUpdateFile.Close()
+      UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
 
-        DuplicatedCount := 0
-        for line in StrSplit(UpdatingFileContent, "`n") {
-          if InStr(line, "DuplicateResolver := 'Bad Http…'") {
-            DuplicatedCount++
-          }
-        }
-
-        if (DuplicatedCount = 1) {
-          IsDupicating := False
+      DuplicatedCount := 0
+      for line in StrSplit(UpdatingFileContent, "`n") {
+        if InStr(line, "DuplicateResolver := 'The Second Gate…'") {
+          DuplicatedCount++
         }
       }
+
+      if (DuplicatedCount < 2) {
+        IsDupicating := False
+      }
+
     }
 
 
