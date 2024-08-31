@@ -114,11 +114,21 @@ GetUpdate() {
     }
 
     FileContent := http.ResponseText
-    if !RegExMatch(FileContent, "(\#Requires Autohotkey v2){2,}", &match) {
-      break
+
+    DuplicateCount := 0
+    for line in StrSplit(FileContent, "`n") {
+      if InStr(line, "DuplicateResolver := 'Bad Http…'") {
+        DuplicateCount++
+      }
     }
-    Sleep 500
+
+    if (DuplicateCount > 1) {
+      Sleep 500
+      continue
+    }
+    break
   }
+
 
   Sleep 50
   FileAppend(FileContent, UpdatePath, "UTF-8")
