@@ -89,12 +89,12 @@ GetUpdate() {
   LanguageCode := GetLanguageCode()
   Messages := Map()
   Messages["ru"] := {}
-  Messages["ru"].UpdateSuccessful := "Обновление успешно завершено."
+  Messages["ru"].UpdateSuccessful := "Обновление успешно завершено.`nУстановлено " . CurrentVersionString . " → " . UpdateVersionString
   Messages["ru"].UpdateFailed := "Обновление не удалось завершить."
   Messages["ru"].NoAnyUpdates := "У вас уже установлена последняя версия."
 
   Messages["en"] := {}
-  Messages["en"].UpdateSuccessful := "Update successful."
+  Messages["en"].UpdateSuccessful := "Update successful.`nInstalled " . CurrentVersionString . " → " . UpdateVersionString
   Messages["en"].UpdateFailed := "Update failed."
   Messages["en"].NoAnyUpdates := "You already have the latest version."
   CurrentPath := A_ScriptFullPath
