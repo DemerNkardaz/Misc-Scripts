@@ -153,7 +153,7 @@ GetUpdate(TimeOut := 0) {
     GettingUpdateFile.Write(FixTrimmedContent)
     GettingUpdateFile.Close()
 
-    FileAppend("`n;Application" . "End", UpdateFilePath, "UTF-8")
+    FileAppend("`n;Application" . "End`n", UpdateFilePath, "UTF-8")
     UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
 
     DuplicatedCount := 0
