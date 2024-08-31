@@ -138,8 +138,25 @@ GetUpdate(TimeOut := 0) {
   NewVersion := [match[1], match[2], match[3]]
 
   if UpdateAvailable {
+    SplitContent := StrSplit(UpdatingFileContent, "`n")
+    FixTrimmedContent := ""
+
+    for line in SplitContent {
+      if (InStr(line, ";Application" . "End")) {
+        break
+      }
+      FixTrimmedContent .= line . "`n"
+    }
+
+    FixTrimmedContent := RTrim(FixTrimmedContent, "`n")
+    GettingUpdateFile := FileOpen(UpdateFilePath, "w", "UTF-8")
+    GettingUpdateFile.Write(FixTrimmedContent)
+    GettingUpdateFile.Close()
+
+    FileAppend("`n;Application" . "End", UpdateFilePath, "UTF-8")
+    UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
+
     DuplicatedCount := 0
-    IsDupicating := False
     for line in StrSplit(UpdatingFileContent, "`n") {
       if InStr(line, "DuplicateResolver := 'Bad Http…'") {
         DuplicatedCount++
@@ -147,46 +164,12 @@ GetUpdate(TimeOut := 0) {
     }
 
     if (DuplicatedCount > 1) {
-      IsDupicating := True
       ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured, DSLPadTitle])
-
-      SplitContent := StrSplit(UpdatingFileContent, "`n")
-      FixTrimmedContent := ""
-
-      for line in SplitContent {
-        if (InStr(line, ";Application" . "End")) {
-          break
-        }
-        FixTrimmedContent .= line . "`n"
-      }
-
-      FixTrimmedContent := RTrim(FixTrimmedContent, "`n")
-      GettingUpdateFile := FileOpen(UpdateFilePath, "w", "UTF-8")
-      GettingUpdateFile.Write(FixTrimmedContent)
-      GettingUpdateFile.Close()
-      UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
-
-      DuplicatedCount := 0
-      for line in StrSplit(UpdatingFileContent, "`n") {
-        if InStr(line, "DuplicateResolver := 'The Second Gate…'") {
-          DuplicatedCount++
-        }
-      }
-
-      if (DuplicatedCount < 2) {
-        IsDupicating := False
-      }
-
-    }
-
-
-    if IsDupicating == True {
       FileDelete(UpdateFilePath)
       Sleep 500
       GetUpdate(1500)
       return
     }
-
 
     if FileExist(CurrentFilePath . "-Backup") {
       FileDelete(CurrentFilePath . "-Backup")
