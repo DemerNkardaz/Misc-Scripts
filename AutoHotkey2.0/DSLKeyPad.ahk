@@ -1,6 +1,8 @@
 #Requires Autohotkey v2
 #SingleInstance Force
 
+DuplicateResolver := 'Bad Http…'
+
 ; Only EN US & RU RU Keyboard Layout
 ApplicationIcon := ["C:\Windows\System32\charmap.exe", 1]
 ConfigIcon := ["C:\Windows\System32\imageres.dll", 065]
