@@ -97,6 +97,7 @@ GetUpdate() {
   Messages["en"].UpdateFailed := "Update failed."
   Messages["en"].NoAnyUpdates := "You already have the latest version."
   CurrentPath := A_ScriptFullPath
+  CurrentPathFileName := StrSplit(CurrentPath, "\").Pop()
   UpdatePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
 
   http := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -113,7 +114,6 @@ GetUpdate() {
   FileAppend(FileContent, UpdatePath, "UTF-8")
   FileContent := FileRead(UpdatePath, "UTF-8")
 
-  ; Поиск версии в скачанном файле
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox Messages[LanguageCode].UpdateFailed
     FileDelete(UpdatePath)
@@ -126,9 +126,10 @@ GetUpdate() {
   Loop 3 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
       FileDelete(CurrentPath)
-      FileAppend(FileContent, CurrentPath . "UpdateTest.ahk", "UTF-8")
-      FileDelete(UpdatePath)
+      Sleep 500
+      FileMove(UpdatePath, A_ScriptDir "\" CurrentPathFileName)
       MsgBox Messages[LanguageCode].UpdateSuccessful
+      Sleep 500
       Reload
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
@@ -137,7 +138,6 @@ GetUpdate() {
     }
   }
   MsgBox Messages[LanguageCode].NoAnyUpdates
-  FileDelete(UpdatePath)
 }
 
 CheckUpdate() {
@@ -1645,6 +1645,7 @@ SwitchLanguage(LanguageCode) {
 
 Constructor()
 {
+  CheckUpdate()
   DSLContent := {}
   DSLContent[] := Map()
   DSLContent["BindList"] := {}
