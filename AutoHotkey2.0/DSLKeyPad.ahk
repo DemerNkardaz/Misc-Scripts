@@ -15,14 +15,16 @@ OpenConfigFile() {
 }
 
 FastKeysIsActive := False
-InputHTMLEntities := False
 SkipGroupMessage := False
+InputMode := "Default"
+LaTeXMode := "common"
 
 DefaultConfig := [
   ["Settings", "FastKeysIsActive", "False"],
-  ["Settings", "InputHTMLEntities", "False"],
   ["Settings", "SkipGroupMessage", "False"],
+  ["Settings", "InputMode", "Default"],
   ["Settings", "UserLanguage", ""],
+  ["LatestPrompts", "LaTeX", ""],
   ["LatestPrompts", "Unicode", ""],
   ["LatestPrompts", "Altcode", ""],
   ["LatestPrompts", "Search", ""],
@@ -31,11 +33,11 @@ DefaultConfig := [
 
 if FileExist(ConfigFile) {
   isFastKeysEnabled := IniRead(ConfigFile, "Settings", "FastKeysIsActive", "False")
-  isInputHTMLEntities := IniRead(ConfigFile, "Settings", "InputHTMLEntities", "False")
   isSkipGroupMessage := IniRead(ConfigFile, "Settings", "SkipGroupMessage", "False")
+  InputMode := IniRead(ConfigFile, "Settings", "InputMode", "Default")
+  LaTeXMode := IniRead(ConfigFile, "Settings", "LaTeXMode", "common")
 
   FastKeysIsActive := (isFastKeysEnabled = "True")
-  InputHTMLEntities := (isInputHTMLEntities = "True")
   SkipGroupMessage := (isSkipGroupMessage = "True")
 } else {
   for index, config in DefaultConfig {
@@ -210,7 +212,7 @@ Characters := Map(
   },
     "0000 acute", {
       unicode: "{U+0301}", html: "&#769;",
-      LaTeX: "\' \acute",
+      LaTeX: ["\'", "\acute"],
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
@@ -260,7 +262,7 @@ Characters := Map(
     ;
     "0006 breve", {
       unicode: "{U+0306}", html: "&#774;",
-      LaTeX: "\u \breve",
+      LaTeX: ["\u", "\breve"],
       titles: Map("ru", "Кратка", "en", "Breve"),
       tags: ["breve", "бреве", "кратка"],
       group: ["Diacritics Primary", ["b", "и"]],
@@ -317,7 +319,7 @@ Characters := Map(
     ;
     "0000 circumflex", {
       unicode: "{U+0302}", html: "&#770;",
-      LaTeX: "\^ \hat",
+      LaTeX: ["\^", "\hat"],
       titles: Map("ru", "Циркумфлекс", "en", "Circumflex"),
       tags: ["circumflex", "циркумфлекс"],
       group: ["Diacritics Primary", ["c", "с"]],
@@ -366,7 +368,7 @@ Characters := Map(
     ;
     "0000 dot_above", {
       unicode: "{U+0307}", html: "&#775;",
-      LaTeX: "\. \dot",
+      LaTeX: ["\.", "\dot"],
       titles: Map("ru", "Точка сверху", "en", "Dot Above"),
       tags: ["dot above", "точка сверху"],
       group: ["Diacritics Primary", ["d", "в"]],
@@ -375,7 +377,7 @@ Characters := Map(
     },
     "0000 diaeresis", {
       unicode: "{U+0308}", html: "&#776;",
-      LaTeX: "\" . QuotationDouble . " \ddot",
+      LaTeX: ["\" . QuotationDouble, "\ddot"],
       titles: Map("ru", "Диерезис", "en", "Diaeresis"),
       tags: ["diaeresis", "диерезис"],
       group: ["Diacritics Primary", ["D", "В"]],
@@ -410,7 +412,7 @@ Characters := Map(
     ;
     "0000 grave", {
       unicode: "{U+0300}", html: "&#768;",
-      LaTeX: "\" . Backquote . " \grave",
+      LaTeX: ["\" . Backquote, "\grave"],
       titles: Map("ru", "Гравис", "en", "Grave"),
       tags: ["grave", "гравис"],
       group: ["Diacritics Primary", ["g", "п"]],
@@ -924,11 +926,9 @@ InputBridgeOld(BindsArray) {
       for _, key in pair[1] {
         if (keyPressed == key) {
           if IsObject(pair[2]) {
-            if InputHTMLEntities {
-              SendText(pair[2][2])
-            } else {
-              Send(pair[2][1])
-            }
+
+            Send(pair[2][1])
+
           } else {
             Send(pair[2])
           }
@@ -938,11 +938,9 @@ InputBridgeOld(BindsArray) {
     } else {
       if (keyPressed == pair[1]) {
         if IsObject(pair[2]) {
-          if InputHTMLEntities {
-            SendText(pair[2][2])
-          } else {
-            Send(pair[2][1])
-          }
+
+          Send(pair[2][1])
+
         } else {
           Send(pair[2])
         }
@@ -959,24 +957,51 @@ InputBridge(GroupKey) {
   ih.Start()
   ih.Wait()
   keyPressed := ih.Input
+  ; InputMode
 
 
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupKey) {
       characterKeys := value.group[2]
       characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
-      characterCodes := [value.unicode, characterEntity]
+      characterLaTeX := (HasProp(value, "LaTeX")) ? value.LaTeX : ""
 
       if IsObject(characterKeys) {
         for _, key in characterKeys {
           if (keyPressed == key) {
-            InputHTMLEntities ? SendText(characterCodes[2]) : Send(characterCodes[1])
+            if InputMode = "HTML" {
+              SendText(characterEntity)
+            } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
+              if IsObject(characterLaTeX) {
+                if LaTeXMode = "common"
+                  SendText(characterLaTeX[1])
+                else if LaTeXMode = "math"
+                  SendText(characterLaTeX[2])
+              } else {
+                SendText(characterLaTeX)
+              }
+            }
+            else
+              Send(value.unicode)
             break
           }
         }
       } else {
         if (keyPressed == characterKeys) {
-          InputHTMLEntities ? SendText(characterCodes[2]) : Send(characterCodes[1])
+          if InputMode = "HTML" {
+            SendText(characterEntity)
+          } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
+            if IsObject(characterLaTeX) {
+              if LaTeXMode = "common"
+                SendText(characterLaTeX[1])
+              else if LaTeXMode = "math"
+                SendText(characterLaTeX[2])
+            } else {
+              SendText(characterLaTeX)
+            }
+          }
+          else
+            Send(value.unicode)
           break
         }
       }
@@ -1023,15 +1048,26 @@ SearchKey() {
   }
 
   Found := False
-  for key, value in Characters {
+  for characterEntry, value in Characters {
+    characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
+    characterLaTeX := (HasProp(value, "LaTeX")) ? value.LaTeX : ""
+
     for _, tag in value.tags {
       if (StrLower(PromptValue) = StrLower(tag)) {
-        if InputHTMLEntities {
-          characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
+        if InputMode = "HTML" {
           SendText(characterEntity)
-        } else {
-          Send(value.unicode)
+        } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
+          if IsObject(characterLaTeX) {
+            if LaTeXMode = "common"
+              SendText(characterLaTeX[1])
+            else if LaTeXMode = "math"
+              SendText(characterLaTeX[2])
+          } else {
+            SendText(characterLaTeX)
+          }
         }
+        else
+          Send(value.unicode)
         IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
         Found := True
         break 2
@@ -1622,7 +1658,7 @@ Constructor()
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активация «Быстрых ключей»", "en", "Toggle FastKeys"), "RAlt Home", ""],
-    [Map("ru", "Активация ввода HTML-кодов", "en", "Toggle of HTML codes input"), "RAlt RShift Home", "á → a&#769;"],
+    [Map("ru", "Переключение ввода HTML/LaTeX/Символ", "en", "Toggle of HTML/LaTeX/Symbol input"), "RAlt RShift Home", "a&#769; | \'{a} | á"],
     [Map("ru", "Оповещения активации групп", "en", "Groups activation notification toggle"), "Win Alt M", ""],
   ]
 
@@ -2110,7 +2146,34 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
 
 
         if (HasProp(value, "LaTeX")) {
-          TargetGroup[PreviewLaTeX].Text := value.LaTeX
+          if IsObject(value.LaTeX) {
+            LaTeXString := ""
+            totalCount := 0
+            for index in value.LaTeX {
+              totalCount++
+            }
+            currentIndex := 0
+            for index, latex in value.LaTeX {
+              LaTeXString .= latex
+              currentIndex++
+              if (currentIndex < totalCount) {
+                LaTeXString .= " "
+              }
+            }
+            TargetGroup[PreviewLaTeX].Text := LaTeXString
+
+            if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
+              && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
+              PreviewGroup.latex.SetFont("s10")
+            } else if (StrLen(TargetGroup[PreviewLaTeX].Text) > 14) {
+              PreviewGroup.latex.SetFont("s9")
+            } else {
+              PreviewGroup.latex.SetFont("s12")
+            }
+          } else {
+            TargetGroup[PreviewLaTeX].Text := value.LaTeX
+          }
+
 
           if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
             && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
@@ -2185,7 +2248,7 @@ LV_RunCommand(LV, RowNumber)
     ToggleFastKeys()
 
   if (Shortcut = "RAlt RShift Home")
-    ToggleInputHTMLEntities()
+    ToggleInputMode()
 }
 
 LV_MouseMove(Control, x, y) {
@@ -2251,24 +2314,40 @@ ToggleFastKeys()
   return
 }
 
-<^>!>+Home:: ToggleInputHTMLEntities()
+<^>!>+Home:: ToggleInputMode()
 
-ToggleInputHTMLEntities()
+ToggleInputMode()
 {
   LanguageCode := GetLanguageCode()
-  global InputHTMLEntities, ConfigFile
-  InputHTMLEntities := !InputHTMLEntities
-  IniWrite (InputHTMLEntities ? "True" : "False"), ConfigFile, "Settings", "InputHTMLEntities"
 
   ActivationMessage := {}
   ActivationMessage[] := Map()
   ActivationMessage["ru"] := {}
   ActivationMessage["en"] := {}
-  ActivationMessage["ru"].Active := "Ввод HTML-кодов активирован"
-  ActivationMessage["ru"].Deactive := "Ввод HTML-кодов деактивирован"
-  ActivationMessage["en"].Active := "Input HTML codes activated"
-  ActivationMessage["en"].Deactive := "Input HTML codes deactivated"
-  MsgBox(InputHTMLEntities ? ActivationMessage[LanguageCode].Active : ActivationMessage[LanguageCode].Deactive, "HTML-Entities", 0x40)
+
+  InputModeLabel := Map(
+    "Default", Map("ru", "символов юникода", "en", "unicode symbols"),
+    "HTML", Map("ru", "HTML-кодов", "en", "HTML codes"),
+    "LaTeX", Map("ru", "LaTeX-кодов", "en", "LaTeX codes")
+  )
+
+  global InputMode, ConfigFile
+
+  if (InputMode = "Default") {
+    InputMode := "HTML"
+  } else if (InputMode = "HTML") {
+    InputMode := "LaTeX"
+  } else if (InputMode = "LaTeX") {
+    InputMode := "Default"
+  }
+
+  IniWrite InputMode, ConfigFile, "Settings", "InputMode"
+
+
+  ActivationMessage["ru"].Active := "Ввод " . InputModeLabel[InputMode][LanguageCode] . " активирован"
+  ActivationMessage["en"].Active := "Input " . InputModeLabel[InputMode][LanguageCode] . " activated"
+
+  MsgBox(ActivationMessage[LanguageCode].Active, DSLPadTitle, 0x40)
 
   return
 }
