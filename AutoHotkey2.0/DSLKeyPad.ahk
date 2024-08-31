@@ -106,41 +106,23 @@ GetUpdate(TimeOut := 0) {
 
   FileContent := ""
 
-  loop {
-    http := ComObject("WinHttp.WinHttpRequest.5.1")
-    http.Open("GET", RawSource, true)
-    http.Send()
-    http.WaitForResponse()
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  http.Open("GET", RawSource, true)
+  http.Send()
+  http.WaitForResponse()
 
-    if http.Status != 200 {
-      MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
-      return
-    }
-
-    FileContent := http.ResponseText
-
-    DuplicateCount := 0
-    for line in StrSplit(FileContent, "`n") {
-      if InStr(line, "DuplicateResolver := 'Bad Http…'") {
-        DuplicateCount++
-      }
-    }
-
-    if (DuplicateCount > 1) {
-      Sleep 250
-      if FileExist(UpdateFilePath) {
-        FileDelete(UpdateFilePath)
-      }
-      Sleep 250
-      continue
-    }
-    Sleep 50
-    FileAppend(FileContent, UpdateFilePath, "UTF-8")
-    Sleep 50
-    FileContent := FileRead(UpdateFilePath, "UTF-8")
-    Sleep 50
-    break
+  if http.Status != 200 {
+    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
+    return
   }
+
+  FileContent := http.ResponseText
+
+  Sleep 50
+  FileAppend(FileContent, UpdateFilePath, "UTF-8")
+  Sleep 50
+  FileContent := FileRead(UpdateFilePath, "UTF-8")
+  Sleep 50
 
 
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
@@ -150,7 +132,6 @@ GetUpdate(TimeOut := 0) {
   }
 
   NewVersion := [match[1], match[2], match[3]]
-
 
   if UpdateAvailable {
     UpdatedFile := FileRead(UpdateFilePath, "UTF-8")
