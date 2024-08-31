@@ -111,8 +111,11 @@ GetUpdate() {
   }
 
   FileContent := http.ResponseText
+  Sleep 50
   FileAppend(FileContent, UpdatePath, "UTF-8")
+  Sleep 50
   FileContent := FileRead(UpdatePath, "UTF-8")
+  Sleep 50
 
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
