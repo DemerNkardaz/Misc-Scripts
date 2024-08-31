@@ -106,7 +106,7 @@ GetUpdate() {
   http.WaitForResponse()
 
   if http.Status != 200 {
-    MsgBox Messages[LanguageCode].UpdateFailed
+    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
     return
   }
 
@@ -115,7 +115,7 @@ GetUpdate() {
   FileContent := FileRead(UpdatePath, "UTF-8")
 
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
-    MsgBox Messages[LanguageCode].UpdateFailed
+    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
     FileDelete(UpdatePath)
     return
   }
@@ -128,7 +128,7 @@ GetUpdate() {
       FileDelete(CurrentPath)
       Sleep 500
       FileMove(UpdatePath, A_ScriptDir "\" CurrentPathFileName)
-      MsgBox Messages[LanguageCode].UpdateSuccessful
+      MsgBox(Messages[LanguageCode].UpdateSuccessful, DSLPadTitle)
       Sleep 500
       Reload
       return
@@ -137,7 +137,7 @@ GetUpdate() {
       return
     }
   }
-  MsgBox Messages[LanguageCode].NoAnyUpdates
+  MsgBox(Messages[LanguageCode].NoAnyUpdates, DSLPadTitle)
 }
 
 CheckUpdate() {
@@ -971,7 +971,8 @@ BindDiacriticF1 := [
   [["G", "П"], CharCodes.dgrave, ["2Гравис", "Двойной Гравис", "2Grave", "Double Grave"]],
   [["h", "р"], CharCodes.hookabove, ["Хвостик сверху", "Hook Above"]],
   [["H", "Р"], CharCodes.horn, ["Рожок", "Horn"]],
-]*/
+]
+*/
 
 BindDiacriticF2 := [
   [["a", "ф"], CharCodes.acutebelow, ["Акут снизу", "Acute Below", "Ударение снизу"]],
