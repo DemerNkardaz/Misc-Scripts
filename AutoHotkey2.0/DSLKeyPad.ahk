@@ -84,7 +84,8 @@ RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/A
 RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
 UpdateAvailable := False
 
-GetUpdate() {
+GetUpdate(TimeOut := 0) {
+  Sleep TimeOut
   global AppVersion, RawSource
   LanguageCode := GetLanguageCode()
   Messages := Map()
@@ -92,14 +93,16 @@ GetUpdate() {
   Messages["ru"].UpdateSuccessful := "Обновление успешно завершено.`nУстановлено " . CurrentVersionString . " → " . UpdateVersionString
   Messages["ru"].UpdateFailed := "Обновление не удалось завершить."
   Messages["ru"].NoAnyUpdates := "У вас уже установлена последняя версия."
+  Messages["ru"].ErrorOccured := "Произошла ошибка обновления. Исправляем…"
 
   Messages["en"] := {}
   Messages["en"].UpdateSuccessful := "Update successful.`nInstalled " . CurrentVersionString . " → " . UpdateVersionString
   Messages["en"].UpdateFailed := "Update failed."
   Messages["en"].NoAnyUpdates := "You already have the latest version."
-  CurrentPath := A_ScriptFullPath
-  CurrentPathFileName := StrSplit(CurrentPath, "\").Pop()
-  UpdatePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
+  Messages["en"].ErrorOccured := "An error occured while updating. Trying to fix it…"
+  CurrentFilePath := A_ScriptFullPath
+  CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
+  UpdateFilePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
 
   FileContent := ""
 
@@ -124,46 +127,65 @@ GetUpdate() {
     }
 
     if (DuplicateCount > 1) {
-      Sleep 500
+      Sleep 250
+      if FileExist(UpdateFilePath) {
+        FileDelete(UpdateFilePath)
+      }
+      Sleep 250
       continue
     }
+    Sleep 50
+    FileAppend(FileContent, UpdateFilePath, "UTF-8")
+    Sleep 50
+    FileContent := FileRead(UpdateFilePath, "UTF-8")
+    Sleep 50
     break
   }
 
 
-  Sleep 50
-  FileAppend(FileContent, UpdatePath, "UTF-8")
-  Sleep 50
-  FileContent := FileRead(UpdatePath, "UTF-8")
-  Sleep 50
-
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
-    FileDelete(UpdatePath)
+    FileDelete(UpdateFilePath)
     return
   }
 
   NewVersion := [match[1], match[2], match[3]]
 
 
-  Loop 3 {
-    if NewVersion[A_Index] > AppVersion[A_Index] {
-      if FileExist(CurrentPath . "-Backup") {
-        FileDelete(CurrentPath . "-Backup")
+  if UpdateAvailable {
+    UpdatedFile := FileRead(UpdateFilePath, "UTF-8")
+    DuplicatedCount := 0
+    for line in StrSplit(UpdatedFile, "`n") {
+      if InStr(line, "DuplicateResolver := 'Bad Http…'") {
+        DuplicatedCount++
+      }
+    }
+
+    if (DuplicatedCount > 1) {
+      ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured, DSLPadTitle])
+      FileDelete(UpdateFilePath)
+      Sleep 500
+      GetUpdate(1500)
+      return
+    } else {
+
+      if FileExist(CurrentFilePath . "-Backup") {
+        FileDelete(CurrentFilePath . "-Backup")
         Sleep 100
       }
-      FileMove(CurrentPath, A_ScriptDir "\" CurrentPathFileName . "-Backup")
-      Sleep 500
-      FileMove(UpdatePath, A_ScriptDir "\" CurrentPathFileName)
+
+      FileMove(CurrentFilePath, A_ScriptDir "\" CurrentFileName . "-Backup")
+      Sleep 200
+      FileMove(UpdateFilePath, A_ScriptDir "\" CurrentFileName)
       MsgBox(Messages[LanguageCode].UpdateSuccessful, DSLPadTitle)
-      Sleep 500
+      Sleep 200
+
+
       Reload
-      return
-    } else if NewVersion[A_Index] < AppVersion[A_Index] {
-      FileDelete(UpdatePath)
       return
     }
   }
+  FileDelete(UpdateFilePath)
   MsgBox(Messages[LanguageCode].NoAnyUpdates, DSLPadTitle)
 }
 
