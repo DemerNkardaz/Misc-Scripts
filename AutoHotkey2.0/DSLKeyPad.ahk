@@ -1,10 +1,10 @@
 #Requires Autohotkey v2
 #SingleInstance Force
 
+; Only EN US & RU RU Keyboard Layout
 ApplicationIcon := ["C:\Windows\System32\charmap.exe", 1]
 ConfigIcon := ["C:\Windows\System32\imageres.dll", 065]
 
-; Only EN US & RU RU Keyboard Layout
 
 ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
@@ -74,6 +74,50 @@ GetLanguageCode()
 
     return ValidateLanguage(SysLanguageKey)
   }
+}
+AppVersion := [0, 1, 1]
+; Joki
+
+GetUpdate() {
+  global AppVersion
+  RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
+  CurrentPath := A_ScriptFullPath
+
+  ; Загрузка содержимого файла с GitHub
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  http.Open("GET", RawSource, true)
+  http.Send()
+  http.WaitForResponse()
+
+  if http.Status != 200 {
+    MsgBox "Ошибка: не удалось загрузить файл с GitHub."
+    return
+  }
+
+  FileContent := http.ResponseText
+
+  ; Поиск версии в загруженном файле
+  if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+    MsgBox "Ошибка: не удалось найти массив AppVersion в загруженном файле."
+    return
+  }
+
+  NewVersion := [match[1], match[2], match[3]]
+
+  ; Сравнение версий
+  Loop 3 {
+    if NewVersion[A_Index] > AppVersion[A_Index] {
+      ; Если новая версия больше, заменяем файл
+      FileDelete(CurrentPath)
+      FileAppend(FileContent, CurrentPath)
+      Reload
+      return
+    } else if NewVersion[A_Index] < AppVersion[A_Index] {
+      ; Если текущая версия больше, обновление не требуется
+      return
+    }
+  }
+  MsgBox "У вас уже установлена последняя версия."
 }
 
 CtrlA := Chr(1)
@@ -2055,7 +2099,7 @@ Constructor()
   DSLContent["ru"].About.Repository := "Папка AHK репозитория: "
   DSLContent["ru"].About.AuthorGit := "Профиль автора: "
   DSLContent["ru"].About.Texts := [
-    "Версия: Альфа от 27.08.2024",
+    "Версия: Альфа от 31.08.2024",
     "Автор: Демер Нкардаз",
     "Примечание: Использовать на русской и английской раскладках",
     "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если он есть в библиотеке, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
