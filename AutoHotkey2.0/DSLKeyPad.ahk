@@ -128,6 +128,10 @@ GetUpdate() {
 
   Loop 3 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
+      if FileExist(CurrentPath . "-Backup") {
+        FileDelete(CurrentPath . "-Backup")
+        Sleep 100
+      }
       FileMove(CurrentPath, A_ScriptDir "\" CurrentPathFileName . "-Backup")
       Sleep 500
       FileMove(UpdatePath, A_ScriptDir "\" CurrentPathFileName)
