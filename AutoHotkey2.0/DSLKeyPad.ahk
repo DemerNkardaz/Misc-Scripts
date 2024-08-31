@@ -75,7 +75,7 @@ GetLanguageCode()
     return ValidateLanguage(SysLanguageKey)
   }
 }
-AppVersion := [0, 1, 0]
+AppVersion := [0, 1, 1]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
 
