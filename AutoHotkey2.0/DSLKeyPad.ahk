@@ -104,6 +104,7 @@ SpaceKey := Chr(32)
 ExclamationMark := Chr(33)
 CommercialAt := Chr(64)
 QuotationDouble := Chr(34)
+Backquote := Chr(96)
 Solidus := Chr(47)
 ReverseSolidus := Chr(92)
 
@@ -209,6 +210,7 @@ Characters := Map(
   },
     "0000 acute", {
       unicode: "{U+0301}", html: "&#769;",
+      LaTeX: "\' \acute",
       titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
@@ -258,6 +260,7 @@ Characters := Map(
     ;
     "0006 breve", {
       unicode: "{U+0306}", html: "&#774;",
+      LaTeX: "\u \breve",
       titles: Map("ru", "Кратка", "en", "Breve"),
       tags: ["breve", "бреве", "кратка"],
       group: ["Diacritics Primary", ["b", "и"]],
@@ -314,6 +317,7 @@ Characters := Map(
     ;
     "0000 circumflex", {
       unicode: "{U+0302}", html: "&#770;",
+      LaTeX: "\^ \hat",
       titles: Map("ru", "Циркумфлекс", "en", "Circumflex"),
       tags: ["circumflex", "циркумфлекс"],
       group: ["Diacritics Primary", ["c", "с"]],
@@ -322,6 +326,7 @@ Characters := Map(
     },
     "0000 caron", {
       unicode: "{U+030C}", html: "&#780;",
+      LaTeX: "\v",
       titles: Map("ru", "Гачек", "en", "Caron"),
       tags: ["caron", "карон", "гачек"],
       group: ["Diacritics Primary", ["C", "С"]],
@@ -344,6 +349,7 @@ Characters := Map(
     },
     "0000 cedilla", {
       unicode: "{U+0327}", html: "&#807;",
+      LaTeX: "\c",
       titles: Map("ru", "Седиль", "en", "Cedilla"),
       tags: ["cedilla", "седиль"],
       group: ["Diacritics Tertiary", ["c", "с"]],
@@ -360,6 +366,7 @@ Characters := Map(
     ;
     "0000 dot_above", {
       unicode: "{U+0307}", html: "&#775;",
+      LaTeX: "\. \dot",
       titles: Map("ru", "Точка сверху", "en", "Dot Above"),
       tags: ["dot above", "точка сверху"],
       group: ["Diacritics Primary", ["d", "в"]],
@@ -368,6 +375,7 @@ Characters := Map(
     },
     "0000 diaeresis", {
       unicode: "{U+0308}", html: "&#776;",
+      LaTeX: "\" . QuotationDouble . " \ddot",
       titles: Map("ru", "Диерезис", "en", "Diaeresis"),
       tags: ["diaeresis", "диерезис"],
       group: ["Diacritics Primary", ["D", "В"]],
@@ -402,6 +410,7 @@ Characters := Map(
     ;
     "0000 grave", {
       unicode: "{U+0300}", html: "&#768;",
+      LaTeX: "\" . Backquote . " \grave",
       titles: Map("ru", "Гравис", "en", "Grave"),
       tags: ["grave", "гравис"],
       group: ["Diacritics Primary", ["g", "п"]],
@@ -466,7 +475,7 @@ Characters := Map(
     ;
     ; ? Шпации
     "0000 emspace", {
-      unicode: "{U+2003}", html: "&#8195;",
+      unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
       titles: Map("ru", "Круглая шпация", "en", "Em Space"),
       tags: ["em space", "emspace", "emsp", "круглая шпация"],
       group: ["Spaces", "1"],
@@ -482,7 +491,7 @@ Characters := Map(
       symbol: "[ ]"
     },
     "0000 ensp", {
-      unicode: "{U+2002}", html: "&#8194;",
+      unicode: "{U+2002}", html: "&#8194;", entity: "&ensp;",
       titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
       tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
       group: ["Spaces", "2"],
@@ -521,6 +530,7 @@ Characters := Map(
     },
     "0000 dagger", {
       unicode: "{U+2020}", html: "&dagger;",
+      LaTeX: "\dagger",
       titles: Map("ru", "Крест", "en", "Dagger"),
       tags: ["dagger", "даггер", "крест"],
       group: ["Special Characters", ["t", "е"]],
@@ -528,6 +538,7 @@ Characters := Map(
     },
     "0000 dagger_double", {
       unicode: "{U+2021}", html: "&Dagger;",
+      LaTeX: "\ddagger",
       titles: Map("ru", "Двойной крест", "en", "Double Dagger"),
       tags: ["double dagger", "двойной даггер", "двойной крест"],
       group: ["Special Characters", ["T", "Е"]],
@@ -553,6 +564,22 @@ Characters := Map(
       tags: ["grapheme joiner", "соединитель графем"],
       group: ["Special Characters", ["g", "п"]],
       symbol: "◌͏"
+    },
+    "0000 prime_single", {
+      unicode: "{U+2032}", html: "&#8242;", entity: "&prime;",
+      LaTeX: "\prime",
+      titles: Map("ru", "Штрих", "en", "Prime"),
+      tags: ["prime", "штрих"],
+      group: ["Special Characters", ["p", "з"]],
+      symbol: "′"
+    },
+    "0000 prime_double", {
+      unicode: "{U+2033}", html: "&#8243;", entity: "&Prime;",
+      LaTeX: "\prime\prime",
+      titles: Map("ru", "Двойной штрих", "en", "Double Prime"),
+      tags: ["double prime", "двойной штрих"],
+      group: ["Special Characters", ["P", "З"]],
+      symbol: "″"
     },
     ;
     ;
@@ -1410,20 +1437,28 @@ Constructor()
     previewFrame: "x685 y80 w128 h128 Center",
     preview: "x685 y80 w128 h128 readonly Center -VScroll -HScroll",
     previewText: "◌͏",
-    title: "x655 y215 w190 h150 Center",
+    title: "x655 y215 w190 h150 Center BackgroundTrans",
     titleText: "N/A",
+    LaTeXTitleA: "x689 y371 w128 h24 BackgroundTrans",
+    LaTeXTitleAText: "A",
+    LaTeXTitleE: "x703 y375 w128 h24 BackgroundTrans",
+    LaTeXTitleEText: "E",
+    LaTeXTitleLTX: "x685 y373 w128 h24 BackgroundTrans",
+    LaTeXTitleLTXText: "L T  X",
+    LaTeX: "x685 y390 w128 h24 readonly Center -VScroll -HScroll",
+    LaTeXText: "N/A",
     alt: "x685 y430 w128 h24 readonly Center -VScroll -HScroll",
-    altTitle: "x685 y415 w128 h24",
+    altTitle: "x685 y415 w128 h24 BackgroundTrans",
     altTitleText: Map("ru", "Альт-код", "en", "Alt-code"),
     altText: "N/A",
     unicode: "x685 y470 w128 h24 readonly Center -VScroll -HScroll",
-    unicodeTitle: "x685 y455 w128 h24",
+    unicodeTitle: "x685 y455 w128 h24 BackgroundTrans",
     unicodeTitleText: Map("ru", "Юникод", "en", "Unicode"),
     unicodeText: "U+0000",
     html: "x685 y510 w128 h24 readonly Center -VScroll -HScroll",
     htmlText: "&#x0000;",
-    htmlTitle: "x685 y495 w128 h24",
-    htmlTitleText: Map("ru", "Сущность/Мнемоника", "en", "Entity"),
+    htmlTitle: "x685 y495 w128 h24 BackgroundTrans",
+    htmlTitleText: Map("ru", "HTML-Код/Мнемоника", "en", "HTML/Entity"),
   }
 
 
@@ -1432,6 +1467,11 @@ Constructor()
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.previewFrame),
     preview: DSLPadGUI.Add("Edit", "vDiacriticSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vDiacriticTitle " . commonInfoBox.title, CommonInfoBox.titleText),
+    ;
+    LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
+    LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
+    LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeX: DSLPadGUI.Add("Edit", "vDiacriticLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
     alt: DSLPadGUI.Add("Edit", "vDiacriticAlt " . commonInfoBox.alt, CommonInfoBox.altText),
@@ -1445,6 +1485,7 @@ Constructor()
 
   GrouBoxDiacritic.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
   GrouBoxDiacritic.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
+  GrouBoxDiacritic.LaTeX.SetFont("s12")
   GrouBoxDiacritic.alt.SetFont("s12")
   GrouBoxDiacritic.unicode.SetFont("s12")
   GrouBoxDiacritic.html.SetFont("s12")
@@ -1471,6 +1512,11 @@ Constructor()
     preview: DSLPadGUI.Add("Edit", "vLettersSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vLettersTitle " . commonInfoBox.title, CommonInfoBox.titleText),
     ;
+    LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
+    LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
+    LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeX: DSLPadGUI.Add("Edit", "vLettersLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
+    ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
     alt: DSLPadGUI.Add("Edit", "vLettersAlt " . commonInfoBox.alt, CommonInfoBox.altText),
     ;
@@ -1483,6 +1529,7 @@ Constructor()
 
   GrouBoxLetters.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
   GrouBoxLetters.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
+  GrouBoxLetters.LaTeX.SetFont("s12")
   GrouBoxLetters.alt.SetFont("s12")
   GrouBoxLetters.unicode.SetFont("s12")
   GrouBoxLetters.html.SetFont("s12")
@@ -1534,6 +1581,11 @@ Constructor()
     preview: DSLPadGUI.Add("Edit", "vSpacesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vSpacesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
     ;
+    LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
+    LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
+    LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeX: DSLPadGUI.Add("Edit", "vSpacesLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
+    ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
     alt: DSLPadGUI.Add("Edit", "vSpacesAlt " . commonInfoBox.alt, CommonInfoBox.altText),
     ;
@@ -1546,6 +1598,7 @@ Constructor()
 
   GrouBoxSpaces.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
   GrouBoxSpaces.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
+  GrouBoxSpaces.LaTeX.SetFont("s12")
   GrouBoxSpaces.alt.SetFont("s12")
   GrouBoxSpaces.unicode.SetFont("s12")
   GrouBoxSpaces.html.SetFont("s12")
@@ -1553,7 +1606,7 @@ Constructor()
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
   DSLContent["en"].EntrydblClick := "2×LMB"
-  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-энтити не влияет на «Быстрые ключи».`n«Плавильня» может создавать не только лигатуры, например «-+» → «±», «-*» → «×», «***» → «⁂»."
+  DSLContent["ru"].CommandsNote := "Unicode/Alt-code поддерживает ввод множества кодов через пробел, например «44F2 5607 9503» → «䓲嘇锃».`nРежим ввода HTML-кодов не влияет на «Быстрые ключи».`n«Плавильня» может создавать не только лигатуры, например «-+» → «±», «-*» → «×», «***» → «⁂»."
   DSLContent["en"].CommandsNote := "Unicode/Alt-code supports input of multiple codes separated by spaces, for example “44F2 5607 9503” → “䓲嘇锃.”`nHTML entities mode does not affect “Fast keys.”`n“Smelter” can to smelt no only ligatures, for example “-+” → “±”, “-*” → “×”, “***” → “⁂”."
 
   DSLContent["BindList"].Commands := [
@@ -1569,7 +1622,7 @@ Constructor()
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
     [Map("ru", "Активация «Быстрых ключей»", "en", "Toggle FastKeys"), "RAlt Home", ""],
-    [Map("ru", "Активация ввода HTML-энтити", "en", "Toggle of HTML entities input"), "RAlt RShift Home", "á → a&#769;"],
+    [Map("ru", "Активация ввода HTML-кодов", "en", "Toggle of HTML codes input"), "RAlt RShift Home", "á → a&#769;"],
     [Map("ru", "Оповещения активации групп", "en", "Groups activation notification toggle"), "Win Alt M", ""],
   ]
 
@@ -1704,6 +1757,11 @@ Constructor()
     preview: DSLPadGUI.Add("Edit", "vLigaturesSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vLigaturesTitle " . commonInfoBox.title, CommonInfoBox.titleText),
     ;
+    LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
+    LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
+    LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeX: DSLPadGUI.Add("Edit", "vLigaturesLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
+    ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
     alt: DSLPadGUI.Add("Edit", "vLigaturesAlt " . commonInfoBox.alt, CommonInfoBox.altText),
     ;
@@ -1716,6 +1774,7 @@ Constructor()
 
   GrouBoxLigatures.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
   GrouBoxLigatures.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
+  GrouBoxLigatures.LaTeX.SetFont("s12")
   GrouBoxLigatures.alt.SetFont("s12")
   GrouBoxLigatures.unicode.SetFont("s12")
   GrouBoxLigatures.html.SetFont("s12")
@@ -1780,6 +1839,11 @@ Constructor()
     preview: DSLPadGUI.Add("Edit", "vFastKeysSymbol " . commonInfoBox.preview, CommonInfoBox.previewText),
     title: DSLPadGUI.Add("Text", "vFastKeysTitle " . commonInfoBox.title, CommonInfoBox.titleText),
     ;
+    LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
+    LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
+    LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeX: DSLPadGUI.Add("Edit", "vFastKeysLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
+    ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
     alt: DSLPadGUI.Add("Edit", "vFastKeysAlt " . commonInfoBox.alt, CommonInfoBox.altText),
     ;
@@ -1792,6 +1856,7 @@ Constructor()
 
   GrouBoxFastKeys.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
   GrouBoxFastKeys.title.SetFont(CommonInfoFonts.titleSize, CommonInfoFonts.preview)
+  GrouBoxFastKeys.LaTeX.SetFont("s12")
   GrouBoxFastKeys.alt.SetFont("s12")
   GrouBoxFastKeys.unicode.SetFont("s12")
   GrouBoxFastKeys.html.SetFont("s12")
@@ -1887,6 +1952,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "DiacriticSymbol",
       "DiacriticTitle",
+      "DiacriticLaTeX",
       "DiacriticAlt",
       "DiacriticUnicode",
       "DiacriticHTML",
@@ -1896,6 +1962,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "LettersSymbol",
       "LettersTitle",
+      "LettersLaTeX",
       "LettersAlt",
       "LettersUnicode",
       "LettersHTML",
@@ -1905,6 +1972,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "SpacesSymbol",
       "SpacesTitle",
+      "SpacesLaTeX",
       "SpacesAlt",
       "SpacesUnicode",
       "SpacesHTML",
@@ -1914,6 +1982,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "FastKeysSymbol",
       "FastKeysTitle",
+      "FastKeysLaTeX",
       "FastKeysAlt",
       "FastKeysUnicode",
       "FastKeysHTML",
@@ -1923,6 +1992,7 @@ Constructor()
     LV_CharacterDetails(LV, RowNumber, [DSLPadGUI,
       "LigaturesSymbol",
       "LigaturesTitle",
+      "LigaturesLaTeX",
       "LigaturesAlt",
       "LigaturesUnicode",
       "LigaturesHTML",
@@ -1947,11 +2017,11 @@ Constructor()
   CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Diacritics Primary", "Spaces", "Special Characters"]))
 
 
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticLaTeX", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersLaTeX", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesLaTeX", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysLaTeX", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesLaTeX", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
 
 
   DSLPadGUI.Title := DSLPadTitle
@@ -1990,7 +2060,7 @@ GetRandomByGroups(GroupNames) {
 }
 
 
-SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
+SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewLaTeX, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
   LanguageCode := GetLanguageCode()
 
   if (UnicodeKey != "") {
@@ -2034,6 +2104,24 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
 
         if (HasProp(value, "altcode")) {
           TargetGroup[PreviewAlt].Text := value.altcode
+        } else {
+          TargetGroup[PreviewAlt].Text := "N/A"
+        }
+
+
+        if (HasProp(value, "LaTeX")) {
+          TargetGroup[PreviewLaTeX].Text := value.LaTeX
+
+          if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
+            && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
+            PreviewGroup.latex.SetFont("s10")
+          } else if (StrLen(TargetGroup[PreviewLaTeX].Text) > 14) {
+            PreviewGroup.latex.SetFont("s9")
+          } else {
+            PreviewGroup.latex.SetFont("s12")
+          }
+        } else {
+          TargetGroup[PreviewLaTeX].Text := "N/A"
         }
       }
     }
@@ -2045,7 +2133,7 @@ LV_CharacterDetails(LV, RowNumber, SetupArray) {
   SetCharacterInfoPanel(UnicodeKey,
     SetupArray[1], SetupArray[2], SetupArray[3],
     SetupArray[4], SetupArray[5], SetupArray[6],
-    SetupArray[7])
+    SetupArray[7], SetupArray[8])
 }
 
 
@@ -2176,10 +2264,10 @@ ToggleInputHTMLEntities()
   ActivationMessage[] := Map()
   ActivationMessage["ru"] := {}
   ActivationMessage["en"] := {}
-  ActivationMessage["ru"].Active := "Ввод HTML-энтити активирован"
-  ActivationMessage["ru"].Deactive := "Ввод HTML-энтити деактивирован"
-  ActivationMessage["en"].Active := "Input HTML entities activated"
-  ActivationMessage["en"].Deactive := "Input HTML entities deactivated"
+  ActivationMessage["ru"].Active := "Ввод HTML-кодов активирован"
+  ActivationMessage["ru"].Deactive := "Ввод HTML-кодов деактивирован"
+  ActivationMessage["en"].Active := "Input HTML codes activated"
+  ActivationMessage["en"].Deactive := "Input HTML codes deactivated"
   MsgBox(InputHTMLEntities ? ActivationMessage[LanguageCode].Active : ActivationMessage[LanguageCode].Deactive, "HTML-Entities", 0x40)
 
   return
