@@ -478,12 +478,123 @@ Characters := Map(
     ; ? Шпации
     "0000 emspace", {
       unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
-      LaTeX: "\emspace",
       titles: Map("ru", "Круглая шпация", "en", "Em Space"),
       tags: ["em space", "emspace", "emsp", "круглая шпация"],
       group: ["Spaces", "1"],
       show_on_fast_keys: True,
-      symbol: "[ ]"
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 ensp", {
+      unicode: "{U+2002}", html: "&#8194;", entity: "&ensp;",
+      titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
+      tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
+      group: ["Spaces", "2"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 1/3emsp", {
+      unicode: "{U+2004}", html: "&#8196;", entity: "&emsp13;",
+      titles: Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"),
+      tags: ["emsp13", "1/3emsp", "1/3 круглой Шпации"],
+      group: ["Spaces", "3"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 1/4emsp", {
+      unicode: "{U+2005}", html: "&#8196;", entity: "&emsp14;",
+      titles: Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"),
+      tags: ["emsp14", "1/4emsp", "1/4 круглой Шпации"],
+      group: ["Spaces", "4"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 thinspace", {
+      unicode: "{U+2009}", html: "&#8201;", entity: "&thinsp;",
+      titles: Map("ru", "Узкий пробел", "en", "Thin Space"),
+      tags: ["thinsp", "thin space", "узкий пробел", "тонкий пробел"],
+      group: ["Spaces", "5"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 1/6emsp", {
+      unicode: "{U+2006}", html: "&#8198;", entity: "&emsp16;",
+      titles: Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"),
+      tags: ["emsp16", "1/6emsp", "1/6 круглой Шпации"],
+      group: ["Spaces", "6"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 narrow_no_break_space", {
+      unicode: "{U+202F}", html: "&#8239;",
+      titles: Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"),
+      tags: ["nnbsp", "narrow no-break space", "узкий неразрывный пробел", "тонкий неразрывный пробел"],
+      group: ["Spaces", "7"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 hairspace", {
+      unicode: "{U+200A}", html: "&#8202;", entity: "&hairsp;",
+      titles: Map("ru", "Волосяная шпация", "en", "Hair Space"),
+      tags: ["hsp", "hairsp", "hair space", "волосяная шпация"],
+      group: ["Spaces", "8"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 punctuation_space", {
+      unicode: "{U+2008}", html: "&#8200;", entity: "&puncsp;",
+      titles: Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"),
+      tags: ["psp", "puncsp", "punctuation space", "пунктуационный пробел"],
+      group: ["Spaces", "9"],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 zero-width_space", {
+      unicode: "{U+200B}", html: "&#8200;", entity: "&NegativeVeryThinSpace;",
+      titles: Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"),
+      tags: ["zwsp", "zero-width space", "пробел нулевой ширины"],
+      group: ["Spaces", "0"],
+      symbol: "[​]",
+      symbolAlt: "​",
+      symbolCustom: "underline"
+    },
+    "0000 word_joiner", {
+      unicode: "{U+2060}", html: "&#8288;", entity: "&NoBreak;",
+      titles: Map("ru", "Соединитель слов", "en", "Word Joiner"),
+      tags: ["wj", "word joiner", "соединитель слов"],
+      group: ["Spaces", "-"],
+      symbol: "[⁠]",
+      symbolAlt: "⁠",
+      symbolCustom: "underline"
+    },
+    "0000 figure_space", {
+      unicode: "{U+2007}", html: "&#8199;", entity: "&numsp;",
+      titles: Map("ru", "Цифровой пробел", "en", "Figure Space"),
+      tags: ["nsp", "numsp", "figure space", "цифровой пробел"],
+      group: ["Spaces", "="],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
+    },
+    "0000 no-break_space", {
+      unicode: "{U+00A0}", html: "&#160;", entity: "&nbsp;",
+      altcode: "0160",
+      LaTeX: "~",
+      titles: Map("ru", "Неразрывный пробел", "en", "No-Break Space"),
+      tags: ["nbsp", "no-break space", "неразрывный пробел"],
+      group: ["Spaces", SpaceKey],
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
     },
     "0000 emquad", {
       unicode: "{U+2001}", html: "&#8193;",
@@ -492,15 +603,9 @@ Characters := Map(
       tags: ["em quad", "emquad", "emqd", "em-квадрат"],
       group: ["Spaces", ExclamationMark],
       show_on_fast_keys: True,
-      symbol: "[ ]"
-    },
-    "0000 ensp", {
-      unicode: "{U+2002}", html: "&#8194;", entity: "&ensp;",
-      LaTeX: "\enspace",
-      titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
-      tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
-      group: ["Spaces", "2"],
-      symbol: "[ ]"
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
     },
     "0000 enquad", {
       unicode: "{U+2000}", html: "&#8192;",
@@ -508,7 +613,9 @@ Characters := Map(
       LaTeX: "\quad",
       tags: ["en quad", "enquad", "enqd", "en-квадрат"],
       group: ["Spaces", [CommercialAt, QuotationDouble]],
-      symbol: "[ ]"
+      symbol: "[ ]",
+      symbolAlt: " ",
+      symbolCustom: "underline"
     },
     ;
     ;
@@ -602,7 +709,8 @@ Characters := Map(
       symbol: "″"
     },
     "0000 permille", {
-      unicode: "{U+2030}", html: "&#8240;", altcode: "0137",
+      unicode: "{U+2030}", html: "&#8240;", entity: "&permil;",
+      altcode: "0137",
       LaTeX: "\permil",
       LaTeXPackage: "wasysym",
       titles: Map("ru", "Промилле", "en", "Per Mille"),
@@ -611,7 +719,9 @@ Characters := Map(
       symbol: "‰"
     },
     "0000 pertenthousand", {
-      unicode: "{U+2031}", html: "&#8241;",
+      unicode: "{U+2031}", html: "&#8241;", entity: "&pertenk;",
+      LaTeX: "\textpertenthousand",
+      LaTeXPackage: "textcomp",
       titles: Map("ru", "Базисный пункт", "en", "Basis Point"),
       tags: ["per ten thousand", "промилле", "базисный пункт", "basis point"],
       group: ["Special Characters", "%"],
@@ -2150,17 +2260,31 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
         (UnicodeKey == UniTrim(value.unicode)) ||
         (UnicodeKey == value.unicode)) {
         if (HasProp(value, "symbol")) {
-          if (StrLen(value.symbol) > 3) {
+          if (HasProp(value, "symbolAlt")) {
+            TargetGroup[PreviewObject].Text := value.symbolAlt
+          } else if (StrLen(value.symbol) > 3) {
             TargetGroup[PreviewObject].Text := SubStr(value.symbol, 1, 1)
           } else {
             TargetGroup[PreviewObject].Text := value.symbol
           }
         }
 
-        if (StrLen(TargetGroup[PreviewObject].Text) > 2) {
-          PreviewGroup.preview.SetFont(CommonInfoFonts.previewSmaller)
+
+        if HasProp(value, "symbolCustom") {
+          PreviewGroup.preview.SetFont(
+            CommonInfoFonts.previewSize . " norm cDefault"
+          )
+          TargetGroup[PreviewObject].SetFont(
+            CommonInfoFonts.previewSize . " " . value.symbolCustom
+          )
+        } else if (StrLen(TargetGroup[PreviewObject].Text) > 2) {
+          PreviewGroup.preview.SetFont(
+            CommonInfoFonts.previewSmaller . " norm cDefault"
+          )
         } else {
-          PreviewGroup.preview.SetFont(CommonInfoFonts.previewSize)
+          PreviewGroup.preview.SetFont(
+            CommonInfoFonts.previewSize . " norm cDefault"
+          )
         }
 
         titleText := HasProp(value, "titlesAlt") ? value.titlesAlt[LanguageCode] : value.titles[LanguageCode]
