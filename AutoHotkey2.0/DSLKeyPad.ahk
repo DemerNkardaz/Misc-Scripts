@@ -76,49 +76,67 @@ GetLanguageCode()
   }
 }
 AppVersion := [0, 1, 1]
-; Joki
+
 
 GetUpdate() {
   global AppVersion
+  LanguageCode := GetLanguageCode()
+  Messages := Map()
+  Messages["ru"] := {}
+  Messages["ru"].UpdateSuccessful := "Обновление успешно завершено."
+  Messages["ru"].UpdateFailed := "Обновление не удалось завершить."
+  Messages["ru"].NoAnyUpdates := "У вас уже установлена последняя версия."
+
+  Messages["en"] := {}
+  Messages["en"].UpdateSuccessful := "Update successful."
+  Messages["en"].UpdateFailed := "Update failed."
+  Messages["en"].NoAnyUpdates := "You already have the latest version."
+
   RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
   CurrentPath := A_ScriptFullPath
+  CurrentPath2 := A_ScriptDir "\DSLKeyPad.ahk"
+  UpdatePath := CurrentPath2 . "-GettingUpdate"
 
-  ; Загрузка содержимого файла с GitHub
+  ; Загрузка файла с GitHub и сохранение его на диск
   http := ComObject("WinHttp.WinHttpRequest.5.1")
   http.Open("GET", RawSource, true)
   http.Send()
   http.WaitForResponse()
 
   if http.Status != 200 {
-    MsgBox "Ошибка: не удалось загрузить файл с GitHub."
+    MsgBox Messages[LanguageCode].UpdateFailed
     return
   }
 
-  ; Преобразование содержимого в правильную кодировку
-  FileContent := StrGet(http.ResponseBody, "UTF-8")
+  FileContent := http.ResponseText
+  FileAppend(FileContent, UpdatePath, "UTF-8")
+  FileContent := FileRead(UpdatePath, "UTF-8")
 
-  ; Поиск версии в загруженном файле
+  ; Поиск версии в скачанном файле
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
-    MsgBox "Ошибка: не удалось найти массив AppVersion в загруженном файле."
+    MsgBox Messages[LanguageCode].UpdateFailed
+    FileDelete(UpdatePath)
     return
   }
 
   NewVersion := [match[1], match[2], match[3]]
 
-  ; Сравнение версий
+
   Loop 3 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
-      ; Если новая версия больше, заменяем файл
-      ;FileDelete(CurrentPath)
+      ; FileDelete(CurrentPath) ; Disabled during test
       FileAppend(FileContent, CurrentPath . "UpdateTest.ahk", "UTF-8")
-      Reload
+      FileDelete(UpdatePath)
+      MsgBox Messages[LanguageCode].UpdateSuccessful
+      ; Reload ; Disabled during test
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
-      ; Если текущая версия больше, обновление не требуется
+      FileDelete(UpdatePath)
       return
     }
   }
-  MsgBox "У вас уже установлена последняя версия."
+  MsgBox Messages[LanguageCode].NoAnyUpdates
+  FileDelete(UpdatePath)
 }
 
 
