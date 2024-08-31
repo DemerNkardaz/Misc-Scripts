@@ -104,7 +104,7 @@ GetUpdate(TimeOut := 0) {
   CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
   UpdateFilePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
 
-  FileContent := ""
+  UpdatingFileContent := ""
 
   http := ComObject("WinHttp.WinHttpRequest.5.1")
   http.Open("GET", RawSource, true)
@@ -116,16 +116,20 @@ GetUpdate(TimeOut := 0) {
     return
   }
 
-  FileContent := http.ResponseText
+  UpdatingFileContent := http.ResponseText
 
   Sleep 50
-  FileAppend(FileContent, UpdateFilePath, "UTF-8")
+  FileAppend("", UpdateFilePath, "UTF-8")
+  GettingUpdateFile := FileOpen(UpdateFilePath, "w", "UTF-8")
+  GettingUpdateFile.Write(UpdatingFileContent)
+  GettingUpdateFile.Close()
+
   Sleep 50
-  FileContent := FileRead(UpdateFilePath, "UTF-8")
+  UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
   Sleep 50
 
 
-  if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+  if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
     FileDelete(UpdateFilePath)
     return
@@ -134,37 +138,68 @@ GetUpdate(TimeOut := 0) {
   NewVersion := [match[1], match[2], match[3]]
 
   if UpdateAvailable {
-    UpdatedFile := FileRead(UpdateFilePath, "UTF-8")
     DuplicatedCount := 0
-    for line in StrSplit(UpdatedFile, "`n") {
+    IsDupicating := False
+    for line in StrSplit(UpdatingFileContent, "`n") {
       if InStr(line, "DuplicateResolver := 'Bad Http…'") {
         DuplicatedCount++
       }
     }
 
     if (DuplicatedCount > 1) {
+      IsDupicating := True
       ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured, DSLPadTitle])
+
+      SplitContent := StrSplit(UpdatingFileContent, "`n")
+      FixTrimmedContent := ""
+
+      for line in SplitContent {
+        if (InStr(line, ";ApplicationEnd")) {
+          break
+        }
+        FixTrimmedContent .= line . "`n"
+      }
+
+      if (InStr(FixTrimmedContent, ";ApplicationEnd")) {
+        FixTrimmedContent := RTrim(FixTrimmedContent, "`n")
+        FileOpen(UpdateFilePath, "w", "UTF-8").Write(FixTrimmedContent).Close()
+        UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
+
+        DuplicatedCount := 0
+        for line in StrSplit(UpdatingFileContent, "`n") {
+          if InStr(line, "DuplicateResolver := 'Bad Http…'") {
+            DuplicatedCount++
+          }
+        }
+
+        if (DuplicatedCount = 1) {
+          IsDupicating := False
+        }
+      }
+    }
+
+
+    if IsDupicating == True {
       FileDelete(UpdateFilePath)
       Sleep 500
       GetUpdate(1500)
       return
-    } else {
-
-      if FileExist(CurrentFilePath . "-Backup") {
-        FileDelete(CurrentFilePath . "-Backup")
-        Sleep 100
-      }
-
-      FileMove(CurrentFilePath, A_ScriptDir "\" CurrentFileName . "-Backup")
-      Sleep 200
-      FileMove(UpdateFilePath, A_ScriptDir "\" CurrentFileName)
-      MsgBox(Messages[LanguageCode].UpdateSuccessful, DSLPadTitle)
-      Sleep 200
-
-
-      Reload
-      return
     }
+
+
+    if FileExist(CurrentFilePath . "-Backup") {
+      FileDelete(CurrentFilePath . "-Backup")
+      Sleep 100
+    }
+
+    FileMove(CurrentFilePath, A_ScriptDir "\" CurrentFileName . "-Backup")
+    Sleep 200
+    FileMove(UpdateFilePath, A_ScriptDir "\" CurrentFileName)
+    MsgBox(Messages[LanguageCode].UpdateSuccessful, DSLPadTitle)
+    Sleep 200
+
+    Reload
+    return
   }
   FileDelete(UpdateFilePath)
   MsgBox(Messages[LanguageCode].NoAnyUpdates, DSLPadTitle)
@@ -2832,3 +2867,13 @@ ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) 
 TraySetIcon(ApplicationIcon[1], ApplicationIcon[2])
 A_IconTip := DSLPadTitle
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
+;ApplicationEnd
+/*
+nsdmfgdfh\
+gfdshl';,fgl
+hj, fhgld
+  , hjflghd, jh
+df,hj
+f'gd,Joinfd'j,.f
+dg;,jfgd'jf'gj,d
+'d*/
