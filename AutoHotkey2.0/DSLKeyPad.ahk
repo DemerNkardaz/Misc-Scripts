@@ -478,6 +478,7 @@ Characters := Map(
     ; ? Шпации
     "0000 emspace", {
       unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
+      LaTeX: "\emspace",
       titles: Map("ru", "Круглая шпация", "en", "Em Space"),
       tags: ["em space", "emspace", "emsp", "круглая шпация"],
       group: ["Spaces", "1"],
@@ -486,6 +487,7 @@ Characters := Map(
     },
     "0000 emquad", {
       unicode: "{U+2001}", html: "&#8193;",
+      LaTeX: "\qquad",
       titles: Map("ru", "Em-квадрат", "en", "Em Quad"),
       tags: ["em quad", "emquad", "emqd", "em-квадрат"],
       group: ["Spaces", ExclamationMark],
@@ -494,6 +496,7 @@ Characters := Map(
     },
     "0000 ensp", {
       unicode: "{U+2002}", html: "&#8194;", entity: "&ensp;",
+      LaTeX: "\enspace",
       titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
       tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
       group: ["Spaces", "2"],
@@ -502,6 +505,7 @@ Characters := Map(
     "0000 enquad", {
       unicode: "{U+2000}", html: "&#8192;",
       titles: Map("ru", "En-квадрат", "en", "En Quad"),
+      LaTeX: "\quad",
       tags: ["en quad", "enquad", "enqd", "en-квадрат"],
       group: ["Spaces", [CommercialAt, QuotationDouble]],
       symbol: "[ ]"
@@ -529,6 +533,20 @@ Characters := Map(
       tags: ["asterism", "астеризм"],
       group: ["Special Characters", CtrlA],
       symbol: "⁂"
+    },
+    "0000 colon_triangle", {
+      unicode: "{U+02D0}", html: "&#720;",
+      titles: Map("ru", "Знак долготы", "en", "Triangle Colon"),
+      tags: ["triangle colon", "знак долготы"],
+      group: ["Special Characters", [";", "ж"]],
+      symbol: "ː"
+    },
+    "0000 colon_triangle_half", {
+      unicode: "{U+02D1}", html: "&#721;",
+      titles: Map("ru", "Знак полудолготы", "en", "Half Triangle Colon"),
+      tags: ["half triangle colon", "знак полудолготы"],
+      group: ["Special Characters", [":", "Ж"]],
+      symbol: "ˑ"
     },
     "0000 dagger", {
       unicode: "{U+2020}", html: "&dagger;",
@@ -582,6 +600,22 @@ Characters := Map(
       tags: ["double prime", "двойной штрих"],
       group: ["Special Characters", ["P", "З"]],
       symbol: "″"
+    },
+    "0000 permille", {
+      unicode: "{U+2030}", html: "&#8240;", altcode: "0137",
+      LaTeX: "\permil",
+      LaTeXPackage: "wasysym",
+      titles: Map("ru", "Промилле", "en", "Per Mille"),
+      tags: ["per mille", "промилле"],
+      group: ["Special Characters", "5"],
+      symbol: "‰"
+    },
+    "0000 pertenthousand", {
+      unicode: "{U+2031}", html: "&#8241;",
+      titles: Map("ru", "Базисный пункт", "en", "Basis Point"),
+      tags: ["per ten thousand", "промилле", "базисный пункт", "basis point"],
+      group: ["Special Characters", "%"],
+      symbol: "‱"
     },
     ;
     ;
@@ -1437,7 +1471,6 @@ Constructor()
 
   DSLPadGUI := Gui()
 
-
   ColumnWidths := [300, 140, 60, 85]
   ThreeColumnWidths := [300, 140, 145]
   ColumnAreaWidth := "w620"
@@ -1481,6 +1514,8 @@ Constructor()
     LaTeXTitleEText: "E",
     LaTeXTitleLTX: "x685 y373 w128 h24 BackgroundTrans",
     LaTeXTitleLTXText: "L T  X",
+    LaTeXPackage: "x685 y373 w128 h24 BackgroundTrans Right",
+    LaTeXPackageText: "",
     LaTeX: "x685 y390 w128 h24 readonly Center -VScroll -HScroll",
     LaTeXText: "N/A",
     alt: "x685 y430 w128 h24 readonly Center -VScroll -HScroll",
@@ -1507,6 +1542,7 @@ Constructor()
     LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
     LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
     LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeXPackage: DSLPadGUI.Add("Text", "vDiacriticLaTeXPackage " . CommonInfoBox.LaTeXPackage, CommonInfoBox.LaTeXPackageText).SetFont("s9"),
     LaTeX: DSLPadGUI.Add("Edit", "vDiacriticLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
@@ -1551,6 +1587,7 @@ Constructor()
     LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
     LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
     LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeXPackage: DSLPadGUI.Add("Text", "vLettersLaTeXPackage " . CommonInfoBox.LaTeXPackage, CommonInfoBox.LaTeXPackageText).SetFont("s9"),
     LaTeX: DSLPadGUI.Add("Edit", "vLettersLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
@@ -1620,6 +1657,7 @@ Constructor()
     LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
     LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
     LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeXPackage: DSLPadGUI.Add("Text", "vSpacesLaTeXPackage " . CommonInfoBox.LaTeXPackage, CommonInfoBox.LaTeXPackageText).SetFont("s9"),
     LaTeX: DSLPadGUI.Add("Edit", "vSpacesLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
@@ -1796,6 +1834,7 @@ Constructor()
     LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
     LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
     LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeXPackage: DSLPadGUI.Add("Text", "vLigaturesLaTeXPackage " . CommonInfoBox.LaTeXPackage, CommonInfoBox.LaTeXPackageText).SetFont("s9"),
     LaTeX: DSLPadGUI.Add("Edit", "vLigaturesLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
@@ -1878,6 +1917,7 @@ Constructor()
     LaTeXTitleLTX: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleLTX, CommonInfoBox.LaTeXTitleLTXText).SetFont("s10", "Cambria"),
     LaTeXTitleA: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleA, CommonInfoBox.LaTeXTitleAText).SetFont("s9", "Cambria"),
     LaTeXTitleE: DSLPadGUI.Add("Text", CommonInfoBox.LaTeXTitleE, CommonInfoBox.LaTeXTitleEText).SetFont("s10", "Cambria"),
+    LaTeXPackage: DSLPadGUI.Add("Text", "vFastKeysLaTeXPackage " . CommonInfoBox.LaTeXPackage, CommonInfoBox.LaTeXPackageText).SetFont("s9"),
     LaTeX: DSLPadGUI.Add("Edit", "vFastKeysLaTeX " . commonInfoBox.LaTeX, CommonInfoBox.LaTeXText),
     ;
     altTitle: DSLPadGUI.Add("Text", CommonInfoBox.altTitle, CommonInfoBox.altTitleText[LanguageCode]).SetFont("s9"),
@@ -1989,6 +2029,7 @@ Constructor()
       "DiacriticSymbol",
       "DiacriticTitle",
       "DiacriticLaTeX",
+      "DiacriticLaTeXPackage",
       "DiacriticAlt",
       "DiacriticUnicode",
       "DiacriticHTML",
@@ -1999,6 +2040,7 @@ Constructor()
       "LettersSymbol",
       "LettersTitle",
       "LettersLaTeX",
+      "LettersLaTeXPackage",
       "LettersAlt",
       "LettersUnicode",
       "LettersHTML",
@@ -2009,6 +2051,7 @@ Constructor()
       "SpacesSymbol",
       "SpacesTitle",
       "SpacesLaTeX",
+      "SpacesLaTeXPackage",
       "SpacesAlt",
       "SpacesUnicode",
       "SpacesHTML",
@@ -2019,6 +2062,7 @@ Constructor()
       "FastKeysSymbol",
       "FastKeysTitle",
       "FastKeysLaTeX",
+      "FastKeysLaTeXPackage",
       "FastKeysAlt",
       "FastKeysUnicode",
       "FastKeysHTML",
@@ -2029,6 +2073,7 @@ Constructor()
       "LigaturesSymbol",
       "LigaturesTitle",
       "LigaturesLaTeX",
+      "LigaturesLaTeXPackage",
       "LigaturesAlt",
       "LigaturesUnicode",
       "LigaturesHTML",
@@ -2053,11 +2098,11 @@ Constructor()
   CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Diacritics Primary", "Spaces", "Special Characters"]))
 
 
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticLaTeX", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersLaTeX", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesLaTeX", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysLaTeX", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesLaTeX", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticLaTeX", "DiacriticLaTeXPackage", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersLaTeX", "LettersLaTeXPackage", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesLaTeX", "SpacesLaTeXPackage", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysLaTeX", "FastKeysLaTeXPackage", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesLaTeX", "LigaturesLaTeXPackage", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
 
 
   DSLPadGUI.Title := DSLPadTitle
@@ -2096,7 +2141,7 @@ GetRandomByGroups(GroupNames) {
 }
 
 
-SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewLaTeX, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
+SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewLaTeX, PreviewLaTeXPackage, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
   LanguageCode := GetLanguageCode()
 
   if (UnicodeKey != "") {
@@ -2144,6 +2189,11 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
           TargetGroup[PreviewAlt].Text := "N/A"
         }
 
+        if (HasProp(value, "LaTeXPackage")) {
+          TargetGroup[PreviewLaTeXPackage].Text := "📦 " . value.LaTeXPackage
+        } else {
+          TargetGroup[PreviewLaTeXPackage].Text := ""
+        }
 
         if (HasProp(value, "LaTeX")) {
           if IsObject(value.LaTeX) {
@@ -2196,7 +2246,7 @@ LV_CharacterDetails(LV, RowNumber, SetupArray) {
   SetCharacterInfoPanel(UnicodeKey,
     SetupArray[1], SetupArray[2], SetupArray[3],
     SetupArray[4], SetupArray[5], SetupArray[6],
-    SetupArray[7], SetupArray[8])
+    SetupArray[7], SetupArray[8], SetupArray[9])
 }
 
 
@@ -2208,8 +2258,29 @@ LV_OpenUnicodeWebsite(LV, RowNumber)
   if (SelectedRow != "") {
     IsCtrlDown := GetKeyState("LControl")
     if (IsCtrlDown) {
-      UnicodeCodePoint := "0x" . SelectedRow
-      A_Clipboard := Chr(UnicodeCodePoint)
+      if (InputMode = "HTML" || InputMode = "LaTeX") {
+        for characterEntry, value in Characters {
+          if (SelectedRow = UniTrim(value.unicode)) {
+            if InputMode = "HTML" {
+              A_Clipboard := HasProp(value, "entity") ? value.entity : value.html
+            } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
+              if IsObject(value.LaTeX) {
+                if LaTeXMode = "common"
+                  A_Clipboard := value.LaTeX[1]
+                else if LaTeXMode = "math"
+                  A_Clipboard := value.LaTeX[2]
+              } else {
+                A_Clipboard := value.LaTeX
+              }
+            }
+          }
+        }
+      } else {
+        UnicodeCodePoint := "0x" . SelectedRow
+        A_Clipboard := Chr(UnicodeCodePoint)
+      }
+
+
       SoundPlay("C:\Windows\Media\Speech On.wav")
     }
     else {
