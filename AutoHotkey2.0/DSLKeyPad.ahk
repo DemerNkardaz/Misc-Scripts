@@ -94,7 +94,8 @@ GetUpdate() {
     return
   }
 
-  FileContent := http.ResponseText
+  ; Преобразование содержимого в правильную кодировку
+  FileContent := StrGet(http.ResponseBody, "UTF-8")
 
   ; Поиск версии в загруженном файле
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
@@ -108,8 +109,8 @@ GetUpdate() {
   Loop 3 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
       ; Если новая версия больше, заменяем файл
-      FileDelete(CurrentPath)
-      FileAppend(FileContent, CurrentPath)
+      ;FileDelete(CurrentPath)
+      FileAppend(FileContent, CurrentPath . "UpdateTest.ahk", "UTF-8")
       Reload
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
@@ -119,6 +120,7 @@ GetUpdate() {
   }
   MsgBox "У вас уже установлена последняя версия."
 }
+
 
 CtrlA := Chr(1)
 CtrlB := Chr(2)
