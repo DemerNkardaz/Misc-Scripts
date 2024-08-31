@@ -100,17 +100,26 @@ GetUpdate() {
   CurrentPathFileName := StrSplit(CurrentPath, "\").Pop()
   UpdatePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
 
-  http := ComObject("WinHttp.WinHttpRequest.5.1")
-  http.Open("GET", RawSource, true)
-  http.Send()
-  http.WaitForResponse()
+  FileContent := ""
 
-  if http.Status != 200 {
-    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
-    return
+  loop {
+    http := ComObject("WinHttp.WinHttpRequest.5.1")
+    http.Open("GET", RawSource, true)
+    http.Send()
+    http.WaitForResponse()
+
+    if http.Status != 200 {
+      MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
+      return
+    }
+
+    FileContent := http.ResponseText
+    if !RegExMatch(FileContent, "(\#Requires Autohotkey v2){2,}", &match) {
+      break
+    }
+    Sleep 500
   }
 
-  FileContent := http.ResponseText
   Sleep 50
   FileAppend(FileContent, UpdatePath, "UTF-8")
   Sleep 50
