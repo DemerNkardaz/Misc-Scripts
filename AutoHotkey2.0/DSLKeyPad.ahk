@@ -2477,29 +2477,21 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
             }
             TargetGroup[PreviewLaTeX].Text := LaTeXString
 
-            if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
-              && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
-              PreviewGroup.latex.SetFont("s10")
-            } else if (StrLen(TargetGroup[PreviewLaTeX].Text) > 14) {
-              PreviewGroup.latex.SetFont("s9")
-            } else {
-              PreviewGroup.latex.SetFont("s12")
-            }
           } else {
             TargetGroup[PreviewLaTeX].Text := value.LaTeX
           }
 
-
-          if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
-            && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
-            PreviewGroup.latex.SetFont("s10")
-          } else if (StrLen(TargetGroup[PreviewLaTeX].Text) > 14) {
-            PreviewGroup.latex.SetFont("s9")
-          } else {
-            PreviewGroup.latex.SetFont("s12")
-          }
         } else {
           TargetGroup[PreviewLaTeX].Text := "N/A"
+        }
+
+        if (StrLen(TargetGroup[PreviewLaTeX].Text) > 9
+          && StrLen(TargetGroup[PreviewLaTeX].Text) < 15) {
+          PreviewGroup.latex.SetFont("s10")
+        } else if (StrLen(TargetGroup[PreviewLaTeX].Text) > 14) {
+          PreviewGroup.latex.SetFont("s9")
+        } else {
+          PreviewGroup.latex.SetFont("s12")
         }
       }
     }
