@@ -54,9 +54,10 @@ if !FileExist(LocalesFile) {
   GetLocales()
 }
 
-ReadLocale(EntryName) {
+ReadLocale(EntryName, Prefix := "") {
   global LocalesFile
-  Intermediate := IniRead(LocalesFile, GetLanguageCode(), EntryName, "")
+  Section := Prefix != "" ? Prefix . "_" . GetLanguageCode() : GetLanguageCode()
+  Intermediate := IniRead(LocalesFile, Section, EntryName, "")
   Intermediate := StrReplace(Intermediate, "\n", "`n")
 
   return Intermediate
@@ -69,7 +70,6 @@ SetStringVars(StringVar, SetVars*) {
   }
   return Result
 }
-
 
 GetAppIco() {
   global AppIcoRaw, AppIcoFile
