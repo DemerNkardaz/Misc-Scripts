@@ -8,66 +8,13 @@ Some of scripts created with AI.
 
 ## AutoHotkey Scripts
 
-### TypographyChars
+### DSL KeyPad
 
-This script binds specials chars insertion for some diacritic signs, spaces, ¹₂numbers etc.
+Is a tool for easier inserting of special characters.
 
-#### List of binds
+- **Win + Alt + Home:** Will open the main window with key combinations and some options.
 
-_Diacritic signs_
-
-**LCtrl + LAlt +** **_following keys:_**
-
-- **m** — Combining marcon, looks like o → ō, u →​ ū.
-- **b** — Combining breve, looks like o → ŏ, u → ŭ.
-- **c** — Combining circumflex, looks like o → ô, u → û.
-- **LShift + c** — Combining caron, looks like o → ǒ, u → û.
-- **a** — Combining acute, looks like o → ó, u → ú.
-- **g** — Combining grave, looks like o → ò, u → ù.
-- **t** — Combining tilde, looks like o → õ, u → ũ.
-- **d** — Combining dot above, looks like o → ȯ, u → u̇.
-- **LShift + d** — Combining diaeresis, looks like o → ö, u → ü.
-- **r** — Combining ring above, looks like o → o̊, u → ů.
-
-- _Super and subscript number_ — **LCtrl + LAlt** **_(for subscript + LShift)_** **+ 1…0 numbers —** ¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀.
-
-_Spaces_
-
-**RAlt + RShift +** **_following keys:_**
-
-- **1** — Em Space [ ].
-- **2** — En Space [ ].
-- **3** — ⅓ Em Space [ ].
-- **4** — ¼ Em Space [ ].
-- **5** — _empty bind_.
-- **6** — ⅙ Em Space [ ].
-- **7** — Thin Space [ ].
-- **8** — Hair Space [ ].
-- **9** — Punctuation Space [ ].
-- **0** — Zero-Width Space [].
-- **-** — Zero-Width No-Break Space [].
-- _With numpad (need to turn off NumLock):_
-- **0** — Figure Space [ ].
-
-- **RAlt + LShift + Space —** Thin No-Break Space.
-
-_Other binds_
-
-**RAlt + m —** Minus sign [−].
-
-**RAlt + _on numpad:_**
-
-- **\*** — Double asterisk [⁑].
-- **RShift + \*** — Asterism [⁂].
-- **/** — Single dagger [†].
-- **RShift + /** — Double dagger [‡].
-
-**LWin +** **_following keys:_**
-
-- **[ or ]** — Single asian quotes:「」.
-- **LShift + [ or ]** — Double asian quotes:『』.
-- **LCtrl + [ or ]** — Vertical single asian quotes:﹁﹂.
-- **LCtrl + LShift + [ or ]** — Vertical double asian quotes:﹃﹄.
+![alt text](image/README/dslkeypad.png)
 
 ## PowerShell Lists Scripts
 
