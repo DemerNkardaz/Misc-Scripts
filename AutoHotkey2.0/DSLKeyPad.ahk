@@ -5,12 +5,14 @@
 ; Only EN US & RU RU Keyboard Layout
 ApplicationIcon := ["C:\Windows\System32\charmap.exe", 1]
 ConfigIcon := ["C:\Windows\System32\imageres.dll", 065]
-
+ChracterMap := "C:\Windows\System32\charmap.exe"
+ImageRes := "C:\Windows\System32\imageres.dll"
+Shell32 := "C:\Windows\SysWOW64\shell32.dll"
 
 ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
 
-OpenConfigFile() {
+OpenConfigFile(*) {
   global ConfigFile
   Run(ConfigFile)
 }
@@ -1763,7 +1765,9 @@ LocaliseArrayKeys(ObjectPath) {
 }
 
 DSLPadTitle := "DSL KeyPad (αλφα)" . " — " . CurrentVersionString
-<#<!Home::
+<#<!Home:: OpenPanel()
+
+OpenPanel(*)
 {
   if (IsGuiOpen(DSLPadTitle))
   {
@@ -1794,11 +1798,14 @@ SwitchLanguage(LanguageCode) {
 
   DSLPadGUI := Constructor()
   DSLPadGUI.Show()
+
+  ManageTrayItems()
 }
 
 Constructor()
 {
   CheckUpdate()
+  ManageTrayItems()
   DSLContent := {}
   DSLContent[] := Map()
   DSLContent["BindList"] := {}
@@ -2978,9 +2985,92 @@ ShowInfoMessage(MessagePost, MessageIcon := "Info", MessageTitle := DSLPadTitle,
 
 }
 
-
 TraySetIcon(ApplicationIcon[1], ApplicationIcon[2])
 A_IconTip := DSLPadTitle
+
+DSLTray := A_TrayMenu
+
+ReloadApplication(*) {
+  Reload
+}
+ExitApplication(*) {
+  ExitApp
+}
+
+OpenScriptFolder(*) {
+  Run A_ScriptDir
+}
+
+ManageTrayItems() {
+  LanguageCode := GetLanguageCode()
+  Labels := Map()
+  Labels["ru"] := {}
+  Labels["en"] := {}
+
+  Labels["ru"].Reload := "Перезапустить"
+  Labels["ru"].Config := "Файл конфига"
+  Labels["ru"].Exit := "Закрыть"
+  Labels["ru"].Panel := "Открыть панель"
+  Labels["ru"].Install := "Установить"
+  Labels["ru"].Search := "Поиск знака…"
+  Labels["ru"].Folder := "Открыть папку"
+  Labels["ru"].Smelter := "Сплавить знаки"
+  Labels["ru"].Unicode := "Вставить по Юникоду"
+  Labels["ru"].Altcode := "Вставить по Альт-коду"
+  Labels["ru"].Notifications := "Вкл/выкл Уведомления групп"
+
+
+  Labels["en"].Reload := "Reload"
+  Labels["en"].Config := "Config file"
+  Labels["en"].Exit := "Exit"
+  Labels["en"].Panel := "Open panel"
+  Labels["en"].Install := "Install"
+  Labels["en"].Search := "Search symbol…"
+  Labels["en"].Folder := "Open folder"
+  Labels["en"].Smelter := "Symbols melt"
+  Labels["en"].Unicode := "Insert by Unicode"
+  Labels["en"].Altcode := "Insert by Alt-code"
+  Labels["en"].Notifications := "On/Off Group Notifications"
+
+  CurrentApp := "DSL Keypad " . CurrentVersionString
+  UpdateEntry := Labels[LanguageCode].Install . " " . UpdateVersionString
+
+  DSLTray.Delete()
+  DSLTray.Add(CurrentApp, (*) => {})
+  if UpdateAvailable {
+    DSLTray.Add(UpdateEntry, (*) => GetUpdate())
+    DSLTray.SetIcon(UpdateEntry, ImageRes, 176)
+  }
+  DSLTray.Add()
+  DSLTray.Add(Labels[LanguageCode].Panel, OpenPanel)
+  DSLTray.Add()
+  DSLTray.Add(Labels[LanguageCode].Search, (*) => SearchKey())
+  DSLTray.Add(Labels[LanguageCode].Unicode, (*) => InsertUnicodeKey())
+  DSLTray.Add(Labels[LanguageCode].Altcode, (*) => InsertAltCodeKey())
+  DSLTray.Add(Labels[LanguageCode].Smelter, (*) => Ligaturise())
+  DSLTray.Add(Labels[LanguageCode].Folder, OpenScriptFolder)
+  DSLTray.Add()
+  DSLTray.Add(Labels[LanguageCode].Notifications, (*) => ToggleGroupMessage())
+  DSLTray.Add()
+  DSLTray.Add(Labels[LanguageCode].Reload, ReloadApplication)
+  DSLTray.Add(Labels[LanguageCode].Config, OpenConfigFile)
+  DSLTray.Add()
+  DSLTray.Add(Labels[LanguageCode].Exit, ExitApplication)
+  DSLTray.Add()
+
+  DSLTray.SetIcon(Labels[LanguageCode].Panel, ChracterMap, 1)
+  DSLTray.SetIcon(Labels[LanguageCode].Search, ImageRes, 169)
+  DSLTray.SetIcon(Labels[LanguageCode].Unicode, Shell32, 225)
+  DSLTray.SetIcon(Labels[LanguageCode].Altcode, Shell32, 313)
+  DSLTray.SetIcon(Labels[LanguageCode].Smelter, ImageRes, 151)
+  DSLTray.SetIcon(Labels[LanguageCode].Folder, ImageRes, 180)
+  DSLTray.SetIcon(Labels[LanguageCode].Notifications, ImageRes, 016)
+  DSLTray.SetIcon(Labels[LanguageCode].Reload, ImageRes, 229)
+  DSLTray.SetIcon(Labels[LanguageCode].Config, ImageRes, 065)
+  DSLTray.SetIcon(Labels[LanguageCode].Exit, ImageRes, 085)
+}
+ManageTrayItems()
+
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
 ;Don’t remove ↓ or update duplication repair will not work
 ;This is marker for trim update file to avoid receiving multiple update code at once
