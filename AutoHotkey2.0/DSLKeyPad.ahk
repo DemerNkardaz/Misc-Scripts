@@ -86,7 +86,7 @@ GetLanguageCode()
   }
 }
 
-AppVersion := [0, 1, 1]
+AppVersion := [0, 1, 1, 1]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
 
@@ -216,13 +216,13 @@ GetUpdate(TimeOut := 0) {
   UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
   Sleep 50
 
-  if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+  if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
     FileDelete(UpdateFilePath)
     return
   }
 
-  NewVersion := [match[1], match[2], match[3]]
+  NewVersion := [match[1], match[2], match[3], match[4]]
 
   if UpdateAvailable {
     DuplicatedCount := 0
@@ -299,14 +299,14 @@ CheckUpdate() {
 
   FileContent := http.ResponseText
 
-  if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+  if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     return
   }
-  NewVersion := [match[1], match[2], match[3]]
-  Loop 3 {
+  NewVersion := [match[1], match[2], match[3], match[4]]
+  Loop 4 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
       UpdateAvailable := True
-      UpdateVersionString := Format("{:d}.{:d}.{:d}", NewVersion[1], NewVersion[2], NewVersion[3])
+      UpdateVersionString := Format("{:d}.{:d}.{:d}", NewVersion[1], NewVersion[2], NewVersion[3], NewVersion[4])
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
       return
