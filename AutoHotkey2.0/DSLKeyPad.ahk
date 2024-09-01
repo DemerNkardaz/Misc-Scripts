@@ -9,8 +9,68 @@ ChracterMap := "C:\Windows\System32\charmap.exe"
 ImageRes := "C:\Windows\System32\imageres.dll"
 Shell32 := "C:\Windows\SysWOW64\shell32.dll"
 
-ConfigFile := "C:\Users\" . A_UserName . "\DSLKeyPadConfig.ini"
 
+AppVersion := [0, 1, 1, 0]
+CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
+UpdateVersionString := ""
+
+RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
+RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
+UpdateAvailable := False
+
+ChangeLogRaw := Map(
+  "ru", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.ru.md",
+  "en", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.en.md"
+)
+
+LocalesRaw := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.locales.ini"
+
+WorkingDir := A_MyDocuments . "\DSLKeyPad"
+DirCreate(WorkingDir)
+
+ConfigFile := WorkingDir . "\DSLKeyPad.config.ini"
+LocalesFile := WorkingDir . "\DSLKeyPad.locales.ini"
+
+GetLocales() {
+  global LocalesRaw
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  http.Open("GET", LocalesRaw, true)
+  http.Send()
+  http.WaitForResponse()
+
+  if http.Status != 200 {
+    MsgBox "An error occured during receiving locales file."
+    return
+  }
+
+  if FileExist(LocalesFile) {
+    WriteLocaleFile := FileOpen(LocalesFile, "w", "UTF-8")
+    WriteLocaleFile.Write(http.ResponseText)
+    WriteLocaleFile.Close()
+  } else {
+    FileAppend(http.ResponseText, LocalesFile, "UTF-8")
+  }
+}
+
+if !FileExist(LocalesFile) {
+  GetLocales()
+}
+
+ReadLocale(EntryName) {
+  global LocalesFile
+  Intermediate := IniRead(LocalesFile, GetLanguageCode(), EntryName, "")
+  Intermediate := StrReplace(Intermediate, "\n", "`n")
+
+  return Intermediate
+}
+
+SetStringVars(StringVar, SetVars*) {
+  Result := StringVar
+  For Index, Value in SetVars {
+    Result := StrReplace(Result, "{" (Index - 1) "}", Value)
+  }
+  return Result
+}
 
 OpenConfigFile(*) {
   global ConfigFile
@@ -86,19 +146,6 @@ GetLanguageCode()
   }
 }
 
-AppVersion := [0, 1, 1, 0]
-CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
-UpdateVersionString := ""
-
-RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
-RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
-UpdateAvailable := False
-
-ChangeLogRaw := Map(
-  "ru", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.ru.md",
-  "en", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.en.md"
-)
-
 GetChangeLog() {
   global ChangeLogRaw
   ReceiveMap := Map()
@@ -140,13 +187,6 @@ GetChangeLog() {
 
 InsertChangesList(TargetGUI) {
   LanguageCode := GetLanguageCode()
-  Labels := Map()
-  Labels["ru"] := {}
-  Labels["ru"].Version := "Версия"
-  Labels["ru"].Date := "Дата"
-  Labels["en"] := {}
-  Labels["en"].Version := "Version"
-  Labels["en"].Date := "Date"
   Changes := GetChangeLog()
   IsEmpty := True
 
@@ -159,9 +199,15 @@ InsertChangesList(TargetGUI) {
     return
   }
 
+  Labels := {
+    ver: IniRead(LocalesFile, LanguageCode, "version", ""),
+    date: IniRead(LocalesFile, LanguageCode, "date", ""),
+  }
+
+
   for language, content in Changes {
     if language = LanguageCode {
-      content := RegExReplace(content, "m)^## " . Labels[language].Version . " (.*) — (.*)", Labels[language].Version . ": $1`n" . Labels[language].Date . ": $2")
+      content := RegExReplace(content, "m)^## " . Labels.ver . " (.*) — (.*)", Labels.ver . ": $1`n" . Labels.date . ": $2")
       content := RegExReplace(content, "m)^- (.*)", " • $1")
       content := RegExReplace(content, "m)^---", " " . StrRepeat("—", 84))
 
@@ -174,20 +220,10 @@ GetUpdate(TimeOut := 0) {
   Sleep TimeOut
   global AppVersion, RawSource
   LanguageCode := GetLanguageCode()
-  Messages := Map()
-  Messages["ru"] := {}
-  Messages["ru"].UpdateSuccessful := "Обновление успешно завершено.`nУстановлено " . CurrentVersionString . " → " . UpdateVersionString
-  Messages["ru"].UpdateFailed := "Обновление не удалось завершить."
-  Messages["ru"].NoAnyUpdates := "У вас уже установлена последняя версия."
-  Messages["ru"].ErrorOccured := "Произошла ошибка обновления. Исправляем…"
-  Messages["ru"].ErrorDuplicated := "Обнаружено дублирование кода обновления. Исправляем…"
+  Messages := {
+    updateSucces: SetStringVars(ReadLocale("update_successful"), CurrentVersionString, UpdateVersionString),
+  }
 
-  Messages["en"] := {}
-  Messages["en"].UpdateSuccessful := "Update successful.`nInstalled " . CurrentVersionString . " → " . UpdateVersionString
-  Messages["en"].UpdateFailed := "Update failed."
-  Messages["en"].NoAnyUpdates := "You already have the latest version."
-  Messages["en"].ErrorOccured := "An error occured while updating. Trying to fix it…"
-  Messages["en"].ErrorDuplicated := "Detected duplicating of update code. Trying to fix it…"
   CurrentFilePath := A_ScriptFullPath
   CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
   UpdateFilePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
@@ -200,7 +236,7 @@ GetUpdate(TimeOut := 0) {
   http.WaitForResponse()
 
   if http.Status != 200 {
-    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
+    MsgBox(ReadLocale("update_failed"), DSLPadTitle)
     return
   }
 
@@ -217,7 +253,7 @@ GetUpdate(TimeOut := 0) {
   Sleep 50
 
   if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]", &match) {
-    MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
+    MsgBox(ReadLocale("update_failed"), DSLPadTitle)
     FileDelete(UpdateFilePath)
     return
   }
@@ -235,7 +271,7 @@ GetUpdate(TimeOut := 0) {
       }
     }
     if (DuplicatedCount > 1) {
-      ShowInfoMessage([Messages["ru"].ErrorDuplicated, DSLPadTitle, Messages["en"].ErrorDuplicated], "Warning")
+      ;ShowInfoMessage([Messages2["ru"].ErrorDuplicated, DSLPadTitle, Messages2["en"].ErrorDuplicated], "Warning")
     }
 
     for line in SplitContent {
@@ -261,7 +297,7 @@ GetUpdate(TimeOut := 0) {
     }
 
     if (DuplicatedCount > 1) {
-      ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured], "Warning")
+      ;ShowInfoMessage([Messages2["ru"].ErrorOccured, DSLPadTitle, Messages2["en"].ErrorOccured], "Warning")
       FileDelete(UpdateFilePath)
       Sleep 500
       GetUpdate(1500)
@@ -276,14 +312,15 @@ GetUpdate(TimeOut := 0) {
     FileMove(CurrentFilePath, A_ScriptDir "\" CurrentFileName . "-Backup")
     Sleep 200
     FileMove(UpdateFilePath, A_ScriptDir "\" CurrentFileName)
-    MsgBox(Messages[LanguageCode].UpdateSuccessful, DSLPadTitle)
+    MsgBox(Messages.updateSucces, DSLPadTitle)
     Sleep 200
+    GetLocales()
 
     Reload
     return
   }
   FileDelete(UpdateFilePath)
-  MsgBox(Messages[LanguageCode].NoAnyUpdates, DSLPadTitle)
+  MsgBox(ReadLocale("update_absent"), DSLPadTitle)
 }
 
 CheckUpdate() {
@@ -1418,18 +1455,9 @@ CombineArrays(destinationArray, sourceArray*)
 }
 
 SearchKey() {
-  LanguageCode := GetLanguageCode()
-  Labels := {}
-  Labels[] := Map()
-  Labels["ru"] := {}
-  Labels["en"] := {}
-  Labels["ru"].SearchTitle := "Поиск знака"
-  Labels["en"].SearchTitle := "Search symbol"
-  Labels["ru"].WindowPrompt := "Введите название знака"
-  Labels["en"].WindowPrompt := "Enter symbol name"
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Search", "")
-  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(ReadLocale("symbol_search_prompt"), ReadLocale("symbol_search"), "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -1476,18 +1504,8 @@ SearchKey() {
 
 
 InsertUnicodeKey() {
-  LanguageCode := GetLanguageCode()
-  Labels := {}
-  Labels[] := Map()
-  Labels["ru"] := {}
-  Labels["en"] := {}
-  Labels["ru"].SearchTitle := "UNICODE"
-  Labels["en"].SearchTitle := "UNICODE"
-  Labels["ru"].WindowPrompt := "Введите кодовые обозначения"
-  Labels["en"].WindowPrompt := "Enter code IDs"
-
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Unicode", "")
-  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(ReadLocale("symbol_code_prompt"), ReadLocale("symbol_unicode"), "w256 h92", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -1563,20 +1581,8 @@ SwitchToScript(scriptMode) {
 }
 
 InsertAltCodeKey() {
-  LanguageCode := GetLanguageCode()
-  Labels := {}
-  Labels[] := Map()
-  Labels["ru"] := {}
-  Labels["en"] := {}
-  Labels["ru"].SearchTitle := "Альт-коды"
-  Labels["en"].SearchTitle := "Alt Codes"
-  Labels["ru"].WindowPrompt := "Введите кодовые обозначения"
-  Labels["en"].WindowPrompt := "Enter code IDs"
-  Labels["ru"].Err := "Введите числовые значения"
-  Labels["en"].Err := "Enter numeric values separated"
-
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
-  IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
+  IB := InputBox(ReadLocale("symbol_code_prompt"), ReadLocale("symbol_altcode"), "w256 h92", PromptValue)
   if IB.Result = "Cancel"
     return
   else
@@ -1588,7 +1594,7 @@ InsertAltCodeKey() {
     if (code ~= "^\d+$") {
       SendAltNumpad(code)
     } else {
-      MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
+      MsgBox(ReadLocale("warning_only_nums"), ReadLocale("symbol_altcode"), 0x30)
       return
     }
   }
@@ -1603,29 +1609,14 @@ SendAltNumpad(CharacterCode) {
   Send("{Alt Up}")
 }
 
-LigaturiserLabels() {
-  Labels := {}
-  Labels[] := Map()
-  Labels["ru"] := {}
-  Labels["en"] := {}
-  Labels["ru"].SearchTitle := "Сплавить знаки"
-  Labels["en"].SearchTitle := "Symbols melt"
-  Labels["ru"].WindowPrompt := "Вставьте ингредиенты"
-  Labels["en"].WindowPrompt := "Insert ingredients"
-  Labels["ru"].Err := "Рецепт не найдено"
-  Labels["en"].Err := "Recipe not found"
-
-  return Labels
-}
 
 Ligaturise(SmeltingMode := "InputBox") {
   LanguageCode := GetLanguageCode()
-  Labels := LigaturiserLabels()
   BackupClipboard := ""
 
   if (SmeltingMode = "InputBox") {
     PromptValue := IniRead(ConfigFile, "LatestPrompts", "Ligature", "")
-    IB := InputBox(Labels[LanguageCode].WindowPrompt, Labels[LanguageCode].SearchTitle, "w256 h92", PromptValue)
+    IB := InputBox(ReadLocale("symbol_smelting_prompt"), ReadLocale("symbol_smelting"), "w256 h92", PromptValue)
     if IB.Result = "Cancel"
       return
     else
@@ -1695,7 +1686,7 @@ Ligaturise(SmeltingMode := "InputBox") {
   }
 
   if (!Found) {
-    MsgBox(Labels[LanguageCode].Err, Labels[LanguageCode].SearchTitle, 0x30)
+    MsgBox(ReadLocale("warning_recipe_absent"), ReadLocale("symbol_smelting"), 0x30)
   }
 
   if (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace") {
