@@ -1863,7 +1863,7 @@ Constructor()
   DSLPadGUI := Gui()
 
   ColumnWidths := [300, 140, 60, 85]
-  ThreeColumnWidths := [300, 140, 145]
+  ThreeColumnWidths := [300, 150, 160]
   ColumnAreaWidth := "w620"
   ColumnAreaHeight := "h510"
   ColumnAreaRules := "+NoSort -Multi"
@@ -2079,8 +2079,8 @@ Constructor()
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Открыть страницу выделенного символа", "en", "Open selected symbol Web"), "Win Alt PgUp", "風 → symbl.cc/" . LanguageCode . "/98A8"],
-    [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
-    [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
+    [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", "8F2A → 輪"],
+    [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", "0171 0187 → «»"],
     [Map("ru", "Выплавка символа", "en", "Symbol Smelter"), "Win Alt L", "AE → Æ, OE → Œ"],
     [Map("ru", "Выплавка символа в тексте", "en", "Melt symbol in text"), "", ""],
     [Map("ru", " (выделить)", "en", " (select)"), "RShift L", "ІУЖ → Ѭ, ІЭ → Ѥ"],
