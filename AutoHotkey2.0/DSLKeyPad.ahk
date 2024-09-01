@@ -46,6 +46,13 @@ if FileExist(ConfigFile) {
   }
 }
 
+StrRepeat(char, count) {
+  result := ""
+  Loop count
+    result .= char
+  return result
+}
+
 
 GetLanguageCode()
 {
@@ -84,6 +91,82 @@ UpdateVersionString := ""
 RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
 RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
 UpdateAvailable := False
+
+ChangeLogRaw := Map(
+  "ru", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.ru.md",
+  "en", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.en.md"
+)
+
+GetChangeLog() {
+  global ChangeLogRaw
+  ReceiveMap := Map()
+
+  TimeOut := 1000
+  Cancelled := False
+
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  CancelHttp() {
+    Cancelled := True
+  }
+
+  SetTimer(CancelHttp, TimeOut)
+  if Cancelled {
+    return
+  }
+
+  for language, url in ChangeLogRaw {
+    http.Open("GET", url, true)
+    http.Send()
+    http.WaitForResponse()
+
+    if http.Status != 200 || Cancelled {
+      if Cancelled
+        http.Abort()
+      continue
+    }
+
+    if Cancelled {
+      return
+    }
+
+    ReceiveMap[language] := http.ResponseText
+  }
+
+
+  return ReceiveMap
+}
+
+InsertChangesList(TargetGUI) {
+  LanguageCode := GetLanguageCode()
+  Labels := Map()
+  Labels["ru"] := {}
+  Labels["ru"].Version := "Версия"
+  Labels["ru"].Date := "Дата"
+  Labels["en"] := {}
+  Labels["en"].Version := "Version"
+  Labels["en"].Date := "Date"
+  Changes := GetChangeLog()
+  IsEmpty := True
+
+  for language, _ in Changes {
+    IsEmpty := False
+    break
+  }
+
+  if IsEmpty {
+    return
+  }
+
+  for language, content in Changes {
+    if language = LanguageCode {
+      content := RegExReplace(content, "m)^## (.*) — (.*)", Labels[language].Version . ": $1`n" . Labels[language].Date . ": $2")
+      content := RegExReplace(content, "m)^- (.*)", " • $1")
+      content := RegExReplace(content, "m)^---", " " . StrRepeat("—", 84))
+
+      TargetGUI.Add("Edit", "x30 y58 w810 h480 readonly Left Wrap -HScroll -E0x200", content)
+    }
+  }
+}
 
 GetUpdate(TimeOut := 0) {
   Sleep TimeOut
@@ -1619,23 +1702,23 @@ Ligaturise(SmeltingMode := "InputBox") {
 }
 
 <#<!F1:: {
-  ShowInfoMessage(["Активна первая группа диакритики", "Primary diacritics group has been activated"], "[F1] " . DSLPadTitle, SkipGroupMessage)
+  ShowInfoMessage(["Активна первая группа диакритики", "Primary diacritics group has been activated"], "[F1] " . DSLPadTitle, , SkipGroupMessage)
   InputBridge("Diacritics Primary")
 }
 <#<!F2:: {
-  ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, SkipGroupMessage)
+  ShowInfoMessage(["Активна вторая группа диакритики", "Secondary diacritics group has been activated"], "[F2] " . DSLPadTitle, , SkipGroupMessage)
   InputBridge("Diacritics Secondary")
 }
 <#<!F3:: {
-  ShowInfoMessage(["Активна третья группа диакритики", "Tertiary diacritics group has been activated"], "[F3] " . DSLPadTitle, SkipGroupMessage)
+  ShowInfoMessage(["Активна третья группа диакритики", "Tertiary diacritics group has been activated"], "[F3] " . DSLPadTitle, , SkipGroupMessage)
   InputBridge("Diacritics Tertiary")
 }
 <#<!F6:: {
-  ShowInfoMessage(["Активна группа специальных символов", "Special characters group has been activated"], "[F6] " . DSLPadTitle, SkipGroupMessage)
+  ShowInfoMessage(["Активна группа специальных символов", "Special characters group has been activated"], "[F6] " . DSLPadTitle, , SkipGroupMessage)
   InputBridge("Special Characters")
 }
 <#<!Space:: {
-  ShowInfoMessage(["Активна группа шпаций", "Space group has been activated"], "[Space] " . DSLPadTitle, SkipGroupMessage)
+  ShowInfoMessage(["Активна группа шпаций", "Space group has been activated"], "[Space] " . DSLPadTitle, , SkipGroupMessage)
   InputBridge("Spaces")
 }
 <#<!f:: SearchKey()
@@ -1728,8 +1811,8 @@ Constructor()
 
   DSLContent["UI"].TabsNCols := [
     [Map(
-      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Плавильня", "Быстрые ключи", "О программе", "Полезное"],
-      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Smelting", "Fast Keys", "About", "Useful"]
+      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Плавильня", "Быстрые ключи", "О программе", "Полезное", "История изменений"],
+      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Smelting", "Fast Keys", "About", "Useful", "Changelog"]
     )],
     [Map(
       "ru", ["Имя", "Ключ", "Вид", "Unicode"],
@@ -2309,6 +2392,13 @@ Constructor()
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.JPnese . '<a href="https://yarxi.ru">ЯРКСИ</a> <a href="https://www.warodai.ruu">Warodai</a>')
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.CHnese . '<a href="https://bkrs.info">БКРС</a>')
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
+
+  Tab.UseTab(9)
+  DSLContent["ru"].Changelog := "История изменений"
+  DSLContent["en"].Changelog := "Changelog"
+  DSLPadGUI.Add("GroupBox", "w825 h512", DSLContent[LanguageCode].Changelog)
+  InsertChangesList(DSLPadGUI)
+
 
   DiacriticLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
   LettersLV.OnEvent("DoubleClick", LV_OpenUnicodeWebsite)
