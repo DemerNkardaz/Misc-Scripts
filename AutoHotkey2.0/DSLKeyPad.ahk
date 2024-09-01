@@ -25,11 +25,15 @@ ChangeLogRaw := Map(
 
 LocalesRaw := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.locales.ini"
 
+AppIcoRaw := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.app.ico"
+
+
 WorkingDir := A_MyDocuments . "\DSLKeyPad"
 DirCreate(WorkingDir)
 
 ConfigFile := WorkingDir . "\DSLKeyPad.config.ini"
 LocalesFile := WorkingDir . "\DSLKeyPad.locales.ini"
+AppIcoFile := WorkingDir . "\DSLKeyPad.app.ico"
 
 GetLocales() {
   global LocalesRaw
@@ -43,13 +47,7 @@ GetLocales() {
     return
   }
 
-  if FileExist(LocalesFile) {
-    WriteLocaleFile := FileOpen(LocalesFile, "w", "UTF-8")
-    WriteLocaleFile.Write(http.ResponseText)
-    WriteLocaleFile.Close()
-  } else {
-    FileAppend(http.ResponseText, LocalesFile, "UTF-8")
-  }
+  Download(LocalesRaw, LocalesFile)
 }
 
 if !FileExist(LocalesFile) {
@@ -72,9 +70,36 @@ SetStringVars(StringVar, SetVars*) {
   return Result
 }
 
+
+GetAppIco() {
+  global AppIcoRaw, AppIcoFile
+  http := ComObject("WinHttp.WinHttpRequest.5.1")
+  http.Open("GET", AppIcoRaw, true)
+  http.Send()
+  http.WaitForResponse()
+
+  if http.Status != 200 {
+    MsgBox "An error occurred while downloading the app icon."
+    return
+  }
+
+  Download(AppIcoRaw, AppIcoFile)
+
+}
+
+if !FileExist(AppIcoFile) {
+  GetAppIco()
+}
+
+
 OpenConfigFile(*) {
   global ConfigFile
   Run(ConfigFile)
+}
+
+OpenLocalesFile(*) {
+  global LocalesFile
+  Run(LocalesFile)
 }
 
 FastKeysIsActive := False
@@ -315,6 +340,7 @@ GetUpdate(TimeOut := 0) {
     MsgBox(Messages.updateSucces, DSLPadTitle)
     Sleep 200
     GetLocales()
+    GetAppIco()
 
     Reload
     return
@@ -3004,7 +3030,7 @@ ShowInfoMessage(MessagePost, MessageIcon := "Info", MessageTitle := DSLPadTitle,
 
 }
 
-TraySetIcon(ApplicationIcon[1], ApplicationIcon[2])
+TraySetIcon(AppIcoFile)
 A_IconTip := DSLPadTitle
 
 DSLTray := A_TrayMenu
@@ -3028,6 +3054,7 @@ ManageTrayItems() {
 
   Labels["ru"].Reload := "Перезапустить"
   Labels["ru"].Config := "Файл конфига"
+  Labels["ru"].Locale := "Файл локализации"
   Labels["ru"].Exit := "Закрыть"
   Labels["ru"].Panel := "Открыть панель"
   Labels["ru"].Install := "Установить"
@@ -3041,6 +3068,7 @@ ManageTrayItems() {
 
   Labels["en"].Reload := "Reload"
   Labels["en"].Config := "Config file"
+  Labels["en"].Locale := "Locale file"
   Labels["en"].Exit := "Exit"
   Labels["en"].Panel := "Open panel"
   Labels["en"].Install := "Install"
@@ -3073,11 +3101,12 @@ ManageTrayItems() {
   DSLTray.Add()
   DSLTray.Add(Labels[LanguageCode].Reload, ReloadApplication)
   DSLTray.Add(Labels[LanguageCode].Config, OpenConfigFile)
+  DSLTray.Add(Labels[LanguageCode].Locale, OpenLocalesFile)
   DSLTray.Add()
   DSLTray.Add(Labels[LanguageCode].Exit, ExitApplication)
   DSLTray.Add()
 
-  DSLTray.SetIcon(Labels[LanguageCode].Panel, ChracterMap, 1)
+  DSLTray.SetIcon(Labels[LanguageCode].Panel, AppIcoFile)
   DSLTray.SetIcon(Labels[LanguageCode].Search, ImageRes, 169)
   DSLTray.SetIcon(Labels[LanguageCode].Unicode, Shell32, 225)
   DSLTray.SetIcon(Labels[LanguageCode].Altcode, Shell32, 313)
@@ -3086,6 +3115,7 @@ ManageTrayItems() {
   DSLTray.SetIcon(Labels[LanguageCode].Notifications, ImageRes, 016)
   DSLTray.SetIcon(Labels[LanguageCode].Reload, ImageRes, 229)
   DSLTray.SetIcon(Labels[LanguageCode].Config, ImageRes, 065)
+  DSLTray.SetIcon(Labels[LanguageCode].Locale, ImageRes, 015)
   DSLTray.SetIcon(Labels[LanguageCode].Exit, ImageRes, 085)
 }
 ManageTrayItems()
