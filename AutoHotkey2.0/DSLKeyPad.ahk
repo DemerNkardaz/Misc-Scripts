@@ -159,7 +159,7 @@ InsertChangesList(TargetGUI) {
 
   for language, content in Changes {
     if language = LanguageCode {
-      content := RegExReplace(content, "m)^## (.*) — (.*)", Labels[language].Version . ": $1`n" . Labels[language].Date . ": $2")
+      content := RegExReplace(content, "m)^## " . Labels[language].Version . " (.*) — (.*)", Labels[language].Version . ": $1`n" . Labels[language].Date . ": $2")
       content := RegExReplace(content, "m)^- (.*)", " • $1")
       content := RegExReplace(content, "m)^---", " " . StrRepeat("—", 84))
 
@@ -2394,8 +2394,8 @@ Constructor()
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
 
   Tab.UseTab(9)
-  DSLContent["ru"].Changelog := "История изменений"
-  DSLContent["en"].Changelog := "Changelog"
+  DSLContent["ru"].Changelog := "🌐 История изменений"
+  DSLContent["en"].Changelog := "🌐 Changelog"
   DSLPadGUI.Add("GroupBox", "w825 h512", DSLContent[LanguageCode].Changelog)
   InsertChangesList(DSLPadGUI)
 
