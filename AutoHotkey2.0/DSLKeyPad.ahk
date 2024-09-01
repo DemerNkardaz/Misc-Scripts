@@ -86,7 +86,7 @@ GetLanguageCode()
   }
 }
 
-AppVersion := [0, 1, 1, 1]
+AppVersion := [0, 1, 1, 0]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
 
@@ -300,13 +300,14 @@ CheckUpdate() {
   FileContent := http.ResponseText
 
   if !RegExMatch(FileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]", &match) {
+    MsgBox "Application version not found."
     return
   }
   NewVersion := [match[1], match[2], match[3], match[4]]
   Loop 4 {
     if NewVersion[A_Index] > AppVersion[A_Index] {
       UpdateAvailable := True
-      UpdateVersionString := Format("{:d}.{:d}.{:d}", NewVersion[1], NewVersion[2], NewVersion[3], NewVersion[4])
+      UpdateVersionString := Format("{:d}.{:d}.{:d}.{:d}", NewVersion[1], NewVersion[2], NewVersion[3], NewVersion[4])
       return
     } else if NewVersion[A_Index] < AppVersion[A_Index] {
       return
