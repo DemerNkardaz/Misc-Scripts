@@ -1734,6 +1734,32 @@ Ligaturise(SmeltingMode := "InputBox") {
 
 <#<!m:: ToggleGroupMessage()
 
+<#<!PgUp:: FindCharacterPage()
+
+
+GetCharacterUnicode(symbol) {
+  return format("{:x}", ord(symbol))
+}
+
+FindCharacterPage() {
+  BackupClipboard := A_Clipboard
+  PromptValue := ""
+  A_Clipboard := ""
+
+  Send("^c")
+  Sleep 120
+  PromptValue := A_Clipboard
+  Sleep 50
+  PromptValue := GetCharacterUnicode(PromptValue)
+
+  if (PromptValue != "") {
+    Run("https://symbl.cc/" . GetLanguageCode() . "/" . PromptValue)
+  }
+
+  A_Clipboard := BackupClipboard
+}
+
+
 ToggleGroupMessage()
 {
   LanguageCode := GetLanguageCode()
@@ -2052,6 +2078,7 @@ Constructor()
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
+    [Map("ru", "Открыть страницу выделенного символа", "en", "Open selected symbol Web"), "Win Alt PgUp", "風 → symbl.cc/" . LanguageCode . "/98A8"],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", ""],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", ""],
     [Map("ru", "Выплавка символа", "en", "Symbol Smelter"), "Win Alt L", "AE → Æ, OE → Œ"],
@@ -3032,7 +3059,7 @@ ManageTrayItems() {
   Labels["en"].Altcode := "Insert by Alt-code"
   Labels["en"].Notifications := "On/Off Group Notifications"
 
-  CurrentApp := "DSL Keypad " . CurrentVersionString
+  CurrentApp := "DSL KeyPad " . CurrentVersionString
   UpdateEntry := Labels[LanguageCode].Install . " " . UpdateVersionString
 
   DSLTray.Delete()
