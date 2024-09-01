@@ -76,6 +76,7 @@ GetLanguageCode()
     return ValidateLanguage(SysLanguageKey)
   }
 }
+
 AppVersion := [0, 1, 1]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
@@ -94,12 +95,14 @@ GetUpdate(TimeOut := 0) {
   Messages["ru"].UpdateFailed := "Обновление не удалось завершить."
   Messages["ru"].NoAnyUpdates := "У вас уже установлена последняя версия."
   Messages["ru"].ErrorOccured := "Произошла ошибка обновления. Исправляем…"
+  Messages["ru"].ErrorDuplicated := "Обнаружено дублирование кода обновления. Исправляем…"
 
   Messages["en"] := {}
   Messages["en"].UpdateSuccessful := "Update successful.`nInstalled " . CurrentVersionString . " → " . UpdateVersionString
   Messages["en"].UpdateFailed := "Update failed."
   Messages["en"].NoAnyUpdates := "You already have the latest version."
   Messages["en"].ErrorOccured := "An error occured while updating. Trying to fix it…"
+  Messages["en"].ErrorDuplicated := "Detected duplicating of update code. Trying to fix it…"
   CurrentFilePath := A_ScriptFullPath
   CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
   UpdateFilePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
@@ -128,7 +131,6 @@ GetUpdate(TimeOut := 0) {
   UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
   Sleep 50
 
-
   if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+)\]", &match) {
     MsgBox(Messages[LanguageCode].UpdateFailed, DSLPadTitle)
     FileDelete(UpdateFilePath)
@@ -138,8 +140,18 @@ GetUpdate(TimeOut := 0) {
   NewVersion := [match[1], match[2], match[3]]
 
   if UpdateAvailable {
+    DuplicatedCount := 0
     SplitContent := StrSplit(UpdatingFileContent, "`n")
     FixTrimmedContent := ""
+
+    for line in SplitContent {
+      if InStr(line, "DuplicateResolver := 'Bad Http…'") {
+        DuplicatedCount++
+      }
+    }
+    if (DuplicatedCount > 1) {
+      ShowInfoMessage([Messages["ru"].ErrorDuplicated, DSLPadTitle, Messages["en"].ErrorDuplicated], "Warning")
+    }
 
     for line in SplitContent {
       if (InStr(line, ";Application" . "End")) {
@@ -157,14 +169,14 @@ GetUpdate(TimeOut := 0) {
     UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
 
     DuplicatedCount := 0
-    for line in StrSplit(UpdatingFileContent, "`n") {
-      if InStr(line, "DuplicateResolver := 'Bad Http…'") {
+    for line in SplitContent {
+      if InStr(line, "DuplicateResolver := 'The Second Gate…'") {
         DuplicatedCount++
       }
     }
 
     if (DuplicatedCount > 1) {
-      ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured, DSLPadTitle])
+      ShowInfoMessage([Messages["ru"].ErrorOccured, DSLPadTitle, Messages["en"].ErrorOccured], "Warning")
       FileDelete(UpdateFilePath)
       Sleep 500
       GetUpdate(1500)
@@ -870,6 +882,13 @@ Characters := Map(
       tags: ["per ten thousand", "промилле", "базисный пункт", "basis point"],
       group: ["Special Characters", "%"],
       symbol: Chr(0x2031)
+    },
+    "0000 dotted_circle", {
+      unicode: "{U+25CC}", html: "&#9676;",
+      titles: Map("ru", "Пунктирный круг", "en", "Dotted Circle"),
+      tags: ["пунктирный круг", "dottet circle"],
+      group: ["Fast Keys Only", "Num0"],
+      symbol: DottedCircle
     },
     ;
     ;
@@ -2708,22 +2727,38 @@ HandleFastKey(Character, CheckOff := False)
 {
   global FastKeysIsActive
   if (FastKeysIsActive || CheckOff == True) {
-    Send(Character)
+    characterEntity := (HasProp(Character, "entity")) ? Character.entity : Character.html
+    characterLaTeX := (HasProp(Character, "LaTeX")) ? Character.LaTeX : ""
+
+    if InputMode = "HTML" {
+      SendText(characterEntity)
+    } else if InputMode = "LaTeX" && HasProp(Character, "LaTeX") {
+      if IsObject(characterLaTeX) {
+        if LaTeXMode = "common"
+          SendText(characterLaTeX[1])
+        else if LaTeXMode = "math"
+          SendText(characterLaTeX[2])
+      } else {
+        SendText(characterLaTeX)
+      }
+    }
+    else
+      Send(Character.unicode)
   }
 }
 
-<^<!a:: HandleFastKey(Characters["0000 acute"].unicode)
-<^<+<!a:: HandleFastKey(Characters["0001 acute_double"].unicode)
-<^<!b:: HandleFastKey(Characters["0006 breve"].unicode)
-<^<+<!b:: HandleFastKey(Characters["0007 breve_inverted"].unicode)
-<^<!c:: HandleFastKey(CharCodes.circumflex[1])
-<^<+<!c:: HandleFastKey(CharCodes.caron[1])
-<^<!d:: HandleFastKey(CharCodes.dotabove[1])
-<^<+<!d:: HandleFastKey(CharCodes.diaeresis[1])
-<^<!g:: HandleFastKey(CharCodes.grave[1])
-<^<+<!g:: HandleFastKey(CharCodes.dgrave[1])
-<^<!m:: HandleFastKey(CharCodes.macron[1])
-<^<+<!m:: HandleFastKey(CharCodes.macronbelow[1])
+<^<!a:: HandleFastKey(Characters["0000 acute"])
+<^<+<!a:: HandleFastKey(Characters["0001 acute_double"])
+<^<!b:: HandleFastKey(Characters["0006 breve"])
+<^<+<!b:: HandleFastKey(Characters["0007 breve_inverted"])
+;<^<!c:: HandleFastKey(CharCodes.circumflex[1])
+;<^<+<!c:: HandleFastKey(CharCodes.caron[1])
+;<^<!d:: HandleFastKey(CharCodes.dotabove[1])
+;<^<+<!d:: HandleFastKey(CharCodes.diaeresis[1])
+;<^<!g:: HandleFastKey(CharCodes.grave[1])
+;<^<+<!g:: HandleFastKey(CharCodes.dgrave[1])
+;<^<!m:: HandleFastKey(CharCodes.macron[1])
+;<^<+<!m:: HandleFastKey(CharCodes.macronbelow[1])
 
 
 <^<!t:: Send("{U+0303}") ; Combining tilde
@@ -2763,49 +2798,51 @@ HandleFastKey(Character, CheckOff := False)
 >^b:: Send("{U+0346}") ; Combining bridge above
 >^>+b:: Send("{U+032A}") ; Combining bridge below
 
-<^<!1:: HandleFastKey("{U+00B9}") ; Superscript 1
-<^<!2:: HandleFastKey("{U+00B2}") ; Superscript 2
-<^<!3:: HandleFastKey("{U+00B3}") ; Superscript 3
-<^<!4:: HandleFastKey("{U+2074}") ; Superscript 4
-<^<!5:: HandleFastKey("{U+2075}") ; Superscript 5
-<^<!6:: HandleFastKey("{U+2076}") ; Superscript 6
-<^<!7:: HandleFastKey("{U+2077}") ; Superscript 7
-<^<!8:: HandleFastKey("{U+2078}") ; Superscript 8
-<^<!9:: HandleFastKey("{U+2079}") ; Superscript 9
-<^<!0:: HandleFastKey("{U+2070}") ; Superscript 0
-<^<+<!1:: HandleFastKey("{U+2081}") ; Subscript 1
-<^<+<!2:: HandleFastKey("{U+2082}") ; Subscript 2
-<^<+<!3:: HandleFastKey("{U+2083}") ; Subscript 3
-<^<+<!4:: HandleFastKey("{U+2084}") ; Subscript 4
-<^<+<!5:: HandleFastKey("{U+2085}") ; Subscript 5
-<^<+<!6:: HandleFastKey("{U+2086}") ; Subscript 6
-<^<+<!7:: HandleFastKey("{U+2087}") ; Subscript 7
-<^<+<!8:: HandleFastKey("{U+2088}") ; Subscript 8
-<^<+<!9:: HandleFastKey("{U+2089}") ; Subscript 9
-<^<+<!0:: HandleFastKey("{U+2080}") ; Subscript 0
+;<^<!1:: HandleFastKey("{U+00B9}") ; Superscript 1
+;<^<!2:: HandleFastKey("{U+00B2}") ; Superscript 2
+;<^<!3:: HandleFastKey("{U+00B3}") ; Superscript 3
+;<^<!4:: HandleFastKey("{U+2074}") ; Superscript 4
+;<^<!5:: HandleFastKey("{U+2075}") ; Superscript 5
+;<^<!6:: HandleFastKey("{U+2076}") ; Superscript 6
+;<^<!7:: HandleFastKey("{U+2077}") ; Superscript 7
+;<^<!8:: HandleFastKey("{U+2078}") ; Superscript 8
+;<^<!9:: HandleFastKey("{U+2079}") ; Superscript 9
+;<^<!0:: HandleFastKey("{U+2070}") ; Superscript 0
+;<^<+<!1:: HandleFastKey("{U+2081}") ; Subscript 1
+;<^<+<!2:: HandleFastKey("{U+2082}") ; Subscript 2
+;<^<+<!3:: HandleFastKey("{U+2083}") ; Subscript 3
+;<^<+<!4:: HandleFastKey("{U+2084}") ; Subscript 4
+;<^<+<!5:: HandleFastKey("{U+2085}") ; Subscript 5
+;<^<+<!6:: HandleFastKey("{U+2086}") ; Subscript 6
+;<^<+<!7:: HandleFastKey("{U+2087}") ; Subscript 7
+;<^<+<!8:: HandleFastKey("{U+2088}") ; Subscript 8
+;<^<+<!9:: HandleFastKey("{U+2089}") ; Subscript 9
+;<^<+<!0:: HandleFastKey("{U+2080}") ; Subscript 0
 
-<^>!>+1:: HandleFastKey(CharCodes.emsp[1])
-<^>!>+2:: HandleFastKey(CharCodes.ensp[1])
-<^>!>+3:: HandleFastKey(CharCodes.emsp13[1])
-<^>!>+4:: HandleFastKey(CharCodes.emsp14[1])
-<^>!>+5:: HandleFastKey(CharCodes.thinsp[1])
-<^>!>+6:: HandleFastKey(CharCodes.emsp16[1])
-<^>!>+7:: HandleFastKey(CharCodes.nnbsp[1])
-<^>!>+8:: HandleFastKey(CharCodes.hairsp[1])
-<^>!>+9:: HandleFastKey(CharCodes.puncsp[1])
-<^>!>+0:: HandleFastKey(CharCodes.zwsp[1])
-<^>!>+-:: HandleFastKey(CharCodes.wj[1])
-<^>!>+=:: HandleFastKey(CharCodes.numsp[1])
-<^>!<+Space:: HandleFastKey(CharCodes.nbsp[1])
+;<^>!>+1:: HandleFastKey(CharCodes.emsp[1])
+;<^>!>+2:: HandleFastKey(CharCodes.ensp[1])
+;<^>!>+3:: HandleFastKey(CharCodes.emsp13[1])
+;<^>!>+4:: HandleFastKey(CharCodes.emsp14[1])
+;<^>!>+5:: HandleFastKey(CharCodes.thinsp[1])
+;<^>!>+6:: HandleFastKey(CharCodes.emsp16[1])
+;<^>!>+7:: HandleFastKey(CharCodes.nnbsp[1])
+;<^>!>+8:: HandleFastKey(CharCodes.hairsp[1])
+;<^>!>+9:: HandleFastKey(CharCodes.puncsp[1])
+;<^>!>+0:: HandleFastKey(CharCodes.zwsp[1])
+;<^>!>+-:: HandleFastKey(CharCodes.wj[1])
+;<^>!>+=:: HandleFastKey(CharCodes.numsp[1])
+;<^>!<+Space:: HandleFastKey(CharCodes.nbsp[1])
 
 <^>!m:: Send("{U+2212}") ; Minus
 
 
+<^<!Numpad0:: HandleFastKey(Characters["0000 dotted_circle"])
+
 <^>!NumpadMult:: Send("{U+2051}") ; Double Asterisk
 <^>!>+NumpadMult:: Send("{U+2042}") ; Asterism
 <^>!<+NumpadMult:: Send("{U+204E}") ; Asterisk Below
-<^>!NumpadDiv:: HandleFastKey(CharCodes.dagger[1], True)
-<^>!>+NumpadDiv:: HandleFastKey(CharCodes.ddagger[1], True)
+;<^>!NumpadDiv:: HandleFastKey(CharCodes.dagger[1], True)
+;<^>!>+NumpadDiv:: HandleFastKey(CharCodes.ddagger[1], True)
 
 <^>!NumpadSub:: Send("{U+00AD}") ; Soft hyphenation
 
@@ -2830,11 +2867,11 @@ HandleFastKey(Character, CheckOff := False)
 <^<+<!x:: Send("{U+04AA}") ; CYRILLIC CAPITAL LETTER ES WITH DESCENDER
 
 
->+<+g:: HandleFastKey(CharCodes.grapjoiner[1], True)
-<^<!NumpadDiv:: HandleFastKey(CharCodes.fractionslash[1], True)
+;>+<+g:: HandleFastKey(CharCodes.grapjoiner[1], True)
+;<^<!NumpadDiv:: HandleFastKey(CharCodes.fractionslash[1], True)
 
 
-ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) {
+ShowInfoMessage(MessagePost, MessageIcon := "Info", MessageTitle := DSLPadTitle, SkipMessage := False) {
   if SkipMessage == True
     return
   LanguageCode := GetLanguageCode()
@@ -2844,6 +2881,9 @@ ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) 
   Labels["en"] := {}
   Labels["ru"].RunMessage := MessagePost[1]
   Labels["en"].RunMessage := MessagePost[2]
+  Ico := MessageIcon == "Info" ? "Iconi" :
+    MessageIcon == "Warning" ? "Icon!" :
+      MessageIcon == "Error" ? "Iconx" : 0x0
   TrayTip Labels[LanguageCode].RunMessage, MessageTitle, "Iconi"
 
 }
@@ -2852,4 +2892,6 @@ ShowInfoMessage(MessagePost, MessageTitle := DSLPadTitle, SkipMessage := False) 
 TraySetIcon(ApplicationIcon[1], ApplicationIcon[2])
 A_IconTip := DSLPadTitle
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
+;Don’t remove ↓ or update duplication repair will not work
+;This is marker for trim update file to avoid receiving multiple update code at once
 ;ApplicationEnd
