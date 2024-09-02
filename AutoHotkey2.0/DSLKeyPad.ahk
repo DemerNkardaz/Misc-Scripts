@@ -469,6 +469,50 @@ ReverseSolidus := Chr(92)
 InformationSymbol := "ⓘ"
 DottedCircle := Chr(0x25CC)
 
+RoNum := Map(
+  "00-HundredM", Chr(0x2188),
+  "01-FiftyTenM", Chr(0x2187),
+  "02-TenM", Chr(0x2182),
+  "03-FiveM", Chr(0x2181),
+  "04-M", Chr(0x216F),
+  "05-D", Chr(0x216E),
+  "06-C", Chr(0x216D),
+  "07-L", Chr(0x216C),
+  ;"08-XII", Chr(0x216B),
+  ;"09-XI", Chr(0x216A),
+  "10-X", Chr(0x2169),
+  "11-IX", Chr(0x2168),
+  "12-VIII", Chr(0x2167),
+  "13-VII", Chr(0x2166),
+  "14-VI", Chr(0x2165),
+  "15-V", Chr(0x2164),
+  "16-IV", Chr(0x2163),
+  "17-III", Chr(0x2162),
+  "18-II", Chr(0x2161),
+  "19-I", Chr(0x2160),
+  "20-sHundredM", Chr(0x2188),
+  "21-sFiftyTenM", Chr(0x2187),
+  "22-sTenM", Chr(0x2182),
+  "23-sFiveM", Chr(0x2181),
+  "24-sM", Chr(0x217F),
+  "25-sD", Chr(0x217E),
+  "26-sC", Chr(0x217D),
+  "27-sL", Chr(0x217C),
+  ;"28-sXII", Chr(0x217B),
+  ;"29-sXI", Chr(0x217A),
+  "30-sX", Chr(0x2179),
+  "31-sIX", Chr(0x2178),
+  "32-sVIII", Chr(0x2177),
+  "33-sVII", Chr(0x2176),
+  "34-sVI", Chr(0x2175),
+  "35-sV", Chr(0x2174),
+  "36-sIV", Chr(0x2173),
+  "37-sIII", Chr(0x2172),
+  "38-sII", Chr(0x2171),
+  "39-sI", Chr(0x2170),
+)
+
+
 FormatHotKey(HKey, Modifier := "") {
   MakeString := ""
 
@@ -1619,8 +1663,13 @@ ToRomanNumeral(IntValue, CapitalLetters := True) {
   if (IntValue < 1 || IntValue > 2000000)
     return ""
 
-  RomanNumerals := CapitalLetters ? ["ↈ", "ↇ", "ↂ", "ↁ", "Ⅿ", "Ⅾ", "Ⅽ", "Ⅼ", "Ⅹ", "Ⅸ", "Ⅷ", "Ⅶ", "Ⅵ", "Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"]
-    : ["ↈ", "ↇ", "ↂ", "ↁ", "ⅿ", "ⅾ", "ⅽ", "ⅼ", "ⅹ", "ⅸ", "ⅷ", "ⅶ", "ⅵ", "ⅴ", "ⅳ", "ⅲ", "ⅱ", "ⅰ"]
+  RomanNumerals := []
+
+  for key, value in RoNum {
+    entryName := RegExReplace(key, "^\S+-")
+    if CapitalLetters == True && !RegExMatch(entryName, "^s") || CapitalLetters == False && RegExMatch(entryName, "^s")
+      RomanNumerals.Push(value)
+  }
 
   Values := [100000, 50000, 10000, 5000, 1000, 500, 100, 50, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
   RomanStr := ""
