@@ -58,15 +58,31 @@ ReadLocale(EntryName, Prefix := "") {
   global LocalesFile
   Section := Prefix != "" ? Prefix . "_" . GetLanguageCode() : GetLanguageCode()
   Intermediate := IniRead(LocalesFile, Section, EntryName, "")
-  Intermediate := StrReplace(Intermediate, "\n", "`n")
+  Intermediate := StrReplace(Intermediate, "`n", "`n")
+
+  while (RegExMatch(Intermediate, "\{([a-zA-Z]{2})\}", &match)) {
+    LangCode := match[1]
+    SectionOverride := Prefix != "" ? Prefix . "_" . LangCode : LangCode
+    Replacement := IniRead(LocalesFile, SectionOverride, EntryName, "")
+    Intermediate := StrReplace(Intermediate, match[0], Replacement)
+  }
+
+  while (RegExMatch(Intermediate, "\{(?:([^\}_]+)_)?([a-zA-Z]{2}):([^\}]+)\}", &match)) {
+    CustomPrefix := match[1] ? match[1] : ""
+    LangCode := match[2]
+    CustomEntry := match[3]
+    SectionOverride := CustomPrefix != "" ? CustomPrefix . "_" . LangCode : LangCode
+    Replacement := IniRead(LocalesFile, SectionOverride, CustomEntry, "")
+    Intermediate := StrReplace(Intermediate, match[0], Replacement)
+  }
 
   return Intermediate
 }
 
 SetStringVars(StringVar, SetVars*) {
   Result := StringVar
-  For Index, Value in SetVars {
-    Result := StrReplace(Result, "{" (Index - 1) "}", Value)
+  for index, value in SetVars {
+    Result := StrReplace(Result, "{" (index - 1) "}", value)
   }
   return Result
 }
@@ -141,12 +157,13 @@ StrRepeat(char, count) {
 }
 
 
+SupportedLanguages := [
+  "en",
+  "ru",
+]
+
 GetLanguageCode()
 {
-  SupportedLanguages := [
-    "en",
-    "ru",
-  ]
 
   ValidateLanguage(LanguageSource) {
     for language in SupportedLanguages {
