@@ -277,6 +277,19 @@ GetUpdate(TimeOut := 0, RepairMode := False) {
     updateSucces: SetStringVars(ReadLocale("update_successful"), CurrentVersionString, UpdateVersionString),
   }
 
+  RepairLabels := Map()
+  RepairLabels["ru"] := {
+    title: "Восстановление",
+    description: "Введите y/n что бы продолжить или отменить восстановление программы.`nОна будет заново скачана из репозитория, включая сопутствующие файлы.",
+    success: "Восстановление завершено успешно.",
+  }
+  RepairLabels["en"] := {
+    title: "Restore",
+    description: "Enter y/n to continue or cancel the restore program.`nIt will be downloaded from the repository, including other files.",
+    success: "Restore completed successfully.",
+  }
+
+
   CurrentFilePath := A_ScriptFullPath
   CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
   UpdateFilePath := A_ScriptDir "\DSLKeyPad.ahk-GettingUpdate"
@@ -306,17 +319,7 @@ GetUpdate(TimeOut := 0, RepairMode := False) {
   Sleep 50
 
   if RepairMode == True {
-    RepairLabels := Map(
-      "ru", {
-        title: "Восстановление",
-        description: "Введите y/n что бы продолжить или отменить восстановление программы.`nОна будет заново скачана из репозитория, включая сопутствующие файлы."
-      },
-        "en", {
-          title: "Restore",
-          description: "Enter y/n to continue or cancel the restore program.`nIt will be downloaded from the repository, including other files."
-        }
-    )
-    IB := InputBox(RepairLabels[LanguageCode].title, RepairLabels[LanguageCode].description, "w256 h92", "")
+    IB := InputBox(RepairLabels[LanguageCode].description, RepairLabels[LanguageCode].title, "w256", "")
     if IB.Result = "Cancel" || IB.Value != "y" {
       return
     }
@@ -374,10 +377,14 @@ GetUpdate(TimeOut := 0, RepairMode := False) {
     FileMove(CurrentFilePath, A_ScriptDir "\" CurrentFileName . "-Backup")
     Sleep 200
     FileMove(UpdateFilePath, A_ScriptDir "\" CurrentFileName)
-    MsgBox(Messages.updateSucces, DSLPadTitle)
     Sleep 200
     GetLocales()
     GetAppIco()
+    if RepairMode == True {
+      MsgBox(RepairLabels[LanguageCode].success, DSLPadTitle)
+    } else {
+      MsgBox(Messages.updateSucces, DSLPadTitle)
+    }
 
     Reload
     return
