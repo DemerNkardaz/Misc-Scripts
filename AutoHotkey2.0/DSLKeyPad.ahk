@@ -35,15 +35,22 @@ ConfigFile := WorkingDir . "\DSLKeyPad.config.ini"
 LocalesFile := WorkingDir . "\DSLKeyPad.locales.ini"
 AppIcoFile := WorkingDir . "\DSLKeyPad.app.ico"
 
+DSLPadTitle := "DSL KeyPad (αλφα)" . " — " . CurrentVersionString
+DSLPadAutoLoad := "DSL KeyPad"
+
 GetLocales() {
   global LocalesRaw
+  ErrMessages := Map(
+    "ru", "Произошла ошибка при получении файла перевода.`nСервер недоступен или ошибка соединения с интернетом.",
+    "en", "An error occured during receiving locales file.`nServer unavailable or internet connection error."
+  )
   http := ComObject("WinHttp.WinHttpRequest.5.1")
   http.Open("GET", LocalesRaw, true)
   http.Send()
   http.WaitForResponse()
 
   if http.Status != 200 {
-    MsgBox "An error occured during receiving locales file."
+    MsgBox(ErrMessages[GetLanguageCode()])
     return
   }
 
@@ -89,13 +96,17 @@ SetStringVars(StringVar, SetVars*) {
 
 GetAppIco() {
   global AppIcoRaw, AppIcoFile
+  ErrMessages := Map(
+    "ru", "Произошла ошибка при получении иконки приложения.`nСервер недоступен или ошибка соединения с интернетом.",
+    "en", "An error occured during receiving app icon.`nServer unavailable or internet connection error."
+  )
   http := ComObject("WinHttp.WinHttpRequest.5.1")
   http.Open("GET", AppIcoRaw, true)
   http.Send()
   http.WaitForResponse()
 
   if http.Status != 200 {
-    MsgBox "An error occurred while downloading the app icon."
+    MsgBox(ErrMessages[GetLanguageCode()])
     return
   }
 
@@ -258,7 +269,7 @@ InsertChangesList(TargetGUI) {
   }
 }
 
-GetUpdate(TimeOut := 0) {
+GetUpdate(TimeOut := 0, RepairMode := False) {
   Sleep TimeOut
   global AppVersion, RawSource
   LanguageCode := GetLanguageCode()
@@ -294,15 +305,24 @@ GetUpdate(TimeOut := 0) {
   UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
   Sleep 50
 
-  if !RegExMatch(UpdatingFileContent, "AppVersion := \[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]", &match) {
-    MsgBox(ReadLocale("update_failed"), DSLPadTitle)
-    FileDelete(UpdateFilePath)
-    return
+  if RepairMode == True {
+    RepairLabels := Map(
+      "ru", {
+        title: "Восстановление",
+        description: "Введите y/n что бы продолжить или отменить восстановление программы.`nОна будет заново скачана из репозитория, включая сопутствующие файлы."
+      },
+        "en", {
+          title: "Restore",
+          description: "Enter y/n to continue or cancel the restore program.`nIt will be downloaded from the repository, including other files."
+        }
+    )
+    IB := InputBox(RepairLabels[LanguageCode].title, RepairLabels[LanguageCode].description, "w256 h92", "")
+    if IB.Result = "Cancel" || IB.Value != "y" {
+      return
+    }
   }
 
-  NewVersion := [match[1], match[2], match[3], match[4]]
-
-  if UpdateAvailable {
+  if UpdateAvailable || RepairMode == True {
     DuplicatedCount := 0
     SplitContent := StrSplit(UpdatingFileContent, "`n")
     FixTrimmedContent := ""
@@ -1779,7 +1799,6 @@ LocaliseArrayKeys(ObjectPath) {
   }
 }
 
-DSLPadTitle := "DSL KeyPad (αλφα)" . " — " . CurrentVersionString
 <#<!Home:: OpenPanel()
 
 OpenPanel(*)
@@ -2105,21 +2124,30 @@ Constructor()
   DSLPadGUI.SetFont("s9")
   ;DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
-  BtnAutoLoad := DSLPadGUI.Add("Button", "x411 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x379 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
   BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
 
-  BtnSwitchRU := DSLPadGUI.Add("Button", "x247 y519 w32 h32", "РУ")
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x21 y519 w32 h32", "РУ")
   BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
 
-  BtnSwitchEN := DSLPadGUI.Add("Button", "x279 y519 w32 h32", "EN")
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x53 y519 w32 h32", "EN")
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
-  UpdateBtn := DSLPadGUI.Add("Button", "x311 y519 w100 h32", DSLContent[LanguageCode].GetUpdate)
+  UpdateBtn := DSLPadGUI.Add("Button", "x611 y487 w32 h32")
   UpdateBtn.OnEvent("Click", (*) => GetUpdate())
+  GuiButtonIcon(UpdateBtn, Shell32, 047, "w24 h24 l3")
 
-  ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32", "⚙️")
-  ConfigFileBtn.SetFont("s13",)
+  RepairBtn := DSLPadGUI.Add("Button", "x579 y487 w32 h32", "🛠️")
+  RepairBtn.SetFont("s16")
+  RepairBtn.OnEvent("Click", (*) => GetUpdate(0, True))
+
+  ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32")
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
+  GuiButtonIcon(ConfigFileBtn, ImageRes, 065)
+
+  LocalesFileBtn := DSLPadGUI.Add("Button", "x579 y519 w32 h32")
+  LocalesFileBtn.OnEvent("Click", (*) => OpenLocalesFile())
+  GuiButtonIcon(LocalesFileBtn, ImageRes, 015)
 
 
   UpdateNewIcon := DSLPadGUI.Add("Text", "vNewVersionIcon x22 y484 w40 h40 BackgroundTrans", "")
@@ -2757,6 +2785,7 @@ LV_MouseMove(Control, x, y) {
 }
 
 AddScriptToAutoload(*) {
+  global DSLPadAutoLoad, AppIcoFile
   LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
@@ -2772,7 +2801,7 @@ AddScriptToAutoload(*) {
     FileDelete(ShortcutPath)
   }
 
-  Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
+  Command := "powershell -command " "$shell = New-Object -ComObject WScript.Shell; $shortcut = $shell.CreateShortcut('" ShortcutPath "'); $shortcut.TargetPath = '" CurrentScriptPath "'; $shortcut.WorkingDirectory = '" A_ScriptDir "'; $shortcut.IconLocation = '" AppIcoFile "'; $shortcut.Description = 'DSLKeyPad AutoHotkey Script'; $shortcut.Save()" ""
   RunWait(Command)
 
   MsgBox(Labels[LanguageCode].Success, DSLPadTitle, 0x40)
@@ -3102,6 +3131,73 @@ ManageTrayItems() {
 ManageTrayItems()
 
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
+
+
+;! Third Party Functions
+
+;{ [Function] GuiButtonIcon
+;{
+; Fanatic Guru
+; Version 2023 04 08
+;
+; #Requires AutoHotkey v2.0.2+
+;
+; FUNCTION to Assign an Icon to a Gui Button
+;
+;------------------------------------------------
+;
+; Method:
+;   GuiButtonIcon(Handle, File, Index, Options)
+;
+;   Parameters:
+;   1) {Handle} 	HWND handle of Gui button or the Gui button object
+;   2) {File} 		File containing icon image
+;   3) {Index} 		Index of icon in file
+;						Optional: Default = 1
+;   4) {Options}	Single letter flag followed by a number with multiple options delimited by a space
+;						W = Width of Icon (default = 16)
+;						H = Height of Icon (default = 16)
+;						S = Size of Icon, Makes Width and Height both equal to Size
+;						L = Left Margin
+;						T = Top Margin
+;						R = Right Margin
+;						B = Botton Margin
+;						A = Alignment (0 = left, 1 = right, 2 = top, 3 = bottom, 4 = center; default = 4)
+;
+; Return:
+;   1 = icon found, 0 = icon not found
+;
+; Example:
+; MyGui := Gui()
+; MyButton := MyGui.Add('Button', 'w70 h38', 'Save')
+; GuiButtonIcon(MyButton, 'shell32.dll', 259, 's32 a1 r2')
+; MyGui.Show
+;}
+GuiButtonIcon(Handle, File, Index := 1, Options := '')
+{
+  RegExMatch(Options, 'i)w\K\d+', &W) ? W := W.0 : W := 16
+  RegExMatch(Options, 'i)h\K\d+', &H) ? H := H.0 : H := 16
+  RegExMatch(Options, 'i)s\K\d+', &S) ? W := H := S.0 : ''
+  RegExMatch(Options, 'i)l\K\d+', &L) ? L := L.0 : L := 0
+  RegExMatch(Options, 'i)t\K\d+', &T) ? T := T.0 : T := 0
+  RegExMatch(Options, 'i)r\K\d+', &R) ? R := R.0 : R := 0
+  RegExMatch(Options, 'i)b\K\d+', &B) ? B := B.0 : B := 0
+  RegExMatch(Options, 'i)a\K\d+', &A) ? A := A.0 : A := 4
+  W *= A_ScreenDPI / 96, H *= A_ScreenDPI / 96
+  button_il := Buffer(20 + A_PtrSize)
+  normal_il := DllCall('ImageList_Create', 'Int', W, 'Int', H, 'UInt', 0x21, 'Int', 1, 'Int', 1)
+  NumPut('Ptr', normal_il, button_il, 0)			; Width & Height
+  NumPut('UInt', L, button_il, 0 + A_PtrSize)		; Left Margin
+  NumPut('UInt', T, button_il, 4 + A_PtrSize)		; Top Margin
+  NumPut('UInt', R, button_il, 8 + A_PtrSize)		; Right Margin
+  NumPut('UInt', B, button_il, 12 + A_PtrSize)	; Bottom Margin
+  NumPut('UInt', A, button_il, 16 + A_PtrSize)	; Alignment
+  SendMessage(BCM_SETIMAGELIST := 5634, 0, button_il, Handle)
+  Return IL_Add(normal_il, File, Index)
+}
+;}
+
+
 ;Don’t remove ↓ or update duplication repair will not work
 ;This is marker for trim update file to avoid receiving multiple update code at once
 ;ApplicationEnd
