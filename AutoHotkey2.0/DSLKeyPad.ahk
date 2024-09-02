@@ -36,7 +36,8 @@ LocalesFile := WorkingDir . "\DSLKeyPad.locales.ini"
 AppIcoFile := WorkingDir . "\DSLKeyPad.app.ico"
 
 DSLPadTitle := "DSL KeyPad (αλφα)" . " — " . CurrentVersionString
-DSLPadAutoLoad := "DSL KeyPad"
+DSLPadTitleDefault := "DSL KeyPad"
+DSLPadTitleFull := "Diacritics-Spaces-Letters KeyPad"
 
 GetLocales() {
   global LocalesRaw
@@ -65,7 +66,7 @@ ReadLocale(EntryName, Prefix := "") {
   global LocalesFile
   Section := Prefix != "" ? Prefix . "_" . GetLanguageCode() : GetLanguageCode()
   Intermediate := IniRead(LocalesFile, Section, EntryName, "")
-  Intermediate := StrReplace(Intermediate, "`n", "`n")
+  Intermediate := StrReplace(Intermediate, "\n", "`n")
 
   while (RegExMatch(Intermediate, "\{([a-zA-Z]{2})\}", &match)) {
     LangCode := match[1]
@@ -164,6 +165,16 @@ StrRepeat(char, count) {
   result := ""
   Loop count
     result .= char
+  return result
+}
+
+TrimArray(From, Count) {
+  result := []
+  for i, item in From {
+    if (i > Count)
+      break
+    result.Push(item)
+  }
   return result
 }
 
@@ -289,6 +300,12 @@ GetUpdate(TimeOut := 0, RepairMode := False) {
     success: "Restore completed successfully.",
   }
 
+  if RepairMode == True {
+    IB := InputBox(RepairLabels[LanguageCode].description, RepairLabels[LanguageCode].title, "w256", "")
+    if IB.Result = "Cancel" || IB.Value != "y" {
+      return
+    }
+  }
 
   CurrentFilePath := A_ScriptFullPath
   CurrentFileName := StrSplit(CurrentFilePath, "\").Pop()
@@ -317,13 +334,6 @@ GetUpdate(TimeOut := 0, RepairMode := False) {
   Sleep 50
   UpdatingFileContent := FileRead(UpdateFilePath, "UTF-8")
   Sleep 50
-
-  if RepairMode == True {
-    IB := InputBox(RepairLabels[LanguageCode].description, RepairLabels[LanguageCode].title, "w256", "")
-    if IB.Result = "Cancel" || IB.Value != "y" {
-      return
-    }
-  }
 
   if UpdateAvailable || RepairMode == True {
     DuplicatedCount := 0
@@ -1847,6 +1857,22 @@ Constructor()
 {
   CheckUpdate()
   ManageTrayItems()
+  DSLTabs := []
+  DSLCols := { default: [], smelting: [] }
+
+  for _, localeKey in ["diacritics", "letters", "spaces", "commands", "smelting", "fastkeys", "about", "useful", "changelog"] {
+    DSLTabs.Push(ReadLocale("tab_" . localeKey))
+  }
+
+  for _, localeKey in ["name", "key", "view", "unicode"] {
+    DSLCols.default.Push(ReadLocale("col_" . localeKey))
+  }
+
+  for _, localeKey in ["name", "recipe", "result", "unicode"] {
+    DSLCols.smelting.Push(ReadLocale("col_" . localeKey))
+  }
+
+
   DSLContent := {}
   DSLContent[] := Map()
   DSLContent["BindList"] := {}
@@ -1884,11 +1910,11 @@ Constructor()
   ColumnAreaRules := "+NoSort -Multi"
   ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
 
-  Tab := DSLPadGUI.Add("Tab3", "w850 h550", DSLContent["UI"].TabsNCols[1][1])
+  Tab := DSLPadGUI.Add("Tab3", "w850 h550", DSLTabs)
   DSLPadGUI.SetFont("s11")
   Tab.UseTab(1)
 
-  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
   DiacriticLV.ModifyCol(1, ColumnWidths[1])
   DiacriticLV.ModifyCol(2, ColumnWidths[2])
   DiacriticLV.ModifyCol(3, ColumnWidths[3])
@@ -1971,7 +1997,7 @@ Constructor()
 
   Tab.UseTab(2)
 
-  LettersLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  LettersLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
   LettersLV.ModifyCol(1, ColumnWidths[1])
   LettersLV.ModifyCol(2, ColumnWidths[2])
   LettersLV.ModifyCol(3, ColumnWidths[3])
@@ -2043,7 +2069,7 @@ Constructor()
   InsertCharactersGroups(DSLContent["BindList"].TabSpaces, "Spaces", "Win Alt Space", False)
   InsertCharactersGroups(DSLContent["BindList"].TabSpaces, "Special Characters", "Win Alt F6")
 
-  SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  SpacesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
   SpacesLV.ModifyCol(1, ColumnWidths[1])
   SpacesLV.ModifyCol(2, ColumnWidths[2])
   SpacesLV.ModifyCol(3, ColumnWidths[3])
@@ -2109,8 +2135,9 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].Commands)
 
-  CommandsLV := DSLPadGUI.Add("ListView", ColumnAreaWidth . " h450 " . ColumnAreaRules,
-    [DSLContent["UI"].TabsNCols[2][1][1], DSLContent["UI"].TabsNCols[2][1][2], DSLContent["UI"].TabsNCols[2][1][3]])
+  CommandsLV := DSLPadGUI.Add("ListView", ColumnAreaWidth . " h450 " . ColumnAreaRules, TrimArray(DSLCols.default, 3))
+
+
   CommandsLV.ModifyCol(1, ThreeColumnWidths[1])
   CommandsLV.ModifyCol(2, ThreeColumnWidths[2])
   CommandsLV.ModifyCol(3, ThreeColumnWidths[3])
@@ -2248,7 +2275,7 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
 
-  LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[3][1])
+  LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.smelting)
   LigaturesLV.ModifyCol(1, ColumnWidths[1])
   LigaturesLV.ModifyCol(2, 110)
   LigaturesLV.ModifyCol(3, 100)
@@ -2331,7 +2358,7 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].FastKeysLV)
 
-  FastKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLContent["UI"].TabsNCols[2][1])
+  FastKeysLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
   FastKeysLV.ModifyCol(1, ColumnWidths[1])
   FastKeysLV.ModifyCol(2, ColumnWidths[2])
   FastKeysLV.ModifyCol(3, ColumnWidths[3])
@@ -2402,18 +2429,51 @@ Constructor()
     "Modes`nCommon: requires “activation” of characters groups: Win Alt [Groups] (F1, Space…) must be pressed, but not held, after which to enter the macro [◌̄].`nFast keys: must be held down modifier keys, for example, LCtrl LAlt + m, to enter the macro [◌̄].`nFast keys, marked ✅, always active."
   ]
 
-  DSLPadGUI.SetFont("s16")
-  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].About.Title)
-  DSLPadGUI.SetFont("s11")
-  DSLPadGUI.Add("Text", , DSLContent[LanguageCode].About.SubTitle)
+  ;DSLPadGUI.SetFont("s16")
+  ;DSLPadGUI.Add("Text", "BackgroundTrans", DSLContent[LanguageCode].About.Title)
+  ;DSLPadGUI.SetFont("s11")
+  ;DSLPadGUI.Add("Text", "BackgroundTrans", DSLContent[LanguageCode].About.SubTitle)
 
   for item in DSLContent[LanguageCode].About.Texts
   {
-    DSLPadGUI.Add("Text", "w600", item)
+    ;DSLPadGUI.Add("Text", "w600 BackgroundTrans", item)
   }
-  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
+  ;DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
 
-  DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
+  ;DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
+
+
+  DSLPadGUI.Add("GroupBox", "x23 y34 w280 h512")
+  DSLPadGUI.Add("GroupBox", "x75 y65 w170 h170")
+  DSLPadGUI.Add("Picture", "x98 y89 w128 h128", AppIcoFile)
+
+  AboutTitle := DSLPadGUI.Add("Text", "x75 y245 w170 h32 Center BackgroundTrans", DSLPadTitleDefault)
+  AboutTitle.SetFont("s20 c333333", "Cambria")
+
+  AboutVersion := DSLPadGUI.Add("Text", "x75 y285 w170 h32 Center BackgroundTrans", CurrentVersionString)
+  AboutVersion.SetFont("s12 c333333", "Cambria")
+
+  AboutRepoLinkX := LanguageCode == "ru" ? "x114" : "x123"
+  AboutRepoLink := DSLPadGUI.Add("Link", AboutRepoLinkX " y320 w150 h20 Center",
+    '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0/">' ReadLocale("about_repository") '</a>'
+  )
+  AboutRepoLink.SetFont("s12", "Cambria")
+
+  AboutAuthor := DSLPadGUI.Add("Text", "x75 y490 w170 h16 Center BackgroundTrans", ReadLocale("about_author"))
+  AboutAuthor.SetFont("s11 c333333", "Cambria")
+
+  AboutAuthorLinks := DSLPadGUI.Add("Link", "x90 y520 w150 h16 Center",
+    '<a href="https://github.com/DemerNkardaz/">GitHub</a> '
+    '<a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a> '
+    '<a href="https://ficbook.net/authors/4241255">Фикбук</a>'
+  )
+  AboutAuthorLinks.SetFont("s9", "Cambria")
+
+  AboutDescBox := DSLPadGUI.Add("GroupBox", "x315 y34 w530 h512", DSLPadTitleFull)
+  AboutDescBox.SetFont("s11", "Cambria")
+
+  AboutDescription := DSLPadGUI.Add("Text", "x330 y70 w505 h485 Wrap BackgroundTrans", ReadLocale("about_description"))
+  AboutDescription.SetFont("s12 c333333", "Cambria")
 
 
   Tab.UseTab(8)
@@ -2452,9 +2512,7 @@ Constructor()
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
 
   Tab.UseTab(9)
-  DSLContent["ru"].Changelog := "🌐 История изменений"
-  DSLContent["en"].Changelog := "🌐 Changelog"
-  DSLPadGUI.Add("GroupBox", "w825 h512", DSLContent[LanguageCode].Changelog)
+  DSLPadGUI.Add("GroupBox", "w825 h512", "🌐 " . ReadLocale("tab_changelog"))
   InsertChangesList(DSLPadGUI)
 
 
@@ -2792,7 +2850,7 @@ LV_MouseMove(Control, x, y) {
 }
 
 AddScriptToAutoload(*) {
-  global DSLPadAutoLoad, AppIcoFile
+  global DSLPadTitleDefault, AppIcoFile
   LanguageCode := GetLanguageCode()
   Labels := {}
   Labels[] := Map()
