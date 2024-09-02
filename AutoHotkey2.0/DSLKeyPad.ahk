@@ -498,16 +498,26 @@ InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", Ad
 
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupName) {
-      characterSymbol :=
-        HasProp(value, "symbol") ? value.symbol : ""
-      characterModifier := (HasProp(value, "modifier") && ShowOnFastKeys) ? value.modifier : ""
-      characterBinding :=
-        (HasProp(value, "recipe") && ShowRecipes) ? RecipesMicroController(value.recipe) :
-          (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys :
-            FormatHotKey(value.group[2], characterModifier)
+      entryName := RegExReplace(characterEntry, "^\S+\s+")
+      characterTitle := ""
+      if (HasProp(value, "titles") &&
+        (!HasProp(value, "titlesAlt") || HasProp(value, "titlesAlt") && value.titlesAlt == True)) {
+        characterTitle := value.titles[LanguageCode]
+      } else if (HasProp(value, "titlesAlt") && value.titlesAlt == True) {
+        characterTitle := ReadLocale(entryName . "_alt", "chars")
+      } else {
+        characterTitle := ReadLocale(entryName, "chars")
+      }
 
-      if !ShowOnFastKeys || ShowOnFastKeys && (HasProp(value, "show_on_fast_keys") && value.show_on_fast_keys)
-        TermporaryArray.Push([value.titles[LanguageCode], characterBinding, characterSymbol, UniTrim(value.unicode)])
+
+      characterSymbol := HasProp(value, "symbol") ? value.symbol : ""
+      characterModifier := (HasProp(value, "modifier") && ShowOnFastKeys) ? value.modifier : ""
+      characterBinding := (HasProp(value, "recipe") && ShowRecipes) ? RecipesMicroController(value.recipe) :
+        (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys : FormatHotKey(value.group[2], characterModifier)
+
+      if !ShowOnFastKeys || ShowOnFastKeys && (HasProp(value, "show_on_fast_keys") && value.show_on_fast_keys) {
+        TermporaryArray.Push([characterTitle, characterBinding, characterSymbol, UniTrim(value.unicode)])
+      }
     }
   }
 
@@ -522,8 +532,11 @@ InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", Ad
 
 Characters := Map(
   "", {
-    unicode: "", html: "",
+    unicode: "", html: "", entity: "",
+    altcode: "",
+    LaTeX: "",
     titles: Map("ru", "", "en", ""),
+    titlesAlt: False,
     tags: [""],
     group: ["", ""],
     modifier: "",
@@ -531,11 +544,12 @@ Characters := Map(
     show_on_fast_keys: False,
     alt_on_fast_keys: "",
     symbol: "",
+    symbolAlt: "",
+    symbolCustom: ""
   },
     "0000 acute", {
       unicode: "{U+0301}", html: "&#769;",
       LaTeX: ["\'", "\acute"],
-      titles: Map("ru", "Акут", "en", "Acute"),
       tags: ["acute", "акут", "ударение"],
       group: ["Diacritics Primary", ["a", "ф"]],
       show_on_fast_keys: True,
@@ -543,7 +557,6 @@ Characters := Map(
     },
     "0001 acute_double", {
       unicode: "{U+030B}", html: "&#779;",
-      titles: Map("ru", "Двойной акут", "en", "Double Acute"),
       tags: ["double acute", "двойной акут", "двойное ударение"],
       group: ["Diacritics Primary", ["A", "Ф"]],
       modifier: "LShift",
@@ -552,14 +565,12 @@ Characters := Map(
     },
     "0002 acute_below", {
       unicode: "{U+0317}", html: "&#791;",
-      titles: Map("ru", "Акут снизу", "en", "Acute Below"),
       tags: ["acute below", "акут снизу"],
       group: ["Diacritics Secondary", ["a", "ф"]],
       symbol: DottedCircle . Chr(0x0317)
     },
     "0003 acute_tone_vietnamese", {
       unicode: "{U+0341}", html: "&#833;",
-      titles: Map("ru", "Акут тона (Вьетнам)", "en", "Acute Tone (Vietnam)"),
       tags: ["acute tone", "акут тона"],
       group: ["Diacritics Secondary", ["A", "Ф"]],
       symbol: DottedCircle . Chr(0x0341)
@@ -568,14 +579,12 @@ Characters := Map(
     ;
     "0004 asterisk_above", {
       unicode: "{U+20F0}", html: "&#8432;",
-      titles: Map("ru", "Астериск сверху", "en", "Asterisk Above"),
       tags: ["asterisk above", "астериск сверху"],
       group: ["Diacritics Tertiary", ["a", "ф"]],
       symbol: DottedCircle . Chr(0x20F0)
     },
     "0005 asterisk_below", {
       unicode: "{U+0359}", html: "&#857;",
-      titles: Map("ru", "Астериск снизу", "en", "Asterisk Below"),
       tags: ["asterisk below", "астериск снизу"],
       group: ["Diacritics Tertiary", ["A", "Ф"]],
       symbol: DottedCircle . Chr(0x0359)
@@ -585,7 +594,6 @@ Characters := Map(
     "0006 breve", {
       unicode: "{U+0306}", html: "&#774;",
       LaTeX: ["\u", "\breve"],
-      titles: Map("ru", "Кратка", "en", "Breve"),
       tags: ["breve", "бреве", "кратка"],
       group: ["Diacritics Primary", ["b", "и"]],
       show_on_fast_keys: True,
@@ -593,7 +601,6 @@ Characters := Map(
     },
     "0007 breve_inverted", {
       unicode: "{U+0311}", html: "&#785;",
-      titles: Map("ru", "Перевёрнутая кратка", "en", "Inverted Breve"),
       tags: ["inverted breve", "перевёрнутое бреве", "перевёрнутая кратка"],
       group: ["Diacritics Primary", ["B", "И"]],
       modifier: "LShift",
@@ -602,14 +609,12 @@ Characters := Map(
     },
     "0008 breve_below", {
       unicode: "{U+032E}", html: "&#814;",
-      titles: Map("ru", "Кратка снизу", "en", "Breve Below"),
       tags: ["breve below", "бреве снизу", "кратка снизу"],
       group: ["Diacritics Secondary", ["b", "и"]],
       symbol: DottedCircle . Chr(0x032E)
     },
     "0009 breve_inverted_below", {
       unicode: "{U+032F}", html: "&#815;",
-      titles: Map("ru", "Перевёрнутая кратка снизу", "en", "Inverted Breve Below"),
       tags: ["inverted breve below", "перевёрнутое бреве снизу", "перевёрнутая кратка снизу"],
       group: ["Diacritics Secondary", ["B", "И"]],
       symbol: DottedCircle . Chr(0x032F)
@@ -618,21 +623,18 @@ Characters := Map(
     ;
     "0000 bridge_above", {
       unicode: "{U+0346}", html: "&#838;",
-      titles: Map("ru", "Мостик сверху", "en", "Bridge Above"),
       tags: ["bridge above", "мостик сверху"],
       group: ["Diacritics Tertiary", ["b", "и"]],
       symbol: DottedCircle . Chr(0x0346)
     },
     "0000 bridge_below", {
       unicode: "{U+032A}", html: "&#810;",
-      titles: Map("ru", "Мостик снизу", "en", "Bridge Below"),
       tags: ["bridge below", "мостик снизу"],
       group: ["Diacritics Tertiary", ["B", "И"]],
       symbol: DottedCircle . Chr(0x032A)
     },
     "0000 bridge_inverted_below", {
       unicode: "{U+033A}", html: "&#825;",
-      titles: Map("ru", "Перевёрнутый мостик снизу", "en", "Inverted Bridge Below"),
       tags: ["inverted bridge below", "перевёрнутый мостик снизу"],
       group: ["Diacritics Tertiary", CtrlB],
       symbol: DottedCircle . Chr(0x033A)
@@ -642,7 +644,6 @@ Characters := Map(
     "0000 circumflex", {
       unicode: "{U+0302}", html: "&#770;",
       LaTeX: ["\^", "\hat"],
-      titles: Map("ru", "Циркумфлекс", "en", "Circumflex"),
       tags: ["circumflex", "циркумфлекс"],
       group: ["Diacritics Primary", ["c", "с"]],
       show_on_fast_keys: True,
@@ -651,7 +652,6 @@ Characters := Map(
     "0000 caron", {
       unicode: "{U+030C}", html: "&#780;",
       LaTeX: "\v",
-      titles: Map("ru", "Гачек", "en", "Caron"),
       tags: ["caron", "карон", "гачек"],
       group: ["Diacritics Primary", ["C", "С"]],
       show_on_fast_keys: True,
@@ -659,14 +659,12 @@ Characters := Map(
     },
     "0000 circumflex_below", {
       unicode: "{U+032D}", html: "&#813;",
-      titles: Map("ru", "Циркумфлекс снизу", "en", "Circumflex Below"),
       tags: ["circumflex below", "циркумфлекс снизу"],
       group: ["Diacritics Secondary", ["c", "с"]],
       symbol: DottedCircle . Chr(0x032D)
     },
     "0000 caron_below", {
       unicode: "{U+032C}", html: "&#812;",
-      titles: Map("ru", "Гачек снизу", "en", "Caron Below"),
       tags: ["caron below", "карон снизу", "гачек снизу"],
       group: ["Diacritics Secondary", ["C", "С"]],
       symbol: DottedCircle . Chr(0x032C)
@@ -681,7 +679,6 @@ Characters := Map(
     },
     "0000 candrabindu", {
       unicode: "{U+0310}", html: "&#784;",
-      titles: Map("ru", "Чандрабинду", "en", "Candrabindu"),
       tags: ["candrabindu", "карон снизу"],
       group: ["Diacritics Tertiary", ["C", "С"]],
       symbol: DottedCircle . Chr(0x0310)
@@ -691,7 +688,6 @@ Characters := Map(
     "0000 dot_above", {
       unicode: "{U+0307}", html: "&#775;",
       LaTeX: ["\.", "\dot"],
-      titles: Map("ru", "Точка сверху", "en", "Dot Above"),
       tags: ["dot above", "точка сверху"],
       group: ["Diacritics Primary", ["d", "в"]],
       show_on_fast_keys: True,
@@ -700,7 +696,6 @@ Characters := Map(
     "0000 diaeresis", {
       unicode: "{U+0308}", html: "&#776;",
       LaTeX: ["\" . QuotationDouble, "\ddot"],
-      titles: Map("ru", "Диерезис", "en", "Diaeresis"),
       tags: ["diaeresis", "диерезис"],
       group: ["Diacritics Primary", ["D", "В"]],
       show_on_fast_keys: True,
@@ -708,14 +703,12 @@ Characters := Map(
     },
     "0000 dot_below", {
       unicode: "{U+0323}", html: "&#803;",
-      titles: Map("ru", "Точка снизу", "en", "Dot Below"),
       tags: ["dot below", "точка снизу"],
       group: ["Diacritics Secondary", ["d", "в"]],
       symbol: DottedCircle . Chr(0x0323)
     },
     "0000 diaeresis_below", {
       unicode: "{U+0324}", html: "&#804;",
-      titles: Map("ru", "Диерезис снизу", "en", "Diaeresis Below"),
       tags: ["diaeresis below", "диерезис снизу"],
       group: ["Diacritics Secondary", ["D", "В"]],
       symbol: DottedCircle . Chr(0x0324)
@@ -724,7 +717,6 @@ Characters := Map(
     ;
     "0000 fermata", {
       unicode: "{U+0352}", html: "&#850;",
-      titles: Map("ru", "Фермата", "en", "Fermata"),
       tags: ["fermata", "фермата"],
       group: ["Diacritics Tertiary", ["F", "А"]],
       show_on_fast_keys: True,
@@ -735,7 +727,6 @@ Characters := Map(
     "0000 grave", {
       unicode: "{U+0300}", html: "&#768;",
       LaTeX: ["\" . Backquote, "\grave"],
-      titles: Map("ru", "Гравис", "en", "Grave"),
       tags: ["grave", "гравис"],
       group: ["Diacritics Primary", ["g", "п"]],
       show_on_fast_keys: True,
@@ -743,7 +734,6 @@ Characters := Map(
     },
     "0000 grave_double", {
       unicode: "{U+030F}", html: "&#783;",
-      titles: Map("ru", "Двойной Гравис", "en", "Double Grave"),
       tags: ["double grave", "двойной гравис"],
       group: ["Diacritics Primary", ["G", "П"]],
       show_on_fast_keys: True,
@@ -751,14 +741,12 @@ Characters := Map(
     },
     "0000 grave_below", {
       unicode: "{U+0316}", html: "&#790;",
-      titles: Map("ru", "Гравис снизу", "en", "Grave Below"),
       tags: ["grave below", "гравис снизу"],
       group: ["Diacritics Secondary", ["g", "п"]],
       symbol: DottedCircle . Chr(0x0316)
     },
     "0000 grave_tone_vietnamese", {
       unicode: "{U+0340}", html: "&#832;",
-      titles: Map("ru", "Гравис тона (Вьетнам)", "en", "Grave Tone (Vietnam)"),
       tags: ["grave tone", "гравис тона"],
       group: ["Diacritics Secondary", ["G", "П"]],
       symbol: DottedCircle . Chr(0x0340)
@@ -767,7 +755,6 @@ Characters := Map(
     ;
     "0000 hook_above", {
       unicode: "{U+0309}", html: "&#777;",
-      titles: Map("ru", "Хвостик сверху", "en", "Hook Above"),
       tags: ["hook above", "хвостик сверху"],
       group: ["Diacritics Primary", ["h", "р"]],
       show_on_fast_keys: True,
@@ -775,7 +762,6 @@ Characters := Map(
     },
     "0000 horn", {
       unicode: "{U+031B}", html: "&#795;",
-      titles: Map("ru", "Рожок", "en", "Horn"),
       tags: ["horn", "рожок"],
       group: ["Diacritics Primary", ["H", "Р"]],
       show_on_fast_keys: True,
@@ -783,14 +769,12 @@ Characters := Map(
     },
     "0000 palatalized_hook_below", {
       unicode: "{U+0321}", html: "&#801;",
-      titles: Map("ru", "Палатальный крюк", "en", "Palatalized Hook Below"),
       tags: ["palatalized hook below", "палатальный крюк"],
       group: ["Diacritics Secondary", ["h", "р"]],
       symbol: DottedCircle . Chr(0x0321)
     },
     "0000 retroflex_hook_below", {
       unicode: "{U+0322}", html: "&#802;",
-      titles: Map("ru", "Ретрофлексный крюк", "en", "Retroflex Hook Below"),
       tags: ["retroflex hook below", "ретрофлексный крюк"],
       group: ["Diacritics Secondary", ["H", "Р"]],
       symbol: DottedCircle . Chr(0x0322)
@@ -800,7 +784,6 @@ Characters := Map(
     ; ? Шпации
     "0000 emspace", {
       unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
-      titles: Map("ru", "Круглая шпация", "en", "Em Space"),
       tags: ["em space", "emspace", "emsp", "круглая шпация"],
       group: ["Spaces", "1"],
       show_on_fast_keys: True,
@@ -810,25 +793,22 @@ Characters := Map(
     },
     "0000 ensp", {
       unicode: "{U+2002}", html: "&#8194;", entity: "&ensp;",
-      titles: Map("ru", "Полукруглая шпация", "en", "En Space"),
       tags: ["en space", "enspace", "ensp", "полукруглая шпация"],
       group: ["Spaces", "2"],
       symbol: "[" . Chr(0x2002) . "]",
       symbolAlt: Chr(0x2002),
       symbolCustom: "underline"
     },
-    "0000 1/3emsp", {
+    "0000 emsp13", {
       unicode: "{U+2004}", html: "&#8196;", entity: "&emsp13;",
-      titles: Map("ru", "⅓ Круглой шпации", "en", "⅓ Em Space"),
       tags: ["emsp13", "1/3emsp", "1/3 круглой Шпации"],
       group: ["Spaces", "3"],
       symbol: "[" . Chr(0x2004) . "]",
       symbolAlt: Chr(0x2004),
       symbolCustom: "underline"
     },
-    "0000 1/4emsp", {
+    "0000 emsp14", {
       unicode: "{U+2005}", html: "&#8196;", entity: "&emsp14;",
-      titles: Map("ru", "¼ Круглой шпации", "en", "¼ Em Space"),
       tags: ["emsp14", "1/4emsp", "1/4 круглой Шпации"],
       group: ["Spaces", "4"],
       symbol: "[" . Chr(0x2005) . "]",
@@ -837,16 +817,14 @@ Characters := Map(
     },
     "0000 thinspace", {
       unicode: "{U+2009}", html: "&#8201;", entity: "&thinsp;",
-      titles: Map("ru", "Узкий пробел", "en", "Thin Space"),
       tags: ["thinsp", "thin space", "узкий пробел", "тонкий пробел"],
       group: ["Spaces", "5"],
       symbol: "[" . Chr(0x2009) . "]",
       symbolAlt: Chr(0x2009),
       symbolCustom: "underline"
     },
-    "0000 1/6emsp", {
+    "0000 emsp16", {
       unicode: "{U+2006}", html: "&#8198;", entity: "&emsp16;",
-      titles: Map("ru", "⅙ Круглой шпации", "en", "⅙ Em Space"),
       tags: ["emsp16", "1/6emsp", "1/6 круглой Шпации"],
       group: ["Spaces", "6"],
       symbol: "[" . Chr(0x2006) . "]",
@@ -855,7 +833,6 @@ Characters := Map(
     },
     "0000 narrow_no_break_space", {
       unicode: "{U+202F}", html: "&#8239;",
-      titles: Map("ru", "Узкий неразрывный пробел", "en", "Narrow No-Break Space"),
       tags: ["nnbsp", "narrow no-break space", "узкий неразрывный пробел", "тонкий неразрывный пробел"],
       group: ["Spaces", "7"],
       symbol: "[" . Chr(0x202F) . "]",
@@ -864,7 +841,6 @@ Characters := Map(
     },
     "0000 hairspace", {
       unicode: "{U+200A}", html: "&#8202;", entity: "&hairsp;",
-      titles: Map("ru", "Волосяная шпация", "en", "Hair Space"),
       tags: ["hsp", "hairsp", "hair space", "волосяная шпация"],
       group: ["Spaces", "8"],
       symbol: "[" . Chr(0x200A) . "]",
@@ -873,16 +849,14 @@ Characters := Map(
     },
     "0000 punctuation_space", {
       unicode: "{U+2008}", html: "&#8200;", entity: "&puncsp;",
-      titles: Map("ru", "Пунктуационный пробел", "en", "Punctuation Space"),
       tags: ["psp", "puncsp", "punctuation space", "пунктуационный пробел"],
       group: ["Spaces", "9"],
       symbol: "[" . Chr(0x2008) . "]",
       symbolAlt: Chr(0x2008),
       symbolCustom: "underline"
     },
-    "0000 zero-width_space", {
+    "0000 zero_width_space", {
       unicode: "{U+200B}", html: "&#8200;", entity: "&NegativeVeryThinSpace;",
-      titles: Map("ru", "Пробел нулевой ширины", "en", "Zero-Width Space"),
       tags: ["zwsp", "zero-width space", "пробел нулевой ширины"],
       group: ["Spaces", "0"],
       symbol: "[" . Chr(0x200B) . "]",
@@ -891,7 +865,6 @@ Characters := Map(
     },
     "0000 word_joiner", {
       unicode: "{U+2060}", html: "&#8288;", entity: "&NoBreak;",
-      titles: Map("ru", "Соединитель слов", "en", "Word Joiner"),
       tags: ["wj", "word joiner", "соединитель слов"],
       group: ["Spaces", "-"],
       symbol: "[" . Chr(0x2060) . "]",
@@ -900,18 +873,16 @@ Characters := Map(
     },
     "0000 figure_space", {
       unicode: "{U+2007}", html: "&#8199;", entity: "&numsp;",
-      titles: Map("ru", "Цифровой пробел", "en", "Figure Space"),
       tags: ["nsp", "numsp", "figure space", "цифровой пробел"],
       group: ["Spaces", "="],
       symbol: "[" . Chr(0x2007) . "]",
       symbolAlt: Chr(0x2007),
       symbolCustom: "underline"
     },
-    "0000 no-break_space", {
+    "0000 no_break_space", {
       unicode: "{U+00A0}", html: "&#160;", entity: "&nbsp;",
       altcode: "0160",
       LaTeX: "~",
-      titles: Map("ru", "Неразрывный пробел", "en", "No-Break Space"),
       tags: ["nbsp", "no-break space", "неразрывный пробел"],
       group: ["Spaces", SpaceKey],
       symbol: "[" . Chr(0x00A0) . "]",
@@ -921,7 +892,6 @@ Characters := Map(
     "0000 emquad", {
       unicode: "{U+2001}", html: "&#8193;",
       LaTeX: "\qquad",
-      titles: Map("ru", "Em-квадрат", "en", "Em Quad"),
       tags: ["em quad", "emquad", "emqd", "em-квадрат"],
       group: ["Spaces", ExclamationMark],
       show_on_fast_keys: True,
@@ -931,7 +901,6 @@ Characters := Map(
     },
     "0000 enquad", {
       unicode: "{U+2000}", html: "&#8192;",
-      titles: Map("ru", "En-квадрат", "en", "En Quad"),
       LaTeX: "\quad",
       tags: ["en quad", "enquad", "enqd", "en-квадрат"],
       group: ["Spaces", [CommercialAt, QuotationDouble]],
@@ -944,35 +913,30 @@ Characters := Map(
     ; ? Special Characters
     "0000 low_asterisk", {
       unicode: "{U+204E}", html: "&#8270;",
-      titles: Map("ru", "Нижний астериск", "en", "Low Asterisk"),
       tags: ["low asterisk", "нижний астериск"],
       group: ["Special Characters", ["a", "ф"]],
       symbol: Chr(0x204E)
     },
     "0000 two_asterisks", {
       unicode: "{U+2051}", html: "&#8273;",
-      titles: Map("ru", "Два астериска", "en", "Two Asterisks"),
       tags: ["two asterisks", "два астериска"],
       group: ["Special Characters", ["A", "Ф"]],
       symbol: Chr(0x2051)
     },
     "0000 asterism", {
       unicode: "{U+2042}", html: "&#8258;",
-      titles: Map("ru", "Астеризм", "en", "Asterism"),
       tags: ["asterism", "астеризм"],
       group: ["Special Characters", CtrlA],
       symbol: Chr(0x2042)
     },
     "0000 colon_triangle", {
       unicode: "{U+02D0}", html: "&#720;",
-      titles: Map("ru", "Знак долготы", "en", "Triangle Colon"),
       tags: ["triangle colon", "знак долготы"],
       group: ["Special Characters", [";", "ж"]],
       symbol: Chr(0x02D0)
     },
     "0000 colon_triangle_half", {
       unicode: "{U+02D1}", html: "&#721;",
-      titles: Map("ru", "Знак полудолготы", "en", "Half Triangle Colon"),
       tags: ["half triangle colon", "знак полудолготы"],
       group: ["Special Characters", [":", "Ж"]],
       symbol: Chr(0x02D1)
@@ -980,7 +944,6 @@ Characters := Map(
     "0000 dagger", {
       unicode: "{U+2020}", html: "&dagger;",
       LaTeX: "\dagger",
-      titles: Map("ru", "Крест", "en", "Dagger"),
       tags: ["dagger", "даггер", "крест"],
       group: ["Special Characters", ["t", "е"]],
       symbol: Chr(0x2020)
@@ -988,28 +951,24 @@ Characters := Map(
     "0000 dagger_double", {
       unicode: "{U+2021}", html: "&Dagger;",
       LaTeX: "\ddagger",
-      titles: Map("ru", "Двойной крест", "en", "Double Dagger"),
       tags: ["double dagger", "двойной даггер", "двойной крест"],
       group: ["Special Characters", ["T", "Е"]],
       symbol: Chr(0x2021)
     },
     "0000 dagger_tripple", {
       unicode: "{U+2E4B}", html: "&#11851;",
-      titles: Map("ru", "Тройной крест", "en", "Tripple Dagger"),
       tags: ["tripple dagger", "тройной даггер", "тройной крест"],
       group: ["Special Characters", CtrlT],
       symbol: Chr(0x2E4B)
     },
     "0000 fraction_slash", {
       unicode: "{U+2044}", html: "&#8260;",
-      titles: Map("ru", "Дробная черта", "en", "Fraction Slash"),
       tags: ["fraction slash", "дробная черта"],
       group: ["Special Characters", "/"],
       symbol: Chr(0x2044)
     },
     "0000 grapheme_joiner", {
       unicode: "{U+034F}", html: "&#847;",
-      titles: Map("ru", "Соединитель графем", "en", "Grapheme Joiner"),
       tags: ["grapheme joiner", "соединитель графем"],
       group: ["Special Characters", ["g", "п"]],
       symbol: DottedCircle . Chr(0x034F)
@@ -1017,7 +976,6 @@ Characters := Map(
     "0000 prime_single", {
       unicode: "{U+2032}", html: "&#8242;", entity: "&prime;",
       LaTeX: "\prime",
-      titles: Map("ru", "Штрих", "en", "Prime"),
       tags: ["prime", "штрих"],
       group: ["Special Characters", ["p", "з"]],
       symbol: Chr(0x2032)
@@ -1025,7 +983,6 @@ Characters := Map(
     "0000 prime_double", {
       unicode: "{U+2033}", html: "&#8243;", entity: "&Prime;",
       LaTeX: "\prime\prime",
-      titles: Map("ru", "Двойной штрих", "en", "Double Prime"),
       tags: ["double prime", "двойной штрих"],
       group: ["Special Characters", ["P", "З"]],
       symbol: Chr(0x2033)
@@ -1035,7 +992,6 @@ Characters := Map(
       altcode: "0137",
       LaTeX: "\permil",
       LaTeXPackage: "wasysym",
-      titles: Map("ru", "Промилле", "en", "Per Mille"),
       tags: ["per mille", "промилле"],
       group: ["Special Characters", "5"],
       symbol: Chr(0x2030)
@@ -1044,14 +1000,12 @@ Characters := Map(
       unicode: "{U+2031}", html: "&#8241;", entity: "&pertenk;",
       LaTeX: "\textpertenthousand",
       LaTeXPackage: "textcomp",
-      titles: Map("ru", "Базисный пункт", "en", "Basis Point"),
       tags: ["per ten thousand", "промилле", "базисный пункт", "basis point"],
       group: ["Special Characters", "%"],
       symbol: Chr(0x2031)
     },
     "0000 dotted_circle", {
       unicode: "{U+25CC}", html: "&#9676;",
-      titles: Map("ru", "Пунктирный круг", "en", "Dotted Circle"),
       tags: ["пунктирный круг", "dottet circle"],
       group: ["Fast Keys Only", "Num0"],
       symbol: DottedCircle
@@ -2598,6 +2552,17 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
 
   if (UnicodeKey != "") {
     for characterEntry, value in Characters {
+      entryName := RegExReplace(characterEntry, "^\S+\s+")
+      characterTitle := ""
+      if (HasProp(value, "titles") &&
+        (!HasProp(value, "titlesAlt") || HasProp(value, "titlesAlt") && value.titlesAlt == True)) {
+        characterTitle := value.titles[LanguageCode]
+      } else if (HasProp(value, "titlesAlt") && value.titlesAlt == True) {
+        characterTitle := ReadLocale(entryName . "_alt", "chars")
+      } else {
+        characterTitle := ReadLocale(entryName, "chars")
+      }
+
       if (
         (UnicodeKey == UniTrim(value.unicode)) ||
         (UnicodeKey == value.unicode)) {
@@ -2629,8 +2594,7 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
           )
         }
 
-        titleText := HasProp(value, "titlesAlt") ? value.titlesAlt[LanguageCode] : value.titles[LanguageCode]
-        TargetGroup[PreviewTitle].Text := titleText
+        TargetGroup[PreviewTitle].Text := characterTitle
 
         TargetGroup[PreviewUnicode].Text := SubStr(value.unicode, 2, StrLen(value.unicode) - 2)
 
