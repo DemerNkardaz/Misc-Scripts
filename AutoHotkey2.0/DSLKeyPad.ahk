@@ -145,6 +145,7 @@ DefaultConfig := [
   ["LatestPrompts", "Altcode", ""],
   ["LatestPrompts", "Search", ""],
   ["LatestPrompts", "Ligature", ""],
+  ["LatestPrompts", "RomanNumeral", ""],
 ]
 
 if FileExist(ConfigFile) {
@@ -1686,13 +1687,15 @@ ToRomanNumeral(IntValue, CapitalLetters := True) {
 SwitchToRoman() {
   LanguageCode := GetLanguageCode()
 
-  PromptValue := ""
+  PromptValue := IniRead(ConfigFile, "LatestPrompts", "RomanNumeral", "")
 
-  IB := InputBox("Enter values", "Convert to Roman Numerals", "w256 h92")
+  IB := InputBox(ReadLocale("symbol_roman_numeral_prompt"), ReadLocale("symbol_roman_numeral"), "w256 h92", PromptValue)
   if IB.Result = "Cancel"
     return
   else {
     PromptValue := ToRomanNumeral(IB.Value)
+
+    IniWrite IB.Value, ConfigFile, "LatestPrompts", "RomanNumeral"
   }
   SendText(PromptValue)
 }
