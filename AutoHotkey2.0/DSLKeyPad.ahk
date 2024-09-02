@@ -1614,6 +1614,41 @@ SwitchToScript(scriptMode) {
   Send(PromptValue)
 }
 
+ToRomanNumeral(IntValue, CapitalLetters := True) {
+  IntValue := Integer(IntValue)
+  if (IntValue < 1 || IntValue > 2000000)
+    return ""
+
+  RomanNumerals := CapitalLetters ? ["ↈ", "ↇ", "ↂ", "ↁ", "Ⅿ", "Ⅾ", "Ⅽ", "Ⅼ", "Ⅹ", "Ⅸ", "Ⅷ", "Ⅶ", "Ⅵ", "Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"]
+    : ["ↈ", "ↇ", "ↂ", "ↁ", "ⅿ", "ⅾ", "ⅽ", "ⅼ", "ⅹ", "ⅸ", "ⅷ", "ⅶ", "ⅵ", "ⅴ", "ⅳ", "ⅲ", "ⅱ", "ⅰ"]
+
+  Values := [100000, 50000, 10000, 5000, 1000, 500, 100, 50, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+  RomanStr := ""
+
+  for i, v in Values {
+    while (IntValue >= v) {
+      RomanStr .= RomanNumerals[i]
+      IntValue -= v
+    }
+  }
+  return RomanStr
+}
+
+SwitchToRoman() {
+  LanguageCode := GetLanguageCode()
+
+  PromptValue := ""
+
+  IB := InputBox("Enter values", "Convert to Roman Numerals", "w256 h92")
+  if IB.Result = "Cancel"
+    return
+  else {
+    PromptValue := ToRomanNumeral(IB.Value)
+  }
+  SendText(PromptValue)
+}
+
+
 InsertAltCodeKey() {
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Altcode", "")
   IB := InputBox(ReadLocale("symbol_code_prompt"), ReadLocale("symbol_altcode"), "w256 h92", PromptValue)
@@ -1757,6 +1792,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 >+Backspace:: Ligaturise("Backspace")
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
+<#<^>!2:: SwitchToRoman()
 
 <#<!m:: ToggleGroupMessage()
 
@@ -2115,6 +2151,7 @@ Constructor()
     [Map("ru", " (установить курсор справа от символов)", "en", " (set cursor to the right of the symbols)"), "RShift Backspace", "st → ﬆ, іат → ѩ"],
     [Map("ru", "Конвертировать в верхний индекс", "en", "Convert into superscript"), "Win LAlt 1", "‌¹‌²‌³‌⁴‌⁵‌⁶‌⁷‌⁸‌⁹‌⁰‌⁽‌⁻‌⁼‌⁾"],
     [Map("ru", "Конвертировать в нижний индекс", "en", "Convert into subscript"), "Win RAlt 1", "‌₁‌₂‌₃‌₄‌₅‌₆‌₇‌₈‌₉‌₀‌₍‌₋‌₌‌₎"],
+    [Map("ru", "Конвертировать в Римские цифры", "en", "Convert into Roman Numerals"), "Win RAlt 2", "15128 → ↂↁⅭⅩⅩⅧ"],
     [Map("ru", "Активация «Быстрых ключей»", "en", "Toggle FastKeys"), "RAlt Home", ""],
     [Map("ru", "Переключение ввода HTML/LaTeX/Символ", "en", "Toggle of HTML/LaTeX/Symbol input"), "RAlt RShift Home", "a&#769; | \'{a} | á"],
     [Map("ru", "Оповещения активации групп", "en", "Groups activation notification toggle"), "Win Alt M", ""],
@@ -2764,6 +2801,9 @@ LV_RunCommand(LV, RowNumber)
 
   if (Shortcut = "Win RAlt 1")
     SwitchToScript("sub")
+
+  if (Shortcut = "Win RAlt 2")
+    SwitchToRoman()
 
   if (Shortcut = "RAlt Home")
     ToggleFastKeys()
