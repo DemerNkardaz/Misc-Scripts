@@ -3,8 +3,6 @@
 
 
 ; Only EN US & RU RU Keyboard Layout
-ApplicationIcon := ["C:\Windows\System32\charmap.exe", 1]
-ConfigIcon := ["C:\Windows\System32\imageres.dll", 065]
 ChracterMap := "C:\Windows\System32\charmap.exe"
 ImageRes := "C:\Windows\System32\imageres.dll"
 Shell32 := "C:\Windows\SysWOW64\shell32.dll"
@@ -14,22 +12,24 @@ AppVersion := [0, 1, 1, 0]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
 
-RawSource := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.ahk"
-RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSLKeyPad.ahk"
+RawRepo := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/"
+
+RawSource := RawRepo . "DSLKeyPad.ahk"
+RepoSource := RawRepo . "DSLKeyPad.ahk"
 UpdateAvailable := False
 
 ChangeLogRaw := Map(
-  "ru", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.ru.md",
-  "en", "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.Changelog.en.md"
+  "ru", RawRepo . "DSLKeyPad.Changelog.ru.md",
+  "en", RawRepo . "DSLKeyPad.Changelog.en.md"
 )
 
-LocalesRaw := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.locales.ini"
-
-AppIcoRaw := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSLKeyPad.app.ico"
+LocalesRaw := RawRepo . "DSLKeyPad.locales.ini"
+AppIcoRaw := RawRepo . "DSLKeyPad.app.ico"
 
 
 WorkingDir := A_MyDocuments . "\DSLKeyPad"
 DirCreate(WorkingDir)
+
 
 ConfigFile := WorkingDir . "\DSLKeyPad.config.ini"
 LocalesFile := WorkingDir . "\DSLKeyPad.locales.ini"
@@ -1857,6 +1857,15 @@ Constructor()
 {
   CheckUpdate()
   ManageTrayItems()
+
+  screenWidth := A_ScreenWidth
+  screenHeight := A_ScreenHeight
+
+  windowWidth := 850
+  windowHeight := 550
+  xPos := screenWidth - windowWidth - 45
+  yPos := screenHeight - windowHeight - 90
+
   DSLTabs := []
   DSLCols := { default: [], smelting: [] }
 
@@ -1872,69 +1881,15 @@ Constructor()
     DSLCols.smelting.Push(ReadLocale("col_" . localeKey))
   }
 
-
   DSLContent := {}
   DSLContent[] := Map()
   DSLContent["BindList"] := {}
-  DSLContent["UI"] := {}
   DSLContent["ru"] := {}
   DSLContent["en"] := {}
 
-  DSLContent["ru"].GBoxSelected := "Знак"
-  DSLContent["en"].GBoxSelected := "Character"
-
-  DSLContent["UI"].TabsNCols := [
-    [Map(
-      "ru", ["Диакритика", "Буквы", "Пробелы и спец-символы", "Команды", "Плавильня", "Быстрые ключи", "О программе", "Полезное", "История изменений"],
-      "en", ["Diacritics", "Letters", "Spaces and spec-chars", "Commands", "Smelting", "Fast Keys", "About", "Useful", "Changelog"]
-    )],
-    [Map(
-      "ru", ["Имя", "Ключ", "Вид", "Unicode"],
-      "en", ["Name", "Key", "View", "Unicode"]
-    )],
-    [Map(
-      "ru", ["Имя", "Рецепт", "Результат", "Unicode"],
-      "en", ["Name", "Recipe", "Result", "Unicode"]
-    )],
-  ]
-  LocaliseArrayKeys(DSLContent["UI"].TabsNCols)
-
-  LanguageCode := GetLanguageCode()
-
-  DSLPadGUI := Gui()
-
-  ColumnWidths := [300, 140, 60, 85]
-  ThreeColumnWidths := [300, 150, 160]
-  ColumnAreaWidth := "w620"
-  ColumnAreaHeight := "h510"
-  ColumnAreaRules := "+NoSort -Multi"
-  ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
-
-  Tab := DSLPadGUI.Add("Tab3", "w850 h550", DSLTabs)
-  DSLPadGUI.SetFont("s11")
-  Tab.UseTab(1)
-
-  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
-  DiacriticLV.ModifyCol(1, ColumnWidths[1])
-  DiacriticLV.ModifyCol(2, ColumnWidths[2])
-  DiacriticLV.ModifyCol(3, ColumnWidths[3])
-  DiacriticLV.ModifyCol(4, ColumnWidths[4])
-
-
-  DSLContent["BindList"].TabDiacritics := []
-
-  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Primary", "Win Alt F1", False)
-  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Secondary", "Win Alt F2")
-  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Tertiary", "Win Alt F3")
-
-  for item in DSLContent["BindList"].TabDiacritics
-  {
-    DiacriticLV.Add(, item[1], item[2], item[3], item[4])
-  }
-
   CommonInfoBox := {
     body: "x650 y35 w200 h510",
-    bodyText: DSLContent[LanguageCode].GBoxSelected,
+    bodyText: ReadLocale("character"),
     previewFrame: "x685 y80 w128 h128 Center",
     preview: "x685 y80 w128 h128 readonly Center -VScroll -HScroll",
     previewText: "◌͏",
@@ -1964,6 +1919,38 @@ Constructor()
     htmlTitleText: Map("ru", "HTML-Код/Мнемоника", "en", "HTML/Entity"),
   }
 
+  LanguageCode := GetLanguageCode()
+
+  DSLPadGUI := Gui()
+
+  ColumnWidths := [300, 140, 60, 85]
+  ThreeColumnWidths := [300, 150, 160]
+  ColumnAreaWidth := "w620"
+  ColumnAreaHeight := "h510"
+  ColumnAreaRules := "+NoSort -Multi"
+  ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
+
+  Tab := DSLPadGUI.Add("Tab3", "w" windowWidth " h" windowHeight, DSLTabs)
+  DSLPadGUI.SetFont("s11")
+  Tab.UseTab(1)
+
+  DiacriticLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.default)
+  DiacriticLV.ModifyCol(1, ColumnWidths[1])
+  DiacriticLV.ModifyCol(2, ColumnWidths[2])
+  DiacriticLV.ModifyCol(3, ColumnWidths[3])
+  DiacriticLV.ModifyCol(4, ColumnWidths[4])
+
+
+  DSLContent["BindList"].TabDiacritics := []
+
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Primary", "Win Alt F1", False)
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Secondary", "Win Alt F2")
+  InsertCharactersGroups(DSLContent["BindList"].TabDiacritics, "Diacritics Tertiary", "Win Alt F3")
+
+  for item in DSLContent["BindList"].TabDiacritics
+  {
+    DiacriticLV.Add(, item[1], item[2], item[3], item[4])
+  }
 
   GrouBoxDiacritic := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -2400,49 +2387,6 @@ Constructor()
 
 
   Tab.UseTab(7)
-  DSLContent["ru"].About := {}
-  DSLContent["ru"].About.Title := "DSL KeyPad"
-  DSLContent["ru"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
-  DSLContent["ru"].About.Repository := "Папка AHK репозитория: "
-  DSLContent["ru"].About.AuthorGit := "Профиль автора: "
-  DSLContent["ru"].About.Texts := [
-    "Версия: Альфа от 31.08.2024",
-    "Автор: Демер Нкардаз",
-    "Примечание: Использовать на русской и английской раскладках",
-    "Данная программа предназначена для помощи при вводе специальных символов, таких как диакритические знаки, пробельные символы и видоизменённые буквы. Вы можете использовать горячие клавиши, произвести вставку знака по названию (Win Alt F), если он есть в библиотеке, или ввести «сырое» обозначение Unicode (Win Alt U) любого символа.",
-    "В данном окне представлены все доступные комбинации клавиш. Двойным нажатием ЛКМ по любой из строк, содержащей Unicode,`nможно перейти на сайт Symbl.cc с обзором соответствующего символа.",
-    "Режимы`nОбычный — требует «активации» группы знаков: Win Alt [Группа] (F1, Space…) необходимо нажать, но не удерживать, после чего нажать на символ ключа нужного знака.`nБыстрые ключи — необходимо удерживать модифицирующие клавиши, например, LCtrl LAlt + m, что бы ввести знак макрона [◌̄].`nБыстрые ключи, отмеченные ✅, активны всегда."
-  ]
-
-  DSLContent["en"].About := {}
-
-  DSLContent["en"].About.Title := "DSL KeyPad"
-  DSLContent["en"].About.SubTitle := "Diacritics-Spaces-Letters KeyPad"
-  DSLContent["en"].About.Repository := "AHK Folder on Repository: "
-  DSLContent["en"].About.AuthorGit := "Author’s Profile: "
-  DSLContent["en"].About.Texts := [
-    "Version: Alpha at 27/08/2024",
-    "Author: Demer Nkardaz",
-    "Note: Use on Russian or English keyboard layout",
-    "This program is created to assist in entering special characters, such as diacritics signs, whitespace characters, and modified letters. You can use hotkeys, insert a symbol by name (Win Alt F), if it exists in library, or enter the “raw” Unicode key (Win Alt U) of any symbol.",
-    "This window displays all available key combinations. Double-clicking the LMB on any line containing Unicode will take you to the Symbl.cc site with an overview of the corresponding symbol.",
-    "Modes`nCommon: requires “activation” of characters groups: Win Alt [Groups] (F1, Space…) must be pressed, but not held, after which to enter the macro [◌̄].`nFast keys: must be held down modifier keys, for example, LCtrl LAlt + m, to enter the macro [◌̄].`nFast keys, marked ✅, always active."
-  ]
-
-  ;DSLPadGUI.SetFont("s16")
-  ;DSLPadGUI.Add("Text", "BackgroundTrans", DSLContent[LanguageCode].About.Title)
-  ;DSLPadGUI.SetFont("s11")
-  ;DSLPadGUI.Add("Text", "BackgroundTrans", DSLContent[LanguageCode].About.SubTitle)
-
-  for item in DSLContent[LanguageCode].About.Texts
-  {
-    ;DSLPadGUI.Add("Text", "w600 BackgroundTrans", item)
-  }
-  ;DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.Repository . '<a href="https://github.com/DemerNkardaz/Misc-Scripts/tree/main/AutoHotkey2.0">GitHub “Misc-Scripts”</a>')
-
-  ;DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].About.AuthorGit . '<a href="https://github.com/DemerNkardaz">GitHub</a>; <a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a>; <a href="https://ficbook.net/authors/4241255">Фикбук</a>')
-
-
   DSLPadGUI.Add("GroupBox", "x23 y34 w280 h512")
   DSLPadGUI.Add("GroupBox", "x75 y65 w170 h170")
   DSLPadGUI.Add("Picture", "x98 y89 w128 h128", AppIcoFile)
@@ -2606,16 +2550,7 @@ Constructor()
 
   DSLPadGUI.Title := DSLPadTitle
 
-  screenWidth := A_ScreenWidth
-  screenHeight := A_ScreenHeight
-
-  windowWidth := 850
-  windowHeight := 562
-  xPos := screenWidth - windowWidth - 40
-  yPos := screenHeight - windowHeight - 75
-
-  DSLPadGUI.Show()
-  DSLPadGUI.Move(xPos, yPos)
+  DSLPadGUI.Show("x" xPos " y" yPos)
 
   return DSLPadGUI
 }
