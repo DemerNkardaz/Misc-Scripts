@@ -68,6 +68,12 @@ ReadLocale(EntryName, Prefix := "") {
   Intermediate := IniRead(LocalesFile, Section, EntryName, "")
   Intermediate := StrReplace(Intermediate, "\n", "`n")
 
+  while (RegExMatch(Intermediate, "\{U\+(\w+)\}", &match)) {
+    Unicode := match[1]
+    Replacement := Chr("0x" . Unicode)
+    Intermediate := StrReplace(Intermediate, match[0], Replacement)
+  }
+
   while (RegExMatch(Intermediate, "\{([a-zA-Z]{2})\}", &match)) {
     LangCode := match[1]
     SectionOverride := Prefix != "" ? Prefix . "_" . LangCode : LangCode
@@ -1661,8 +1667,9 @@ SwitchToScript(scriptMode) {
 
 ToRomanNumeral(IntValue, CapitalLetters := True) {
   IntValue := Integer(IntValue)
-  if (IntValue < 1 || IntValue > 2000000)
-    return ""
+  if (IntValue < 1 || IntValue > 2000000) {
+    return
+  }
 
   RomanNumerals := []
 
@@ -1693,7 +1700,11 @@ SwitchToRoman() {
   if IB.Result = "Cancel"
     return
   else {
-    PromptValue := ToRomanNumeral(IB.Value)
+    if (Integer(IB.Value) < 1 || Integer(IB.Value) > 2000000) {
+      MsgBox(ReadLocale("warning_roman_2m"), DSLPadTitle, "Icon!")
+      return
+    }
+    PromptValue := ToRomanNumeral(Integer(IB.Value))
 
     IniWrite IB.Value, ConfigFile, "LatestPrompts", "RomanNumeral"
   }
