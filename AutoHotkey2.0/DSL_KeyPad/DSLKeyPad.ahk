@@ -1798,7 +1798,7 @@ Ligaturise(SmeltingMode := "InputBox") {
   }
 
 
-  if (!Found && (SmeltingMode = "Clipboard" || SmeltingMode = "Backspace")) {
+  if (!Found) {
     SplitWords := StrSplit(OriginalValue, " ")
 
     for i, word in SplitWords {
@@ -1823,6 +1823,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 
     if (NewValue != OriginalValue) {
       Send(NewValue)
+      IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
       Found := True
     }
   }
@@ -3245,6 +3246,7 @@ ManageTrayItems()
 
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
 
+<^Esc:: ExitApp
 
 ;! Third Party Functions
 
