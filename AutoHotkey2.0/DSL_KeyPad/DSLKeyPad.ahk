@@ -1768,7 +1768,27 @@ Ligaturise(SmeltingMode := "InputBox") {
     A_Clipboard := ""
 
     if (SmeltingMode = "Backspace") {
-      Send("^+{Left}")
+      ;Send("^+{Left}")
+      BufferValue := ""
+      Loop 20 {
+        Send("^+{Left}")
+        Sleep 75
+        Send("^c")
+        Sleep 75
+        ClipWait(0.25, 1)
+
+        if (A_Clipboard = BufferValue) {
+          break
+        }
+
+        BufferValue := A_Clipboard
+
+        if InStr(A_Clipboard, Chr(0x0020)) {
+          Send("^+{Right}")
+          Send("^c")
+          break
+        }
+      }
       Sleep 120
     }
     Send("^c")
@@ -1823,7 +1843,6 @@ Ligaturise(SmeltingMode := "InputBox") {
 
     if (NewValue != OriginalValue) {
       Send(NewValue)
-      IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
       Found := True
     }
   }
@@ -2267,7 +2286,7 @@ Constructor()
 
   UpdateBtn := DSLPadGUI.Add("Button", "x611 y487 w32 h32")
   UpdateBtn.OnEvent("Click", (*) => GetUpdate())
-  GuiButtonIcon(UpdateBtn, Shell32, 047, "w24 h24 l3")
+  GuiButtonIcon(UpdateBtn, ImageRes, 176, "w24 h24")
 
   RepairBtn := DSLPadGUI.Add("Button", "x579 y487 w32 h32", "🛠️")
   RepairBtn.SetFont("s16")
