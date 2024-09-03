@@ -1,61 +1,21 @@
-DN—LICENSE
+MIT License
 
-Copyright (c) 2024 Демер Нкардаз
+Copyright (c) 2024 Demer Nkardaz
 
-Warranties and Disclaimer of Liability:
-Software provided without warranties.
-The author does not guarantee the absence of errors or uninterrupted operation of the software. The user assumes full responsibility for the selection, use, and results of using this software. The author is not liable for any damage, direct or indirect, associated with the use of the software.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Copyright — author’s media (visual, audial, lore, interactive & all the rest originally created by author without using others’ media) distributes in copyright license.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
- • No commercial use. 
- • Modifications & Derivatives are allowed. Credit to original source of used media is required.
-    • Excl.: modifications & derivatives that attach original source as “dependency” are not requiring to credit source.
- • Any materials created based on the author’s original materials must not be licensed under terms that are incompatible with the original license. The license for derived materials should align with and uphold the conditions specified in the original license for the sake of consistency and adherence to the author's intentions.
- • Distribution allowed freely.
-
-License Editions:
-The author reserves the right to modify this license at any time. Users must accept the most recent version of the license. Continued use of the software or materials after any modifications implies acceptance of the updated license terms.
-
-MIT — all program code that contained in the product distributes in MIT License.
-It’s mean you're fully free to modify or use the code if you want.
-https://opensource.org/license/mit/
-
-
-DN—Лицензия
-Гарантии и Отказ от Ответственности:
-Программное обеспечение предоставляется без каких-либо гарантий.
-Автор не гарантирует отсутствие ошибок или бесперебойной работы программного обеспечения. Пользователь несет полную ответственность за выбор, использование и результаты использования данного программного обеспечения. Автор не несет ответственности за любой ущерб, прямой или косвенный, связанный с использованием программного обеспечения.
-
-Авторское право — автор сохраняет все авторские права на оригинальные медийные материалы (визуальные, звуковые, сюжетные, интерактивные и все остальные), созданные автором без использования материалов других авторов.
-
- • Не допускается коммерческое использование. 
- • Модификации и производные работы разрешены. Требуется указание оригинального источника использованных медийных материалов.
-    • Исключение: Модификации и производные работы, которые прикрепляют оригинальный источник в качестве «зависимости», не обязаны указывать источник.
- • Любые материалы, созданные на основе оригинальных материалов автора, не могут быть лицензированы по условиям, несовместимым с оригинальной лицензией. Лицензия на производные материалы должна соответствовать и соблюдать условия, установленные в оригинальной лицензии для поддержания последовательности и соблюдения намерений автора.
- • Распространение разрешено свободно.
-
-Версии Лицензии:
-Автор оставляет за собой право изменять данную лицензию в любое время. Пользователи должны принимать наиболее актуальную версию лицензии. Продолжение использования программного обеспечения или материалов после внесения изменений подразумевает принятие обновленных условий лицензии.
-
-MIT — весь программный код, содержащийся в продукте, распространяется по условиям лицензии MIT. Это означает, что вы полностью свободны в модификации или использовании кода по вашему желанию.
-https://opensource.org/license/mit/
-
-
-Licentia DN
-Fides ac Immunis a Reatu:
-Instrumentum sine ullis securitatibus praebetur.
-Auctor non praestat defectum absentem nec operam interruptam instrumenti. Usor plenam sortem in eligendo, utendo et usu huiusmodi instrumenti suscipit. Auctor non est responsabilis pro ullo damno, directo vel indirecto, quod cum usu instrumenti coniunctum est.
-
-Ius Auctoris — Medias Auctoris conservat omnia iura in mediis originalibus (visibilibus, auditivis, argumentativis, interactivis et ceteris), quae ab auctore sine usu materialium aliorum auctorum creata sunt.
- • Commercium non est permissum.
- • Mutationes et opera derivata permittuntur. Exigitur indicatio fontis originalis utendorum mediorum.
-    • Exceptio: Mutationes et opera derivata, quae fontem originalem tamquam “dependentiam” adiungunt, indicare non tenentur.
- • Materia quaecumque, quae ex materialibus originalibus auctoris creata est, non sub licentia potest esse, quae originali licentiae adversatur. Licentia pro materiis derivatis debet congruere et servare condiciones in originali licentia ad consistentiam et respectum ad auctoris proposita.
- • Libera Distributio permittitur.
-
-Editiones Licentiae:
-Auctor sibi reservat ius hanc licentiam in quovis tempore mutandi. Usores debent recipere recentissimam licentiae versionem. Continuatio usus instrumenti vel materialium post mutationes indicat acceptationem condicionum licentiae emendatae.
-MIT — omnis codex programmandus qui in producto continetur, distribuitur sub licentia MIT. Hoc significat te liberum esse ad mutandum aut utendum codice secundum tuam voluntatem.
-https://opensource.org/license/mit/
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -138,3 +138,10 @@ First script generates folders based on strings in clipboard. Every new string =
 Second script generates a deep folders structure based on JSON structure of JSON-generate script in above.
 
 ![1705929894168](image/README/1705929894168.png)![1705929666673](image/README/1705929666673.png)
+
+---
+
+# LICENSE
+
+- The source code of this project is licensed under the “MIT License”, which is specified in the LICENSE file.
+- The non-code objects (media, etc.) are copyrighted, check “LICENSE-NONCODE” file.
