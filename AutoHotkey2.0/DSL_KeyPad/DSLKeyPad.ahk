@@ -12,10 +12,10 @@ AppVersion := [0, 1, 1, 0]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
 
-RawRepo := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/"
+RawRepo := "https://raw.githubusercontent.com/DemerNkardaz/Misc-Scripts/main/AutoHotkey2.0/DSL_KeyPad/"
+RepoSource := "https://github.com/DemerNkardaz/Misc-Scripts/blob/main/AutoHotkey2.0/DSL_KeyPad/DSLKeyPad.ahk"
 
 RawSource := RawRepo . "DSLKeyPad.ahk"
-RepoSource := RawRepo . "DSLKeyPad.ahk"
 UpdateAvailable := False
 
 ChangeLogRaw := Map(
