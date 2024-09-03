@@ -553,6 +553,19 @@ FormatHotKey(HKey, Modifier := "") {
   return MakeString
 }
 
+GetChar(CharacterName) {
+  Result := ""
+
+  for characterEntry, value in Characters {
+    TrimValue := RegExReplace(characterEntry, "^\S+\s+")
+    if (TrimValue = CharacterName) {
+      Result := Chr("0x" . UniTrim(value.unicode))
+      break
+    }
+  }
+
+  return Result
+}
 
 InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False, ShowRecipes := False) {
   if GroupName == "" {
@@ -1108,6 +1121,18 @@ Characters := Map(
     ;
 )
 
+
+CommandList := Map(
+  "", {
+    title: "",
+    key: "",
+    preview: "",
+    ui_set: {}
+  },
+    "0000 go_symbol_page", {},
+)
+
+
 CharCodes := {}
 CharCodes.acute := ["{U+0301}", "&#769;"]
 CharCodes.dacute := ["{U+030B}", "&#779;"]
@@ -1433,6 +1458,26 @@ LigaturesDictionary := [
   [["УЖАТ", "ѪѦ"], CharCodes.smelter.cyrillic_Captial_Blended_Yus[1]],
   [["ужат", "ѫѧ"], CharCodes.smelter.cyrillic_Small_Blended_Yus[1]],
   ["о+", CharCodes.smelter.cyrillic_Multiocular_O[1]],
+  ["ЛЬ", "{U+0409}"],
+  ["ль", "{U+0459}"],
+  ["НЬ", "{U+040A}"],
+  ["нь", "{U+045A}"],
+  ["Ц←", "{U+040F}"],
+  ["ц←", "{U+045F}"],
+  ["-Ь", "{U+048C}"],
+  ["-ь", "{U+048D}"],
+  ["Ж,", "{U+0496}"],
+  ["ж,", "{U+0497}"],
+  ["К,", "{U+049A}"],
+  ["к,", "{U+049B}"],
+  ["Х,", "{U+04B2}"],
+  ["х,", "{U+04B3}"],
+  ["Ч,", "{U+04B6}"],
+  ["ч,", "{U+04B7}"],
+  ["ТЦ", "{U+04B4}"],
+  ["тц", "{U+04B5}"],
+  ["Ж" . GetChar("breve"), "{U+04C1}"],
+  ["ж" . GetChar("breve"), "{U+04C2}"],
   ; Other
   [["-----", "3-"], CharCodes.threemdash[1]],
   [["----", "2-"], CharCodes.twoemdash[1]],
@@ -1830,6 +1875,8 @@ Ligaturise(SmeltingMode := "InputBox") {
   }
 
   if (!Found) {
+    Send("{Esc}")
+    Sleep 400
     MsgBox(ReadLocale("warning_recipe_absent"), ReadLocale("symbol_smelting"), 0x30)
   }
 
