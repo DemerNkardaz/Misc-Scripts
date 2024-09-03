@@ -135,6 +135,8 @@ OpenLocalesFile(*) {
   Run(LocalesFile)
 }
 
+EscapePressed := False
+
 FastKeysIsActive := False
 SkipGroupMessage := False
 InputMode := "Default"
@@ -465,6 +467,7 @@ CtrlW := Chr(23)
 CtrlX := Chr(24)
 CtrlY := Chr(25)
 CtrlZ := Chr(26)
+EscapeKey := Chr(27)
 SpaceKey := Chr(32)
 ExclamationMark := Chr(33)
 CommercialAt := Chr(64)
@@ -473,6 +476,10 @@ Backquote := Chr(96)
 Solidus := Chr(47)
 ReverseSolidus := Chr(92)
 InformationSymbol := "ⓘ"
+NewLine := Chr(0x000A)
+CarriageReturn := Chr(0x000D)
+Tabulation := Chr(0x0009)
+NbrSpace := Chr(0x00A0)
 DottedCircle := Chr(0x25CC)
 
 RoNum := Map(
@@ -1233,6 +1240,7 @@ CharCodes.smelter.cyrillic_Captial_Closed_Little_Yus_Iotified := ["{U+A65C}", "&
 CharCodes.smelter.cyrillic_Small_Closed_Little_Yus_Iotified := ["{U+A65D}", "&#42589;"]
 CharCodes.smelter.cyrillic_Captial_Blended_Yus := ["{U+A65A}", "&#42586;"]
 CharCodes.smelter.cyrillic_Small_Blended_Yus := ["{U+A65B}", "&#42587;"]
+CharCodes.smelter.cyrillic_Multiocular_O := ["{U+A66E}", "&#42606;"]
 
 UniTrim(str) {
   return SubStr(str, 4, StrLen(str) - 4)
@@ -1424,6 +1432,7 @@ LigaturesDictionary := [
   [["і_ѧ", "і_ат", "іꙙ"], CharCodes.smelter.cyrillic_Small_Closed_Little_Yus_Iotified[1]],
   [["УЖАТ", "ѪѦ"], CharCodes.smelter.cyrillic_Captial_Blended_Yus[1]],
   [["ужат", "ѫѧ"], CharCodes.smelter.cyrillic_Small_Blended_Yus[1]],
+  ["о+", CharCodes.smelter.cyrillic_Multiocular_O[1]],
   ; Other
   [["-----", "3-"], CharCodes.threemdash[1]],
   [["----", "2-"], CharCodes.twoemdash[1]],
@@ -1441,42 +1450,6 @@ LigaturesDictionary := [
   ["n-", CharCodes.numdash[1]],
   ["0-", CharCodes.nbdash[1]],
 ]
-
-InputBridgeOld(BindsArray) {
-  ih := InputHook("L1 C M", "L")
-  ih.Start()
-  ih.Wait()
-  keyPressed := ih.Input
-  for index, pair in BindsArray {
-    if IsObject(pair[1]) {
-      for _, key in pair[1] {
-        if (keyPressed == key) {
-          if IsObject(pair[2]) {
-
-            Send(pair[2][1])
-
-          } else {
-            Send(pair[2])
-          }
-          return
-        }
-      }
-    } else {
-      if (keyPressed == pair[1]) {
-        if IsObject(pair[2]) {
-
-          Send(pair[2][1])
-
-        } else {
-          Send(pair[2])
-        }
-        return
-      }
-    }
-  }
-  ih.Stop()
-}
-
 
 InputBridge(GroupKey) {
   ih := InputHook("L1 C M", "L")
@@ -1783,7 +1756,12 @@ Ligaturise(SmeltingMode := "InputBox") {
 
         BufferValue := A_Clipboard
 
-        if InStr(A_Clipboard, Chr(0x0020)) {
+        if InStr(A_Clipboard, SpaceKey) ||
+          InStr(A_Clipboard, NbrSpace) ||
+          InStr(A_Clipboard, NewLine) ||
+          InStr(A_Clipboard, CarriageReturn) ||
+          InStr(A_Clipboard, Tabulation)
+        {
           Send("^+{Right}")
           Send("^c")
           break
@@ -1795,7 +1773,11 @@ Ligaturise(SmeltingMode := "InputBox") {
     Sleep 120
     PromptValue := A_Clipboard
     Sleep 50
+  } else if (SmeltingMode = "Compose") {
+    ShowInfoMessage("message_compose")
+    return
   }
+
 
   Found := False
   OriginalValue := PromptValue
@@ -1883,6 +1865,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 <#<!l:: Ligaturise()
 >+l:: Ligaturise("Clipboard")
 >+Backspace:: Ligaturise("Backspace")
+>+c:: Ligaturise("Compose")
 <#<!1:: SwitchToScript("sup")
 <#<^>!1:: SwitchToScript("sub")
 <#<^>!2:: SwitchToRoman()
@@ -3160,16 +3143,20 @@ ShowInfoMessage(MessagePost, MessageIcon := "Info", MessageTitle := DSLPadTitle,
   if SkipMessage == True
     return
   LanguageCode := GetLanguageCode()
-  Labels := {}
-  Labels[] := Map()
-  Labels["ru"] := {}
-  Labels["en"] := {}
-  Labels["ru"].RunMessage := MessagePost[1]
-  Labels["en"].RunMessage := MessagePost[2]
   Ico := MessageIcon == "Info" ? "Iconi" :
     MessageIcon == "Warning" ? "Icon!" :
       MessageIcon == "Error" ? "Iconx" : 0x0
-  TrayTip Labels[LanguageCode].RunMessage, MessageTitle, "Iconi"
+  if IsObject(MessagePost) {
+    Labels := {}
+    Labels[] := Map()
+    Labels["ru"] := {}
+    Labels["en"] := {}
+    Labels["ru"].RunMessage := MessagePost[1]
+    Labels["en"].RunMessage := MessagePost[2]
+    TrayTip Labels[LanguageCode].RunMessage, MessageTitle, Ico
+  } else {
+    TrayTip ReadLocale(MessagePost), MessageTitle, Ico
+  }
 
 }
 
