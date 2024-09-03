@@ -7,7 +7,6 @@ ChracterMap := "C:\Windows\System32\charmap.exe"
 ImageRes := "C:\Windows\System32\imageres.dll"
 Shell32 := "C:\Windows\SysWOW64\shell32.dll"
 
-
 AppVersion := [0, 1, 1, 0]
 CurrentVersionString := Format("{:d}.{:d}.{:d}", AppVersion[1], AppVersion[2], AppVersion[3])
 UpdateVersionString := ""
@@ -1228,7 +1227,12 @@ CharCodes.smelter.cyrillic_Captial_Big_Yus_Iotified := ["{U+046C}", "&#1132;"]
 CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified := ["{U+046D}", "&#1133;"]
 CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified := ["{U+0468}", "&#1128;"]
 CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified := ["{U+0469}", "&#1129;"]
-
+CharCodes.smelter.cyrillic_Captial_Closed_Little_Yus := ["{U+A658}", "&#42584;"]
+CharCodes.smelter.cyrillic_Small_Closed_Little_Yus := ["{U+A659}", "&#42585;"]
+CharCodes.smelter.cyrillic_Captial_Closed_Little_Yus_Iotified := ["{U+A65C}", "&#42588;"]
+CharCodes.smelter.cyrillic_Small_Closed_Little_Yus_Iotified := ["{U+A65D}", "&#42589;"]
+CharCodes.smelter.cyrillic_Captial_Blended_Yus := ["{U+A65A}", "&#42586;"]
+CharCodes.smelter.cyrillic_Small_Blended_Yus := ["{U+A65B}", "&#42587;"]
 
 UniTrim(str) {
   return SubStr(str, 4, StrLen(str) - 4)
@@ -1414,6 +1418,12 @@ LigaturesDictionary := [
   [["іѫ", "іуж"], CharCodes.smelter.cyrillic_Small_Big_Yus_Iotified[1]],
   [["ІѦ", "ІАТ"], CharCodes.smelter.cyrillic_Captial_Little_Yus_Iotified[1]],
   [["іѧ", "іат"], CharCodes.smelter.cyrillic_Small_Little_Yus_Iotified[1]],
+  [["_Ѧ", "_АТ"], CharCodes.smelter.cyrillic_Captial_Closed_Little_Yus[1]],
+  [["_ѧ", "_ат"], CharCodes.smelter.cyrillic_Small_Closed_Little_Yus[1]],
+  [["І_Ѧ", "І_АТ", "ІꙘ"], CharCodes.smelter.cyrillic_Captial_Closed_Little_Yus_Iotified[1]],
+  [["і_ѧ", "і_ат", "іꙙ"], CharCodes.smelter.cyrillic_Small_Closed_Little_Yus_Iotified[1]],
+  [["УЖАТ", "ѪѦ"], CharCodes.smelter.cyrillic_Captial_Blended_Yus[1]],
+  [["ужат", "ѫѧ"], CharCodes.smelter.cyrillic_Small_Blended_Yus[1]],
   ; Other
   [["-----", "3-"], CharCodes.threemdash[1]],
   [["----", "2-"], CharCodes.twoemdash[1]],
