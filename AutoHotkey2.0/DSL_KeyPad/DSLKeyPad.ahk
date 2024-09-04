@@ -2141,6 +2141,12 @@ Ligaturise(SmeltingMode := "InputBox") {
         if RegExMatch(A_Clipboard, "(\s|`n|`r|`t)") {
           Send("^+{Right}")
           Send("^c")
+          Sleep 75
+          if RegExMatch(A_Clipboard, "(\s|`n|`r|`t)") {
+            Send("+{Right}")
+            Send("^c")
+            Sleep 75
+          }
           break
         }
       }
@@ -2645,7 +2651,7 @@ Constructor()
   DSLContent["BindList"].Commands := [
     [Map("ru", "Перейти на страницу символа", "en", "Go to symbol page"), DSLContent[LanguageCode].EntrydblClick, ""],
     [Map("ru", "Копировать символ из списка", "en", "Copy from list"), "Ctrl " . DSLContent[LanguageCode].EntrydblClick, ""],
-    [Map("ru", "Поиск по названию", "en", "Find by name"), "Win Alt F", ""],
+    [Map("ru", "Поиск по тегу", "en", "Find by name"), "Win Alt F", ""],
     [Map("ru", "Открыть страницу выделенного символа", "en", "Open selected symbol Web"), "Win Alt PgUp", "風 → symbl.cc/" . LanguageCode . "/98A8"],
     [Map("ru", "Вставить по Unicode", "en", "Unicode insertion"), "Win Alt U", "8F2A → 輪"],
     [Map("ru", "Вставить по Альт-коду", "en", "Alt-code insertion"), "Win Alt A", "0171 0187 → «»"],
