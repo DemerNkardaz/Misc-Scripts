@@ -545,7 +545,12 @@ FormatHotKey(HKey, Modifier := "") {
       MakeString .= FormatHotKey(keys)
     }
   } else {
-    MakeString := "[" . HKey . "]"
+    if (RegExMatch(HKey, "^\S+\+")) {
+      StringSplitter := StrSplit(HKey, "+")
+      MakeString := StringSplitter[1] . " " . "[" . StringSplitter[2] . "]"
+    } else {
+      MakeString := "[" . HKey . "]"
+    }
   }
 
   MakeString := Modifier != "" ? (Modifier . " " . MakeString) : MakeString
@@ -566,6 +571,16 @@ GetChar(CharacterName) {
 
   return Result
 }
+
+MapInsert(MapObj, Pairs*) {
+  for i, pair in Pairs {
+    if (Mod(i, 2) == 1)
+      key := pair
+    else
+      MapObj[key] := pair
+  }
+}
+
 
 InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", AddSeparator := True, ShowOnFastKeys := False, ShowRecipes := False) {
   if GroupName == "" {
@@ -607,11 +622,8 @@ InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", Ad
     if (HasProp(value, "group") && value.group[1] == GroupName) {
       entryName := RegExReplace(characterEntry, "^\S+\s+")
       characterTitle := ""
-      if (HasProp(value, "titles") &&
-        (!HasProp(value, "titlesAlt") || HasProp(value, "titlesAlt") && value.titlesAlt == True)) {
+      if (HasProp(value, "titles")) {
         characterTitle := value.titles[LanguageCode]
-      } else if (HasProp(value, "titlesAlt") && value.titlesAlt == True) {
-        characterTitle := ReadLocale(entryName . "_alt", "chars")
       } else {
         characterTitle := ReadLocale(entryName, "chars")
       }
@@ -619,8 +631,10 @@ InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", Ad
 
       characterSymbol := HasProp(value, "symbol") ? value.symbol : ""
       characterModifier := (HasProp(value, "modifier") && ShowOnFastKeys) ? value.modifier : ""
-      characterBinding := (HasProp(value, "recipe") && ShowRecipes) ? RecipesMicroController(value.recipe) :
-        (ShowOnFastKeys && HasProp(value, "alt_on_fast_keys")) ? value.alt_on_fast_keys : FormatHotKey(value.group[2], characterModifier)
+      characterBinding := ShowRecipes ? (HasProp(value, "recipeAlt") ? RecipesMicroController(value.recipeAlt) : HasProp(value, "recipe") ? RecipesMicroController(value.recipe) : "") :
+        ShowOnFastKeys && HasProp(value, "alt_on_fast_keys") ? value.alt_on_fast_keys :
+          FormatHotKey(value.group[2], characterModifier)
+
 
       if !ShowOnFastKeys || ShowOnFastKeys && (HasProp(value, "show_on_fast_keys") && value.show_on_fast_keys) {
         TermporaryArray.Push([characterTitle, characterBinding, characterSymbol, UniTrim(value.unicode)])
@@ -1018,6 +1032,12 @@ Characters := Map(
     ;
     ;
     ; ? Special Characters
+    "0000 arrow_left", {
+      unicode: "{U+2190}", html: "&#8592;",
+      tags: ["left arrow", "стрелка влево"],
+      group: ["Special Characters", ["RShift+A"]],
+      symbol: Chr(0x2190)
+    },
     "0000 low_asterisk", {
       unicode: "{U+204E}", html: "&#8270;",
       tags: ["low asterisk", "нижний астериск"],
@@ -1117,8 +1137,141 @@ Characters := Map(
       group: ["Fast Keys Only", "Num0"],
       symbol: DottedCircle
     },
-    ;
-    ;
+)
+MapInsert(Characters,
+  ;
+  ;
+  ; * Letters
+  "0000 lat_c_lig_aa", {
+    unicode: "{U+A732}", html: "&#42802;",
+    titlesAlt: True,
+    group: ["Latin Ligatures"],
+    tags: ["лигатура AA", "ligature AA"],
+    recipe: "AA",
+    symbol: Chr(0xA732)
+  },
+    "0000 lat_s_lig_aa", {
+      unicode: "{U+A733}", html: "&#42803;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура aa", "ligature aa"],
+      recipe: "aa",
+      symbol: Chr(0xA733)
+    },
+    "0000 lat_c_lig_ae", {
+      unicode: "{U+00C6}", html: "&#198;", entity: "&AElig;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AE", "ligature AE"],
+      recipe: "AE",
+      symbol: Chr(0x00C6)
+    },
+    "0000 lat_s_lig_ae", {
+      unicode: "{U+00E6}", html: "&#230;", entity: "&aelig;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура ae", "ligature ae"],
+      recipe: "ae",
+      symbol: Chr(0x00E6)
+    },
+    "0000 lat_c_lig_ae_acute", {
+      unicode: "{U+01FC}", html: "&#508;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AE", "ligature AE"],
+      recipe: "AE" . GetChar("acute"),
+      recipeAlt: "AE" . DottedCircle . GetChar("acute"),
+      symbol: Chr(0x01FC)
+    },
+    "0000 lat_s_lig_ae_acute", {
+      unicode: "{U+01FD}", html: "&#509;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура ae", "ligature ae"],
+      recipe: "ae" . GetChar("acute"),
+      recipeAlt: "ae" . DottedCircle . GetChar("acute"),
+      symbol: Chr(0x01FD)
+    },
+    "0000 lat_c_lig_ao", {
+      unicode: "{U+A734}", html: "&#42804;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AO", "ligature AO"],
+      recipe: "AO",
+      symbol: Chr(0xA734)
+    },
+    "0000 lat_s_lig_ao", {
+      unicode: "{U+A735}", html: "&#42805;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура ao", "ligature ao"],
+      recipe: "ao",
+      symbol: Chr(0xA735)
+    },
+    "0000 lat_c_lig_au", {
+      unicode: "{U+A736}", html: "&#42806;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AU", "ligature AU"],
+      recipe: "AU",
+      symbol: Chr(0xA736)
+    },
+    "0000 lat_s_lig_au", {
+      unicode: "{U+A737}", html: "&#42807;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура au", "ligature au"],
+      recipe: "au",
+      symbol: Chr(0xA737)
+    },
+    "0000 lat_c_lig_av", {
+      unicode: "{U+A738}", html: "&#42808;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AV", "ligature AV"],
+      recipe: "AV",
+      symbol: Chr(0xA738)
+    },
+    "0000 lat_s_lig_av", {
+      unicode: "{U+A739}", html: "&#42809;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура av", "ligature av"],
+      recipe: "av",
+      symbol: Chr(0xA739)
+    },
+    "0000 lat_c_lig_avi", {
+      unicode: "{U+A73A}", html: "&#42810;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AVI", "ligature AVI"],
+      recipe: "AVI",
+      symbol: Chr(0xA73A)
+    },
+    "0000 lat_s_lig_avi", {
+      unicode: "{U+A73B}", html: "&#42811;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура avi", "ligature avi"],
+      recipe: "avi",
+      symbol: Chr(0xA73B)
+    },
+    "0000 lat_c_lig_ay", {
+      unicode: "{U+A73C}", html: "&#42812;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AY", "ligature AY"],
+      recipe: "AY",
+      symbol: Chr(0xA73C)
+    },
+    "0000 lat_s_lig_ay", {
+      unicode: "{U+A73D}", html: "&#42813;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура ay", "ligature ay"],
+      recipe: "ay",
+      symbol: Chr(0xA73D)
+    },
 )
 
 
@@ -1500,10 +1653,21 @@ InputBridge(GroupKey) {
   ih := InputHook("L1 C M", "L")
   ih.Start()
   ih.Wait()
-  keyPressed := ih.Input
-  ; InputMode
+  keyPressed := ""
 
+  if GetKeyState("RShift", "P") {
+    keyPressed := "RShift+" . ih.Input
+  } else {
+    keyPressed := ih.Input
+  }
 
+  ProceedEntriesHandle(keyPressed, GroupKey)
+
+  ih.Stop()
+  return
+}
+
+ProceedEntriesHandle(keyPressed, GroupKey) {
   for characterEntry, value in Characters {
     if (HasProp(value, "group") && value.group[1] == GroupKey) {
       characterKeys := value.group[2]
@@ -1551,10 +1715,8 @@ InputBridge(GroupKey) {
       }
     }
   }
-
-  ih.Stop()
-  return
 }
+
 
 CombineArrays(destinationArray, sourceArray*)
 {
@@ -1769,7 +1931,6 @@ SendAltNumpad(CharacterCode) {
   Send("{Alt Up}")
 }
 
-
 Ligaturise(SmeltingMode := "InputBox") {
   LanguageCode := GetLanguageCode()
   BackupClipboard := ""
@@ -1801,12 +1962,7 @@ Ligaturise(SmeltingMode := "InputBox") {
 
         BufferValue := A_Clipboard
 
-        if InStr(A_Clipboard, SpaceKey) ||
-          InStr(A_Clipboard, NbrSpace) ||
-          InStr(A_Clipboard, NewLine) ||
-          InStr(A_Clipboard, CarriageReturn) ||
-          InStr(A_Clipboard, Tabulation)
-        {
+        if RegExMatch(A_Clipboard, "(\s|`n|`r|`t)") {
           Send("^+{Right}")
           Send("^c")
           break
@@ -1827,43 +1983,54 @@ Ligaturise(SmeltingMode := "InputBox") {
   Found := False
   OriginalValue := PromptValue
   NewValue := ""
-  for index, pair in LigaturesDictionary {
-    if IsObject(pair[1]) {
-      for _, key in pair[1] {
-        if (PromptValue == key) {
-          Send(pair[2])
-          IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
-          Found := True
+
+  for chracterEntry, value in Characters {
+    if !HasProp(value, "recipe") || (HasProp(value, "recipe") && value.recipe == "") {
+      continue
+    } else {
+      Recipe := value.recipe
+
+      if IsObject(Recipe) {
+        for _, recipe in Recipe {
+          if (recipe == PromptValue) {
+            Send(value.unicode)
+            IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
+            Found := True
+          }
         }
+      } else if (Recipe == PromptValue) {
+        Send(value.unicode)
+        IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
+        Found := True
       }
     }
-    else if (PromptValue == pair[1]) {
-      Send(pair[2])
-      IniWrite PromptValue, ConfigFile, "LatestPrompts", "Ligature"
-      Found := True
-    }
   }
-
 
   if (!Found) {
     SplitWords := StrSplit(OriginalValue, " ")
 
     for i, word in SplitWords {
       TempValue := word
-      for index, pair in LigaturesDictionary {
-        if IsObject(pair[1]) {
-          for _, key in pair[1] {
-            if InStr(TempValue, key, true) {
-              TempValue := StrReplace(TempValue, key, pair[2])
-            }
-          }
+      for chracterEntry, value in Characters {
+        if !HasProp(value, "recipe") || (HasProp(value, "recipe") && value.recipe == "") {
+          continue
         } else {
-          if InStr(TempValue, pair[1], true) {
-            TempValue := StrReplace(TempValue, pair[1], pair[2])
+          Recipe := value.recipe
+
+          if IsObject(Recipe) {
+            for _, recipe in Recipe {
+              if InStr(TempValue, recipe, true) {
+                TempValue := StrReplace(TempValue, recipe, value.unicode)
+              }
+            }
+          } else {
+            if InStr(TempValue, Recipe, true) {
+              TempValue := StrReplace(TempValue, Recipe, value.unicode)
+            }
           }
         }
       }
-      NewValue .= TempValue . " "
+      NewValue .= TempValue . ""
     }
 
     NewValue := RTrim(NewValue)
@@ -1874,9 +2041,12 @@ Ligaturise(SmeltingMode := "InputBox") {
     }
   }
 
-  if (!Found) {
-    Send("{Esc}")
-    Sleep 400
+
+  if !Found {
+    if !SmeltingMode = "InputBox" {
+      Send("^{Right}")
+      Sleep 400
+    }
     MsgBox(ReadLocale("warning_recipe_absent"), ReadLocale("symbol_smelting"), 0x30)
   }
 
@@ -2422,13 +2592,19 @@ Constructor()
 
   LocaliseArrayKeys(DSLContent["BindList"].LigaturesInput)
 
+
+  DSLContent["BindList"].TabSmelter := []
+
+  InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Latin Ligatures", , False, , True)
+
+
   LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.smelting)
   LigaturesLV.ModifyCol(1, ColumnWidths[1])
   LigaturesLV.ModifyCol(2, 110)
   LigaturesLV.ModifyCol(3, 100)
   LigaturesLV.ModifyCol(4, ColumnWidths[4])
 
-  for item in DSLContent["BindList"].LigaturesInput
+  for item in DSLContent["BindList"].TabSmelter
   {
     LigaturesLV.Add(, item[1], item[2], item[3], item[4])
   }
