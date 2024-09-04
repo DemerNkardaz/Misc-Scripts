@@ -619,7 +619,20 @@ InsertCharactersGroups(TargetArray := "", GroupName := "", GroupHotKey := "", Ad
     TermporaryArray.Push(["", GroupHotKey, "", ""])
 
   for characterEntry, value in Characters {
+    GroupValid := False
+
     if (HasProp(value, "group") && value.group[1] == GroupName) {
+      GroupValid := True
+    } else if (HasProp(value, "group") && IsObject(value.group[1])) {
+      for group in value.group[1] {
+        if (group = GroupName) {
+          GroupValid := True
+          break
+        }
+      }
+    }
+
+    if GroupValid {
       entryName := RegExReplace(characterEntry, "^\S+\s+")
       characterTitle := ""
       if (HasProp(value, "titles")) {
@@ -905,7 +918,7 @@ Characters := Map(
     "0000 macron", {
       unicode: "{U+0304}", html: "&#772;",
       tags: ["macron", "макрон"],
-      group: ["Diacritics Secondary", ["m", "ь"]],
+      group: ["Diacritics Primary", ["m", "ь"]],
       symbol: DottedCircle . Chr(0x0304)
     },
     ;
@@ -1049,19 +1062,22 @@ Characters := Map(
     "0000 low_asterisk", {
       unicode: "{U+204E}", html: "&#8270;",
       tags: ["low asterisk", "нижний астериск"],
-      group: ["Special Characters", ["a", "ф"]],
+      group: [["Special Characters", "Smelting Special"], ["a", "ф"]],
+      recipe: "*",
       symbol: Chr(0x204E)
     },
     "0000 two_asterisks", {
       unicode: "{U+2051}", html: "&#8273;",
       tags: ["two asterisks", "два астериска"],
-      group: ["Special Characters", ["A", "Ф"]],
+      group: [["Special Characters", "Smelting Special"], ["A", "Ф"]],
+      recipe: "**",
       symbol: Chr(0x2051)
     },
     "0000 asterism", {
       unicode: "{U+2042}", html: "&#8258;",
       tags: ["asterism", "астеризм"],
-      group: ["Special Characters", CtrlA],
+      group: [["Special Characters", "Smelting Special"], CtrlA],
+      recipe: "***",
       symbol: Chr(0x2042)
     },
     "0000 colon_triangle", {
@@ -1695,7 +1711,19 @@ InputBridge(GroupKey) {
 
 ProceedEntriesHandle(keyPressed, GroupKey) {
   for characterEntry, value in Characters {
+    GroupValid := False
     if (HasProp(value, "group") && value.group[1] == GroupKey) {
+      GroupValid := True
+    } else if (HasProp(value, "group") && IsObject(value.group[1])) {
+      for group in value.group[1] {
+        if (group = GroupKey) {
+          GroupValid := True
+          break
+        }
+      }
+    }
+
+    if GroupValid {
       characterKeys := value.group[2]
       characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
       characterLaTeX := (HasProp(value, "LaTeX")) ? value.LaTeX : ""
@@ -2274,6 +2302,11 @@ Constructor()
     htmlTitleText: Map("ru", "HTML-Код/Мнемоника", "en", "HTML/Entity"),
   }
 
+  CommonFilter := {
+    icon: "x21 y520 h24 w24",
+    field: "x49 y520 w593 h24 v",
+  }
+
   LanguageCode := GetLanguageCode()
 
   DSLPadGUI := Gui()
@@ -2308,7 +2341,9 @@ Constructor()
   }
 
 
-  DiacriticsFilter := DSLPadGUI.Add("Edit", "w620 h24 vDiacriticsFilter", "")
+  DiacriticsFilterIcon := DSLPadGUI.Add("Button", CommonFilter.icon)
+  GuiButtonIcon(DiacriticsFilterIcon, ImageRes, 169)
+  DiacriticsFilter := DSLPadGUI.Add("Edit", CommonFilter.field . "DiacriticsFilter", "")
   DiacriticsFilter.SetFont("s10")
   DiacriticsFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "DiacriticsFilter", DiacriticLV, DSLContent["BindList"].TabDiacritics))
 
@@ -2358,7 +2393,10 @@ Constructor()
     LettersLV.Add(, item[1], item[2], item[3], item[4])
   }
 
-  LettersFilter := DSLPadGUI.Add("Edit", "w620 h24 vLettersFilter", "")
+
+  LettersFilterIcon := DSLPadGUI.Add("Button", CommonFilter.icon)
+  GuiButtonIcon(LettersFilterIcon, ImageRes, 169)
+  LettersFilter := DSLPadGUI.Add("Edit", CommonFilter.field . "LettersFilter", "")
   LettersFilter.SetFont("s10")
   LettersFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "LettersFilter", LettersLV, DSLContent["BindList"].TabLetters))
 
@@ -2433,7 +2471,9 @@ Constructor()
     SpacesLV.Add(, item[1], item[2], item[3], item[4])
   }
 
-  SpacesFilter := DSLPadGUI.Add("Edit", "w620 h24 vSpaceFilter", "")
+  SpacesFilterIcon := DSLPadGUI.Add("Button", CommonFilter.icon)
+  GuiButtonIcon(SpacesFilterIcon, ImageRes, 169)
+  SpacesFilter := DSLPadGUI.Add("Edit", CommonFilter.field . "SpaceFilter", "")
   SpacesFilter.SetFont("s10")
   SpacesFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "SpaceFilter", SpacesLV, DSLContent["BindList"].TabSpaces))
 
@@ -2637,6 +2677,7 @@ Constructor()
   DSLContent["BindList"].TabSmelter := []
 
   InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Latin Ligatures", , False, , True)
+  InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Smelting Special", , True, , True)
 
 
   LigaturesLV := DSLPadGUI.Add("ListView", ColumnListStyle, DSLCols.smelting)
@@ -2650,8 +2691,9 @@ Constructor()
     LigaturesLV.Add(, item[1], item[2], item[3], item[4])
   }
 
-
-  LigaturesFilter := DSLPadGUI.Add("Edit", "w620 h24 vLigFilter", "")
+  LigaturesFilterIcon := DSLPadGUI.Add("Button", CommonFilter.icon)
+  GuiButtonIcon(LigaturesFilterIcon, ImageRes, 169)
+  LigaturesFilter := DSLPadGUI.Add("Edit", CommonFilter.field . "LigFilter", "")
   LigaturesFilter.SetFont("s10")
   LigaturesFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "LigFilter", LigaturesLV, DSLContent["BindList"].TabSmelter))
 
@@ -2946,16 +2988,40 @@ PopulateListView(LV, DataList) {
 }
 
 FilterListView(GuiFrame, FilterField, LV, DataList) {
-  FilterText := GuiFrame[FilterField].Text
+  FilterText := StrLower(GuiFrame[FilterField].Text)
   LV.Delete()
 
   if FilterText = ""
     PopulateListView(LV, DataList)
-  else
+  else {
+    GroupStarted := false
+    PreviousGroupName := ""
     for item in DataList {
-      if InStr(item[1], FilterText)
+      if StrLower(item[1]) = "" {
         LV.Add(, item[1], item[2], item[3], item[4])
+        GroupStarted := true
+      } else if InStr(StrLower(item[1]), FilterText) {
+        if !GroupStarted {
+          GroupStarted := true
+        }
+        LV.Add(, item[1], item[2], item[3], item[4])
+      } else if GroupStarted {
+        GroupStarted := false
+      }
+
+      if StrLower(item[1]) != "" and StrLower(item[1]) != PreviousGroupName {
+        PreviousGroupName := StrLower(item[1])
+      }
     }
+
+    if GroupStarted {
+      LV.Add(, "", "", "", "")
+    }
+
+    if PreviousGroupName != "" {
+      LV.Add(, "", "", "", "")
+    }
+  }
 }
 
 GetRandomByGroups(GroupNames) {
