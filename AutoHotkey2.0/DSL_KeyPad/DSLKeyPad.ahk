@@ -902,6 +902,14 @@ Characters := Map(
     },
     ;
     ;
+    "0000 macron", {
+      unicode: "{U+0304}", html: "&#772;",
+      tags: ["macron", "макрон"],
+      group: ["Diacritics Secondary", ["m", "ь"]],
+      symbol: DottedCircle . Chr(0x0304)
+    },
+    ;
+    ;
     ; ? Шпации
     "0000 emspace", {
       unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
@@ -1178,7 +1186,7 @@ MapInsert(Characters,
       unicode: "{U+01FC}", html: "&#508;",
       titlesAlt: True,
       group: ["Latin Ligatures"],
-      tags: ["лигатура AE", "ligature AE"],
+      tags: ["лигатура AE с акутом", "ligature AE with acute"],
       recipe: "AE" . GetChar("acute"),
       recipeAlt: "AE" . DottedCircle . GetChar("acute"),
       symbol: Chr(0x01FC)
@@ -1187,10 +1195,28 @@ MapInsert(Characters,
       unicode: "{U+01FD}", html: "&#509;",
       titlesAlt: True,
       group: ["Latin Ligatures"],
-      tags: ["лигатура ae", "ligature ae"],
+      tags: ["лигатура ae с акутом", "ligature ae with acute"],
       recipe: "ae" . GetChar("acute"),
       recipeAlt: "ae" . DottedCircle . GetChar("acute"),
       symbol: Chr(0x01FD)
+    },
+    "0000 lat_c_lig_ae_macron", {
+      unicode: "{U+01E2}", html: "&#482;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура AE с макроном", "ligature AE with macron"],
+      recipe: "AE" . GetChar("macron"),
+      recipeAlt: "AE" . DottedCircle . GetChar("macron"),
+      symbol: Chr(0x01E2)
+    },
+    "0000 lat_s_lig_ae_macron", {
+      unicode: "{U+01E3}", html: "&#483;",
+      titlesAlt: True,
+      group: ["Latin Ligatures"],
+      tags: ["лигатура ae с макроном", "ligature ae with macron"],
+      recipe: "ae" . GetChar("macron"),
+      recipeAlt: "ae" . DottedCircle . GetChar("macron"),
+      symbol: Chr(0x01E3)
     },
     "0000 lat_c_lig_ao", {
       unicode: "{U+A734}", html: "&#42804;",
@@ -2255,7 +2281,7 @@ Constructor()
   ColumnWidths := [300, 140, 60, 85]
   ThreeColumnWidths := [300, 150, 160]
   ColumnAreaWidth := "w620"
-  ColumnAreaHeight := "h510"
+  ColumnAreaHeight := "h480"
   ColumnAreaRules := "+NoSort -Multi"
   ColumnListStyle := ColumnAreaWidth . " " . ColumnAreaHeight . " " . ColumnAreaRules
 
@@ -2280,6 +2306,12 @@ Constructor()
   {
     DiacriticLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+
+  DiacriticsFilter := DSLPadGUI.Add("Edit", "w620 h24 vDiacriticsFilter", "")
+  DiacriticsFilter.SetFont("s10")
+  DiacriticsFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "DiacriticsFilter", DiacriticLV, DSLContent["BindList"].TabDiacritics))
+
 
   GrouBoxDiacritic := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -2325,6 +2357,11 @@ Constructor()
   {
     LettersLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  LettersFilter := DSLPadGUI.Add("Edit", "w620 h24 vLettersFilter", "")
+  LettersFilter.SetFont("s10")
+  LettersFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "LettersFilter", LettersLV, DSLContent["BindList"].TabLetters))
+
 
   GrouBoxLetters := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -2395,6 +2432,10 @@ Constructor()
   {
     SpacesLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+  SpacesFilter := DSLPadGUI.Add("Edit", "w620 h24 vSpaceFilter", "")
+  SpacesFilter.SetFont("s10")
+  SpacesFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "SpaceFilter", SpacesLV, DSLContent["BindList"].TabSpaces))
 
   GrouBoxSpaces := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -2608,6 +2649,12 @@ Constructor()
   {
     LigaturesLV.Add(, item[1], item[2], item[3], item[4])
   }
+
+
+  LigaturesFilter := DSLPadGUI.Add("Edit", "w620 h24 vLigFilter", "")
+  LigaturesFilter.SetFont("s10")
+  LigaturesFilter.OnEvent("Change", (*) => FilterListView(DSLPadGUI, "LigFilter", LigaturesLV, DSLContent["BindList"].TabSmelter))
+
 
   GrouBoxLigatures := {
     group: DSLPadGUI.Add("GroupBox", CommonInfoBox.body, CommonInfoBox.bodyText),
@@ -2889,6 +2936,26 @@ Constructor()
   DSLPadGUI.Show("x" xPos " y" yPos)
 
   return DSLPadGUI
+}
+
+PopulateListView(LV, DataList) {
+  LV.Delete()
+  for item in DataList {
+    LV.Add(, item[1], item[2], item[3], item[4])
+  }
+}
+
+FilterListView(GuiFrame, FilterField, LV, DataList) {
+  FilterText := GuiFrame[FilterField].Text
+  LV.Delete()
+
+  if FilterText = ""
+    PopulateListView(LV, DataList)
+  else
+    for item in DataList {
+      if InStr(item[1], FilterText)
+        LV.Add(, item[1], item[2], item[3], item[4])
+    }
 }
 
 GetRandomByGroups(GroupNames) {
