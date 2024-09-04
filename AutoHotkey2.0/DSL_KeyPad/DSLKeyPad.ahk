@@ -283,7 +283,7 @@ InsertChangesList(TargetGUI) {
       content := RegExReplace(content, "m)^- (.*)", " • $1")
       content := RegExReplace(content, "m)^---", " " . StrRepeat("—", 84))
 
-      TargetGUI.Add("Edit", "x30 y58 w810 h480 readonly Left Wrap -HScroll -E0x200", content)
+      TargetGUI.Add("Edit", "x30 y58 w810 h485 readonly Left Wrap -HScroll -E0x200", content)
     }
   }
 }
@@ -786,7 +786,7 @@ Characters := Map(
     "0000 caron", {
       unicode: "{U+030C}", html: "&#780;",
       LaTeX: "\v",
-      tags: ["caron", "карон", "гачек"],
+      tags: ["caron", "hachek", "карон", "гачек"],
       group: ["Diacritics Primary", ["C", "С"]],
       show_on_fast_keys: True,
       symbol: DottedCircle . Chr(0x030C)
@@ -1165,7 +1165,7 @@ Characters := Map(
 MapInsert(Characters,
   ;
   ;
-  ; * Letters
+  ; * Letters Latin
   "0000 lat_c_lig_aa", {
     unicode: "{U+A732}", html: "&#42802;",
     titlesAlt: True,
@@ -1313,6 +1313,25 @@ MapInsert(Characters,
       tags: ["лигатура ay", "ligature ay"],
       recipe: "ay",
       symbol: Chr(0xA73D)
+    },
+    ;
+    ;
+    ; * Letters Cyriillic
+    "0000 cyr_c_yus_big", {
+      unicode: "{U+046A}", html: "&#1130;",
+      titlesAlt: True,
+      group: ["Cyrillic Ligatures & Letters"],
+      tags: ["Юс большой", "big Yus"],
+      recipe: "УЖ",
+      symbol: Chr(0x046A)
+    },
+    "0000 cyr_s_yus_big", {
+      unicode: "{U+046B}", html: "&#046B;",
+      titlesAlt: True,
+      group: ["Cyrillic Ligatures & Letters"],
+      tags: ["юс большой", "big yus"],
+      recipe: "уж",
+      symbol: Chr(0x046B)
     },
 )
 
@@ -1786,7 +1805,7 @@ CombineArrays(destinationArray, sourceArray*)
 SearchKey() {
 
   PromptValue := IniRead(ConfigFile, "LatestPrompts", "Search", "")
-  IB := InputBox(ReadLocale("symbol_search_prompt"), ReadLocale("symbol_search"), "w256 h92", PromptValue)
+  IB := InputBox(ReadLocale("symbol_search_prompt"), ReadLocale("symbol_search"), "w350 h110", PromptValue)
 
   if IB.Result = "Cancel"
     return
@@ -1798,13 +1817,20 @@ SearchKey() {
     return
   }
 
+  IsSensitive := !(SubStr(PromptValue, 1, 1) = "*")
+  if !IsSensitive
+    PromptValue := SubStr(PromptValue, 2)
+
   Found := False
   for characterEntry, value in Characters {
     characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
     characterLaTeX := (HasProp(value, "LaTeX")) ? value.LaTeX : ""
 
     for _, tag in value.tags {
-      if (StrLower(PromptValue) = StrLower(tag)) {
+      IsEqualNonSensitive := IsSensitive && (StrLower(PromptValue) = StrLower(tag))
+      IsEqualSensitive := !IsSensitive && (PromptValue == tag)
+
+      if (IsEqualSensitive || IsEqualNonSensitive) {
         if InputMode = "HTML" {
           SendText(characterEntity)
         } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
@@ -1819,7 +1845,7 @@ SearchKey() {
         }
         else
           Send(value.unicode)
-        IniWrite PromptValue, ConfigFile, "LatestPrompts", "Search"
+        IniWrite !IsSensitive ? "*" . PromptValue : PromptValue, ConfigFile, "LatestPrompts", "Search"
         Found := True
         break 2
       }
@@ -2245,7 +2271,7 @@ Constructor()
   screenHeight := A_ScreenHeight
 
   windowWidth := 850
-  windowHeight := 550
+  windowHeight := 560
   xPos := screenWidth - windowWidth - 45
   yPos := screenHeight - windowHeight - 90
 
@@ -2300,6 +2326,7 @@ Constructor()
     htmlText: "&#x0000;",
     htmlTitle: "x685 y495 w128 h24 BackgroundTrans",
     htmlTitleText: Map("ru", "HTML-Код/Мнемоника", "en", "HTML/Entity"),
+    tags: "x21 y546 w800 h24 readonly -VScroll -HScroll -E0x200",
   }
 
   CommonFilter := {
@@ -2368,6 +2395,8 @@ Constructor()
     ;
     htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vDiacriticHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+    ;
+    tags: DSLPadGUI.Add("Edit", "vDiacriticTags " . commonInfoBox.tags),
   }
 
   GrouBoxDiacritic.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
@@ -2376,6 +2405,7 @@ Constructor()
   GrouBoxDiacritic.alt.SetFont("s12")
   GrouBoxDiacritic.unicode.SetFont("s12")
   GrouBoxDiacritic.html.SetFont("s12")
+  GrouBoxDiacritic.tags.SetFont("s9")
 
 
   Tab.UseTab(2)
@@ -2421,6 +2451,7 @@ Constructor()
     ;
     htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vLettersHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+    tags: DSLPadGUI.Add("Edit", "vLettersTags " . commonInfoBox.tags),
   }
 
   GrouBoxLetters.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
@@ -2429,6 +2460,7 @@ Constructor()
   GrouBoxLetters.alt.SetFont("s12")
   GrouBoxLetters.unicode.SetFont("s12")
   GrouBoxLetters.html.SetFont("s12")
+  GrouBoxLetters.tags.SetFont("s9")
 
 
   Tab.UseTab(3)
@@ -2497,6 +2529,7 @@ Constructor()
     ;
     htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vSpacesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+    tags: DSLPadGUI.Add("Edit", "vSpacesTags " . commonInfoBox.tags),
   }
 
   GrouBoxSpaces.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
@@ -2505,6 +2538,7 @@ Constructor()
   GrouBoxSpaces.alt.SetFont("s12")
   GrouBoxSpaces.unicode.SetFont("s12")
   GrouBoxSpaces.html.SetFont("s12")
+  GrouBoxSpaces.tags.SetFont("s9")
 
   Tab.UseTab(4)
   DSLContent["ru"].EntrydblClick := "2×ЛКМ"
@@ -2556,28 +2590,28 @@ Constructor()
   DSLPadGUI.SetFont("s9")
   ;DSLPadGUI.Add("Text", "w600", DSLContent[LanguageCode].CommandsNote)
 
-  BtnAutoLoad := DSLPadGUI.Add("Button", "x379 y519 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
+  BtnAutoLoad := DSLPadGUI.Add("Button", "x379 y527 w200 h32", DSLContent[LanguageCode].AutoLoadAdd)
   BtnAutoLoad.OnEvent("Click", AddScriptToAutoload)
 
-  BtnSwitchRU := DSLPadGUI.Add("Button", "x21 y519 w32 h32", "РУ")
+  BtnSwitchRU := DSLPadGUI.Add("Button", "x21 y527 w32 h32", "РУ")
   BtnSwitchRU.OnEvent("Click", (*) => SwitchLanguage("ru"))
 
-  BtnSwitchEN := DSLPadGUI.Add("Button", "x53 y519 w32 h32", "EN")
+  BtnSwitchEN := DSLPadGUI.Add("Button", "x53 y527 w32 h32", "EN")
   BtnSwitchEN.OnEvent("Click", (*) => SwitchLanguage("en"))
 
-  UpdateBtn := DSLPadGUI.Add("Button", "x611 y487 w32 h32")
+  UpdateBtn := DSLPadGUI.Add("Button", "x611 y495 w32 h32")
   UpdateBtn.OnEvent("Click", (*) => GetUpdate())
   GuiButtonIcon(UpdateBtn, ImageRes, 176, "w24 h24")
 
-  RepairBtn := DSLPadGUI.Add("Button", "x579 y487 w32 h32", "🛠️")
+  RepairBtn := DSLPadGUI.Add("Button", "x579 y495 w32 h32", "🛠️")
   RepairBtn.SetFont("s16")
   RepairBtn.OnEvent("Click", (*) => GetUpdate(0, True))
 
-  ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y519 w32 h32")
+  ConfigFileBtn := DSLPadGUI.Add("Button", "x611 y527 w32 h32")
   ConfigFileBtn.OnEvent("Click", (*) => OpenConfigFile())
   GuiButtonIcon(ConfigFileBtn, ImageRes, 065)
 
-  LocalesFileBtn := DSLPadGUI.Add("Button", "x579 y519 w32 h32")
+  LocalesFileBtn := DSLPadGUI.Add("Button", "x579 y527 w32 h32")
   LocalesFileBtn.OnEvent("Click", (*) => OpenLocalesFile())
   GuiButtonIcon(LocalesFileBtn, ImageRes, 015)
 
@@ -2677,6 +2711,7 @@ Constructor()
   DSLContent["BindList"].TabSmelter := []
 
   InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Latin Ligatures", , False, , True)
+  InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Cyrillic Ligatures & Letters", , True, , True)
   InsertCharactersGroups(DSLContent["BindList"].TabSmelter, "Smelting Special", , True, , True)
 
 
@@ -2718,6 +2753,7 @@ Constructor()
     ;
     htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vLigaturesHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+    tags: DSLPadGUI.Add("Edit", "vLigaturesTags " . commonInfoBox.tags),
   }
 
   GrouBoxLigatures.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
@@ -2726,6 +2762,7 @@ Constructor()
   GrouBoxLigatures.alt.SetFont("s12")
   GrouBoxLigatures.unicode.SetFont("s12")
   GrouBoxLigatures.html.SetFont("s12")
+  GrouBoxLigatures.tags.SetFont("s9")
 
 
   Tab.UseTab(6)
@@ -2801,6 +2838,7 @@ Constructor()
     ;
     htmlTitle: DSLPadGUI.Add("Text", CommonInfoBox.htmlTitle, CommonInfoBox.htmlTitleText[LanguageCode]).SetFont("s9"),
     html: DSLPadGUI.Add("Edit", "vFastKeysHTML " . commonInfoBox.html, CommonInfoBox.htmlText),
+    tags: DSLPadGUI.Add("Edit", "vFastKeysTags " . commonInfoBox.tags),
   }
 
   GrouBoxFastKeys.preview.SetFont(CommonInfoFonts.previewSize, CommonInfoFonts.preview)
@@ -2809,10 +2847,11 @@ Constructor()
   GrouBoxFastKeys.alt.SetFont("s12")
   GrouBoxFastKeys.unicode.SetFont("s12")
   GrouBoxFastKeys.html.SetFont("s12")
+  GrouBoxFastKeys.tags.SetFont("s9")
 
 
   Tab.UseTab(7)
-  DSLPadGUI.Add("GroupBox", "x23 y34 w280 h512")
+  DSLPadGUI.Add("GroupBox", "x23 y34 w280 h520")
   DSLPadGUI.Add("GroupBox", "x75 y65 w170 h170")
   DSLPadGUI.Add("Picture", "x98 y89 w128 h128", AppIcoFile)
 
@@ -2828,20 +2867,20 @@ Constructor()
   )
   AboutRepoLink.SetFont("s12", "Cambria")
 
-  AboutAuthor := DSLPadGUI.Add("Text", "x75 y490 w170 h16 Center BackgroundTrans", ReadLocale("about_author"))
+  AboutAuthor := DSLPadGUI.Add("Text", "x75 y495 w170 h16 Center BackgroundTrans", ReadLocale("about_author"))
   AboutAuthor.SetFont("s11 c333333", "Cambria")
 
-  AboutAuthorLinks := DSLPadGUI.Add("Link", "x90 y520 w150 h16 Center",
+  AboutAuthorLinks := DSLPadGUI.Add("Link", "x90 y525 w150 h16 Center",
     '<a href="https://github.com/DemerNkardaz/">GitHub</a> '
     '<a href="http://steamcommunity.com/profiles/76561198177249942">STEAM</a> '
     '<a href="https://ficbook.net/authors/4241255">Фикбук</a>'
   )
   AboutAuthorLinks.SetFont("s9", "Cambria")
 
-  AboutDescBox := DSLPadGUI.Add("GroupBox", "x315 y34 w530 h512", DSLPadTitleFull)
+  AboutDescBox := DSLPadGUI.Add("GroupBox", "x315 y34 w530 h520", DSLPadTitleFull)
   AboutDescBox.SetFont("s11", "Cambria")
 
-  AboutDescription := DSLPadGUI.Add("Text", "x330 y70 w505 h485 Wrap BackgroundTrans", ReadLocale("about_description"))
+  AboutDescription := DSLPadGUI.Add("Text", "x330 y70 w505 h495 Wrap BackgroundTrans", ReadLocale("about_description"))
   AboutDescription.SetFont("s12 c333333", "Cambria")
 
 
@@ -2881,7 +2920,7 @@ Constructor()
   DSLPadGUI.Add("Link", "w600", DSLContent[LanguageCode].Useful.VTnese . '<a href="https://chunom.org">Chữ Nôm</a>')
 
   Tab.UseTab(9)
-  DSLPadGUI.Add("GroupBox", "w825 h512", "🌐 " . ReadLocale("tab_changelog"))
+  DSLPadGUI.Add("GroupBox", "w825 h520", "🌐 " . ReadLocale("tab_changelog"))
   InsertChangesList(DSLPadGUI)
 
 
@@ -2901,6 +2940,7 @@ Constructor()
       "DiacriticAlt",
       "DiacriticUnicode",
       "DiacriticHTML",
+      "DiacriticTags",
       GrouBoxDiacritic]
     ))
   LettersLV.OnEvent("ItemFocus", (LV, RowNumber) =>
@@ -2912,6 +2952,7 @@ Constructor()
       "LettersAlt",
       "LettersUnicode",
       "LettersHTML",
+      "LettersTags",
       GrouBoxLetters]
     ))
   SpacesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
@@ -2923,6 +2964,7 @@ Constructor()
       "SpacesAlt",
       "SpacesUnicode",
       "SpacesHTML",
+      "SpacesTags",
       GrouBoxSpaces]
     ))
   FastKeysLV.OnEvent("ItemFocus", (LV, RowNumber) =>
@@ -2934,6 +2976,7 @@ Constructor()
       "FastKeysAlt",
       "FastKeysUnicode",
       "FastKeysHTML",
+      "FastKeysTags",
       GrouBoxFastKeys]
     ))
   LigaturesLV.OnEvent("ItemFocus", (LV, RowNumber) =>
@@ -2945,6 +2988,7 @@ Constructor()
       "LigaturesAlt",
       "LigaturesUnicode",
       "LigaturesHTML",
+      "LigaturesTags",
       GrouBoxLigatures]
     ))
 
@@ -2966,12 +3010,11 @@ Constructor()
   CharacterPreviewRandomCodes.Push(GetRandomByGroups(["Diacritics Primary", "Spaces", "Special Characters"]))
 
 
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticLaTeX", "DiacriticLaTeXPackage", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", GrouBoxDiacritic)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersLaTeX", "LettersLaTeXPackage", "LettersAlt", "LettersUnicode", "LettersHTML", GrouBoxLetters)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesLaTeX", "SpacesLaTeXPackage", "SpacesAlt", "SpacesUnicode", "SpacesHTML", GrouBoxSpaces)
-  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysLaTeX", "FastKeysLaTeXPackage", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", GrouBoxFastKeys)
-  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesLaTeX", "LigaturesLaTeXPackage", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", GrouBoxLigatures)
-
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[1], DSLPadGUI, "DiacriticSymbol", "DiacriticTitle", "DiacriticLaTeX", "DiacriticLaTeXPackage", "DiacriticAlt", "DiacriticUnicode", "DiacriticHTML", "DiacriticTags", GrouBoxDiacritic)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LettersSymbol", "LettersTitle", "LettersLaTeX", "LettersLaTeXPackage", "LettersAlt", "LettersUnicode", "LettersHTML", "LettersTags", GrouBoxLetters)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[3], DSLPadGUI, "SpacesSymbol", "SpacesTitle", "SpacesLaTeX", "SpacesLaTeXPackage", "SpacesAlt", "SpacesUnicode", "SpacesHTML", "SpacesTags", GrouBoxSpaces)
+  SetCharacterInfoPanel(CharacterPreviewRandomCodes[5], DSLPadGUI, "FastKeysSymbol", "FastKeysTitle", "FastKeysLaTeX", "FastKeysLaTeXPackage", "FastKeysAlt", "FastKeysUnicode", "FastKeysHTML", "FastKeysTags", GrouBoxFastKeys)
+  SetCharacterInfoPanel(CharacterPreviewRandomCode, DSLPadGUI, "LigaturesSymbol", "LigaturesTitle", "LigaturesLaTeX", "LigaturesLaTeXPackage", "LigaturesAlt", "LigaturesUnicode", "LigaturesHTML", "LigaturesTags", GrouBoxLigatures)
 
   DSLPadGUI.Title := DSLPadTitle
 
@@ -2979,6 +3022,7 @@ Constructor()
 
   return DSLPadGUI
 }
+
 
 PopulateListView(LV, DataList) {
   LV.Delete()
@@ -3044,7 +3088,7 @@ GetRandomByGroups(GroupNames) {
 }
 
 
-SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewLaTeX, PreviewLaTeXPackage, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewGroup) {
+SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, PreviewLaTeX, PreviewLaTeXPackage, PreviewAlt, PreviewUnicode, PreviewHTML, PreviewTags, PreviewGroup) {
   LanguageCode := GetLanguageCode()
 
   if (UnicodeKey != "") {
@@ -3059,6 +3103,7 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
       } else {
         characterTitle := ReadLocale(entryName, "chars")
       }
+
 
       if (
         (UnicodeKey == UniTrim(value.unicode)) ||
@@ -3109,6 +3154,27 @@ SetCharacterInfoPanel(UnicodeKey, TargetGroup, PreviewObject, PreviewTitle, Prev
         } else {
           PreviewGroup.html.SetFont("s12")
         }
+
+        if (HasProp(value, "tags")) {
+          TagsString := ReadLocale("tags") . ": "
+
+          totalCount := 0
+          for index in value.tags {
+            totalCount++
+          }
+
+          currentIndex := 0
+          for index, tag in value.tags {
+            TagsString .= tag
+            currentIndex++
+            if (currentIndex < totalCount) {
+              TagsString .= ", "
+            }
+          }
+
+          TargetGroup[PreviewTags].Text := TagsString
+        }
+
 
         if (HasProp(value, "altcode")) {
           TargetGroup[PreviewAlt].Text := value.altcode
@@ -3165,7 +3231,8 @@ LV_CharacterDetails(LV, RowNumber, SetupArray) {
   SetCharacterInfoPanel(UnicodeKey,
     SetupArray[1], SetupArray[2], SetupArray[3],
     SetupArray[4], SetupArray[5], SetupArray[6],
-    SetupArray[7], SetupArray[8], SetupArray[9])
+    SetupArray[7], SetupArray[8], SetupArray[9],
+    SetupArray[10])
 }
 
 
