@@ -1,8 +1,35 @@
 #Requires Autohotkey v2
 #SingleInstance Force
 
-
 ; Only EN US & RU RU Keyboard Layout
+
+CodeEn := "00000409"
+CodeRu := "00000419"
+
+ChangeKeyboardLayout(LocaleID, LayoutID := 1) {
+  LanguageCode := ""
+
+  if LocaleID == "en" {
+    LanguageCode := CodeEn
+  } else if LocaleID == "ru" {
+    LanguageCode := CodeRu
+  } else {
+    LanguageCode := LocaleID
+  }
+
+  layout := DllCall("LoadKeyboardLayout", "Str", LanguageCode, "Int", LayoutID)
+  hwnd := DllCall("GetForegroundWindow")
+  pid := DllCall("GetWindowThreadProcessId", "UInt", hwnd, "Ptr", 0)
+  DllCall("PostMessage", "UInt", hwnd, "UInt", 0x50, "UInt", 0, "UInt", layout)
+}
+
+GetLayoutLocale() {
+  threadId := DllCall("GetWindowThreadProcessId", "UInt", DllCall("GetForegroundWindow", "UInt"), "UInt", 0)
+  layout := DllCall("GetKeyboardLayout", "UInt", threadId, "UPtr")
+  layoutHex := Format("{:08X}", layout & 0xFFFF)
+  return layoutHex
+}
+
 ChracterMap := "C:\Windows\System32\charmap.exe"
 ImageRes := "C:\Windows\System32\imageres.dll"
 Shell32 := "C:\Windows\SysWOW64\shell32.dll"
@@ -124,7 +151,6 @@ if !FileExist(AppIcoFile) {
   GetAppIco()
 }
 
-
 OpenConfigFile(*) {
   global ConfigFile
   Run(ConfigFile)
@@ -153,6 +179,7 @@ DefaultConfig := [
   ["LatestPrompts", "Search", ""],
   ["LatestPrompts", "Ligature", ""],
   ["LatestPrompts", "RomanNumeral", ""],
+  ["ServiceFields", "PrevLayout", ""],
 ]
 
 if FileExist(ConfigFile) {
@@ -166,6 +193,23 @@ if FileExist(ConfigFile) {
 } else {
   for index, config in DefaultConfig {
     IniWrite config[3], ConfigFile, config[1], config[2]
+  }
+}
+
+CurrentLayout := GetLayoutLocale()
+Sleep 150
+PreviousLayout := IniRead(ConfigFile, "ServiceFields", "PrevLayout", "")
+if (CurrentLayout != CodeEn) {
+  IniWrite(CurrentLayout, ConfigFile, "ServiceFields", "PrevLayout")
+  ChangeKeyboardLayout("en", 2)
+  Reload
+}
+
+SetPreviousLayout(Timing := 150) {
+  if (PreviousLayout != "") {
+    Sleep Timing
+    ChangeKeyboardLayout(PreviousLayout, 2)
+    IniWrite("", ConfigFile, "ServiceFields", "PrevLayout")
   }
 }
 
@@ -924,7 +968,7 @@ Characters := Map(
     ;
     ;
     ; ? Шпации
-    "0000 emspace", {
+    "0000 emsp", {
       unicode: "{U+2003}", html: "&#8195;", entity: "&emsp;",
       tags: ["em space", "emspace", "emsp", "круглая шпация"],
       group: ["Spaces", "1"],
@@ -1059,14 +1103,14 @@ Characters := Map(
       group: ["Special Characters", ["RShift+A"]],
       symbol: Chr(0x2190)
     },
-    "0000 low_asterisk", {
+    "0000 asterisk_low", {
       unicode: "{U+204E}", html: "&#8270;",
       tags: ["low asterisk", "нижний астериск"],
       group: [["Special Characters", "Smelting Special"], ["a", "ф"]],
       recipe: "*",
       symbol: Chr(0x204E)
     },
-    "0000 two_asterisks", {
+    "0000 asterisk_two", {
       unicode: "{U+2051}", html: "&#8273;",
       tags: ["two asterisks", "два астериска"],
       group: [["Special Characters", "Smelting Special"], ["A", "Ф"]],
@@ -3515,43 +3559,60 @@ ToggleInputMode()
   return
 }
 
-
-HandleFastKey(Character, CheckOff := False)
-{
-  global FastKeysIsActive
-  if (FastKeysIsActive || CheckOff == True) {
-    characterEntity := (HasProp(Character, "entity")) ? Character.entity : Character.html
-    characterLaTeX := (HasProp(Character, "LaTeX")) ? Character.LaTeX : ""
-
-    if InputMode = "HTML" {
-      SendText(characterEntity)
-    } else if InputMode = "LaTeX" && HasProp(Character, "LaTeX") {
-      if IsObject(characterLaTeX) {
-        if LaTeXMode = "common"
-          SendText(characterLaTeX[1])
-        else if LaTeXMode = "math"
-          SendText(characterLaTeX[2])
-      } else {
-        SendText(characterLaTeX)
-      }
-    }
-    else
-      Send(Character.unicode)
+CheckLayoutValid() {
+  layoutHex := GetLayoutLocale()
+  if (layoutHex == CodeEn || layoutHex == CodeRu) {
+    return True
   }
+  return False
 }
 
-<^<!a:: HandleFastKey(Characters["0000 acute"])
-<^<+<!a:: HandleFastKey(Characters["0001 acute_double"])
-<^<!b:: HandleFastKey(Characters["0006 breve"])
-<^<+<!b:: HandleFastKey(Characters["0007 breve_inverted"])
-;<^<!c:: HandleFastKey(CharCodes.circumflex[1])
-;<^<+<!c:: HandleFastKey(CharCodes.caron[1])
-;<^<!d:: HandleFastKey(CharCodes.dotabove[1])
-;<^<+<!d:: HandleFastKey(CharCodes.diaeresis[1])
-;<^<!g:: HandleFastKey(CharCodes.grave[1])
-;<^<+<!g:: HandleFastKey(CharCodes.dgrave[1])
-;<^<!m:: HandleFastKey(CharCodes.macron[1])
-;<^<+<!m:: HandleFastKey(CharCodes.macronbelow[1])
+HandleFastKey(CharacterName, CheckOff := False)
+{
+  global FastKeysIsActive
+  IsLayoutValid := CheckLayoutValid()
+
+  if IsLayoutValid && (FastKeysIsActive || CheckOff == True) {
+    for characterEntry, value in Characters {
+      entryName := RegExReplace(characterEntry, "^\S+\s+")
+
+      if (entryName = CharacterName) {
+        characterEntity := (HasProp(value, "entity")) ? value.entity : value.html
+        characterLaTeX := (HasProp(value, "LaTeX")) ? value.LaTeX : ""
+
+        if InputMode = "HTML" {
+          SendText(characterEntity)
+        } else if InputMode = "LaTeX" && HasProp(value, "LaTeX") {
+          if IsObject(characterLaTeX) {
+            if LaTeXMode = "common"
+              SendText(characterLaTeX[1])
+            else if LaTeXMode = "math"
+              SendText(characterLaTeX[2])
+          } else {
+            SendText(characterLaTeX)
+          }
+        }
+        else {
+          Send(value.unicode)
+        }
+      }
+    }
+  }
+  return
+}
+
+<^<!a:: HandleFastKey("acute")
+<^<+<!a:: HandleFastKey("acute_double")
+<^<!b:: HandleFastKey("breve")
+<^<+<!b:: HandleFastKey("breve_inverted")
+<^<!c:: HandleFastKey("circumflex")
+<^<+<!c:: HandleFastKey("caron")
+<^<!d:: HandleFastKey("dot_above")
+<^<+<!d:: HandleFastKey("diaeresis")
+<^<!g:: HandleFastKey("grave")
+<^<+<!g:: HandleFastKey("grave_double")
+<^<!m:: HandleFastKey("macron")
+<^<+<!m:: HandleFastKey("macron_below")
 
 
 <^<!t:: Send("{U+0303}") ; Combining tilde
@@ -3612,42 +3673,44 @@ HandleFastKey(Character, CheckOff := False)
 ;<^<+<!9:: HandleFastKey("{U+2089}") ; Subscript 9
 ;<^<+<!0:: HandleFastKey("{U+2080}") ; Subscript 0
 
-;<^>!>+1:: HandleFastKey(CharCodes.emsp[1])
-;<^>!>+2:: HandleFastKey(CharCodes.ensp[1])
-;<^>!>+3:: HandleFastKey(CharCodes.emsp13[1])
-;<^>!>+4:: HandleFastKey(CharCodes.emsp14[1])
-;<^>!>+5:: HandleFastKey(CharCodes.thinsp[1])
-;<^>!>+6:: HandleFastKey(CharCodes.emsp16[1])
-;<^>!>+7:: HandleFastKey(CharCodes.nnbsp[1])
-;<^>!>+8:: HandleFastKey(CharCodes.hairsp[1])
-;<^>!>+9:: HandleFastKey(CharCodes.puncsp[1])
-;<^>!>+0:: HandleFastKey(CharCodes.zwsp[1])
-;<^>!>+-:: HandleFastKey(CharCodes.wj[1])
-;<^>!>+=:: HandleFastKey(CharCodes.numsp[1])
-;<^>!<+Space:: HandleFastKey(CharCodes.nbsp[1])
+<^>!>+1:: HandleFastKey("emsp")
+<^>!>+2:: HandleFastKey("ensp")
+<^>!>+3:: HandleFastKey("emsp13")
+<^>!>+4:: HandleFastKey("emsp14")
+<^>!>+5:: HandleFastKey("thinspace")
+<^>!>+6:: HandleFastKey("emsp16")
+<^>!>+7:: HandleFastKey("narrow_no_break_space")
+<^>!>+8:: HandleFastKey("hairspace")
+<^>!>+9:: HandleFastKey("punctuation_space")
+<^>!>+0:: HandleFastKey("zero_width_space")
+<^>!>+-:: HandleFastKey("word_joiner")
+<^>!>+=:: HandleFastKey("figure_space")
+<^>!<+Space:: HandleFastKey("no_break_space")
 
 <^>!m:: Send("{U+2212}") ; Minus
 
 
-<^<!Numpad0:: HandleFastKey(Characters["0000 dotted_circle"])
+<^<!Numpad0:: HandleFastKey("dotted_circle")
 
-<^>!NumpadMult:: Send("{U+2051}") ; Double Asterisk
-<^>!>+NumpadMult:: Send("{U+2042}") ; Asterism
-<^>!<+NumpadMult:: Send("{U+204E}") ; Asterisk Below
-;<^>!NumpadDiv:: HandleFastKey(CharCodes.dagger[1], True)
-;<^>!>+NumpadDiv:: HandleFastKey(CharCodes.ddagger[1], True)
+<^>!NumpadMult:: HandleFastKey("asterisk_two")
+<^>!>+NumpadMult:: HandleFastKey("asterism")
+<^>!<+NumpadMult:: HandleFastKey("asterisk_low")
+<^>!NumpadDiv:: HandleFastKey("dagger")
+<^>!>+NumpadDiv:: HandleFastKey("dagger_double")
 
 <^>!NumpadSub:: Send("{U+00AD}") ; Soft hyphenation
 
-<#[:: Send("{U+300C}") ; Single Asian Quotes
-<#<+[:: Send("{U+300E}") ; Double Asian Quotes
-<#]:: Send("{U+300D}") ; Single Asian Quotes End
-<#<+]:: Send("{U+300F}") ; Double Asian Quotes End
+if CurrentLayout = CodeEn {
+  Hotkey("<#[", (*) => Send("{U+300C}"))
+  Hotkey("<#<+[", (*) => Send("{U+300E}"))
+  Hotkey("<#]", (*) => Send("{U+300D}"))
+  Hotkey("<#<+]", (*) => Send("{U+300F}"))
 
-<#<^[:: Send("{U+FE41}") ; Vertical Single Asian Quotes
-<#<^<+[:: Send("{U+FE43}") ; Vertical Double Asian Quotes
-<#<^]:: Send("{U+FE42}") ; Vertical Single Asian Quotes End
-<#<^<+]:: Send("{U+FE44}") ; Vertical Double Asian Quotes End
+  Hotkey("<#<^[", (*) => Send("{U+FE41}"))
+  Hotkey("<#<^<+[", (*) => Send("{U+FE43}"))
+  Hotkey("<#<^]", (*) => Send("{U+FE42}"))
+  Hotkey("<#<^<+]", (*) => Send("{U+FE44}"))
+}
 
 <^<!e:: Send("{U+045E}") ; Cyrillic u with breve
 <^<+<!e:: Send("{U+040E}") ; Cyrillic cap u with breve
@@ -3778,6 +3841,8 @@ ManageTrayItems()
 ShowInfoMessage(["Приложение запущено`nНажмите Win Alt Home для расширенных сведений.", "Application started`nPress Win Alt Home for extended information."])
 
 <^Esc:: ExitApp
+
+SetPreviousLayout()
 
 ;! Third Party Functions
 
