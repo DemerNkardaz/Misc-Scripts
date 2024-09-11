@@ -4,6 +4,7 @@
 Hotkey("<#SC022", (*) => WebSearch())
 Hotkey("<#SC011", (*) => WebSearch("WikipediaRU"))
 Hotkey("<#<+SC011", (*) => WebSearch("WikipediaEN"))
+Hotkey("<#<!SC011", (*) => WebSearch("Wiktionary"))
 
 WebSearch(Mode := "Google") {
   BackupClipboard := A_Clipboard
@@ -21,6 +22,8 @@ WebSearch(Mode := "Google") {
       Run("https://ru.wikipedia.org/w/index.php?search=" . PromptValue)
     } else if (Mode = "WikipediaEN") {
       Run("https://en.wikipedia.org/w/index.php?search=" . PromptValue)
+    } else if (Mode = "Wiktionary") {
+      Run("https://wiktionary.org/wiki/" . PromptValue)
     }
   }
 
