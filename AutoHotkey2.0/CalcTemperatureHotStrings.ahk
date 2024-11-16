@@ -83,14 +83,14 @@ TemperaturesConversion(ConversionType := "CtF", TemperatureValue := 0.00) {
 		"RtN", (GetConverted) => (GetConverted / 1.8 - 273.15) * 33 / 100,
 		"CtD", (GetConverted) => (100 - GetConverted) * 3 / 2,
 		"DtC", (GetConverted) => 100 - (GetConverted * 2 / 3),
-		"FtD", (GetConverted) => (212 - GetConverted) * 6 / 5,
-		"DtF", (GetConverted) => (212 - GetConverted) * 5 / 6,
-		"KtD", (GetConverted) => (373.15 - GetConverted) * 5 / 6,
-		"DtK", (GetConverted) => (GetConverted - 273.15) * 3 / 2,
+		"FtD", (GetConverted) => (212 - GetConverted) * 5 / 6,
+		"DtF", (GetConverted) => 212 - (GetConverted * 6 / 5),
+		"KtD", (GetConverted) => (373.15 - GetConverted) * 3 / 2,
+		"DtK", (GetConverted) => 373.15 - (GetConverted * 2 / 3),
 		"RtD", (GetConverted) => (671.67 - GetConverted) * 5 / 6,
-		"DtR", (GetConverted) => (GetConverted - 671.67) * 6 / 5,
-		"NtD", (GetConverted) => GetConverted * 5 / 6,
-		"DtN", (GetConverted) => GetConverted * 6 / 5,
+		"DtR", (GetConverted) => 671.67 - (GetConverted * 6 / 5),
+		"NtD", (GetConverted) => (33 - GetConverted) * 50 / 11,
+		"DtN", (GetConverted) => 33 - (GetConverted * 11 / 50),
 	)
 
 	ConvertedTemperatureValue := 0
