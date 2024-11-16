@@ -2,8 +2,13 @@
 #SingleInstance Force
 
 CharMinus := Chr(0x2212)
+CharThinSpace := Chr(0x2009) ; Thin Space
 CharNNbrSpace := Chr(0x202F) ; Narrow No-Break Space
 CharDegree := Chr(0x00B0)
+CharApostrophe := Chr(0x2019) ; Right Single Quotation Mark
+
+IsExtendedFormattingEnabled := True ; Enable or disable formatting like “15,000,000.00/15 000 000,00”
+ExtendedFormattingFromCount := 5 ; Starting count of integer digits for formatting: 5 means 1000 will be 1000, but 10000 will be 10,000
 
 RegistryTemperaturesHotString() {
 	HotStringsEntries := ["cf", "fc", "ck", "kc", "fk", "kf", "kr", "rk", "fr", "rf", "cr", "rc", "cn", "nc", "fn", "nf", "kn", "nk", "rn", "nr"]
@@ -32,7 +37,7 @@ TemperaturesConversionsInputHook(ConversionType, FallBackString := "") {
 	IH.Wait()
 
 	TemperatureValue := IH.Input
-	TemperatureValue := RegExReplace(TemperatureValue, "[^\d.,-" CharMinus "]")
+	TemperatureValue := RegExReplace(TemperatureValue, "[^\d.,'-" CharMinus "]")
 
 	Output := ""
 
@@ -78,15 +83,28 @@ TemperaturesConversion(ConversionType := "CtF", TemperatureValue := 0.00) {
 	)
 
 	ConvertedTemperatureValue := 0
-	UseComma := False
 
 	if (InStr(TemperatureValue, CharMinus)) {
 		TemperatureValue := RegExReplace(TemperatureValue, CharMinus, "-")
 	}
 
-	if (InStr(TemperatureValue, ",")) {
+	if (InStr(TemperatureValue, ".,")) {
+		TemperatureValue := RegExReplace(TemperatureValue, "\.,", ".")
+		TypographyRule := "Deutsch"
+	} else if (InStr(TemperatureValue, "..")) {
+		TemperatureValue := RegExReplace(TemperatureValue, "\.\.", ".")
+		TypographyRule := "Albania"
+	} else if (InStr(TemperatureValue, "''")) {
+		TemperatureValue := RegExReplace(TemperatureValue, "\'\'", ".")
+		TypographyRule := "Switzerland-Comma"
+	} else if (InStr(TemperatureValue, "'")) {
+		TemperatureValue := RegExReplace(TemperatureValue, "\'", ".")
+		TypographyRule := "Switzerland-Dot"
+	} else if (InStr(TemperatureValue, ",")) {
 		TemperatureValue := RegExReplace(TemperatureValue, ",", ".")
-		UseComma := True
+		TypographyRule := "Russian"
+	} else {
+		TypographyRule := "English"
 	}
 
 	if (ConversionsValues.Has(ConversionType)) {
@@ -104,8 +122,27 @@ TemperaturesConversion(ConversionType := "CtF", TemperatureValue := 0.00) {
 	if (SubStr(ConvertedTemperatureValue, 1, 1) = "-")
 		ConvertedTemperatureValue := CharMinus SubStr(ConvertedTemperatureValue, 2)
 
-	if (UseComma)
+	if (TypographyRule = "Russian" || TypographyRule = "Deutsch" || TypographyRule = "Switzerland-Comma")
 		ConvertedTemperatureValue := RegExReplace(ConvertedTemperatureValue, "\.", ",")
+
+	if (IsExtendedFormattingEnabled) {
+		IntegerPart := RegExReplace(ConvertedTemperatureValue, "(\..*)|([,].*)", "")
+
+		if (StrLen(IntegerPart) >= ExtendedFormattingFromCount) {
+			DecimalSeparators := Map(
+				"English", ",",
+				"Deutsch", ".",
+				"Russian", CharThinSpace,
+				"Albania", CharThinSpace,
+				"Switzerland-Comma", CharApostrophe,
+				"Switzerland-Dot", CharApostrophe,
+			)
+
+			IntegerPart := RegExReplace(IntegerPart, "\B(?=(\d{3})+(?!\d))", DecimalSeparators[TypographyRule])
+			ConvertedTemperatureValue := RegExReplace(ConvertedTemperatureValue, "^\d+", IntegerPart)
+		}
+
+	}
 
 	ConvertedTemperatureValue .= CharNNbrSpace ConversionsSymbols[ConversionTo]
 	return ConvertedTemperatureValue
