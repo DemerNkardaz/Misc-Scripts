@@ -11,7 +11,7 @@ IsExtendedFormattingEnabled := True ; Enable or disable formatting like “15,00
 ExtendedFormattingFromCount := 5 ; Starting count of integer digits for formatting: 5 means 1000 will be 1000, but 10000 will be 10,000
 
 RegistryTemperaturesHotString() {
-	HotStringsEntries := ["cf", "fc", "ck", "kc", "fk", "kf", "kr", "rk", "fr", "rf", "cr", "rc", "cn", "nc", "fn", "nf", "kn", "nk", "rn", "nr"]
+	HotStringsEntries := ["cf", "fc", "ck", "kc", "fk", "kf", "kr", "rk", "fr", "rf", "cr", "rc", "cn", "nc", "fn", "nf", "kn", "nk", "rn", "nr", "cd", "dc", "fd", "df", "kd", "dk", "rd", "dr", "nd", "dn"]
 
 	ShortCutConverter(InputString) {
 		InputString := StrUpper(InputString)
@@ -58,6 +58,7 @@ TemperaturesConversion(ConversionType := "CtF", TemperatureValue := 0.00) {
 		"K", "K", ; or use Chr(0x212A), dedicated Kelvin symbol
 		"R", CharDegree "R", ; Rankine Scale
 		"N", CharDegree "N", ; Newton Scale
+		"D", CharDegree "D", ; Delisle Scale
 	)
 	ConversionsValues := Map(
 		"CtF", (GetConverted) => (GetConverted * 9 / 5) + 32,
@@ -79,7 +80,17 @@ TemperaturesConversion(ConversionType := "CtF", TemperatureValue := 0.00) {
 		"NtK", (GetConverted) => (GetConverted * 100 / 33) + 273.15,
 		"KtN", (GetConverted) => (GetConverted - 273.15) * 33 / 100,
 		"NtR", (GetConverted) => (GetConverted * 100 / 33 + 273.15) * 1.8,
-		"RtN", (GetConverted) => (GetConverted / 1.8 - 273.15) * 33 / 100
+		"RtN", (GetConverted) => (GetConverted / 1.8 - 273.15) * 33 / 100,
+		"CtD", (GetConverted) => (100 - GetConverted) * 3 / 2,
+		"DtC", (GetConverted) => 100 - (GetConverted * 2 / 3),
+		"FtD", (GetConverted) => (212 - GetConverted) * 6 / 5,
+		"DtF", (GetConverted) => (212 - GetConverted) * 5 / 6,
+		"KtD", (GetConverted) => (373.15 - GetConverted) * 5 / 6,
+		"DtK", (GetConverted) => (GetConverted - 273.15) * 3 / 2,
+		"RtD", (GetConverted) => (671.67 - GetConverted) * 5 / 6,
+		"DtR", (GetConverted) => (GetConverted - 671.67) * 6 / 5,
+		"NtD", (GetConverted) => GetConverted * 5 / 6,
+		"DtN", (GetConverted) => GetConverted * 6 / 5,
 	)
 
 	ConvertedTemperatureValue := 0
