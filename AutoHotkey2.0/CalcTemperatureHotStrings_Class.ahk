@@ -74,6 +74,7 @@ Class TemperatureConversion {
 
 		conversionLabel := "[" (IsObject(this.scales.%labelFrom%) ? this.scales.%labelFrom%[2] : this.chars.degree this.scales.%labelFrom%) " " this.chars.arrowRight " " (IsObject(this.scales.%labelTo%) ? this.scales.%labelTo%[2] : this.chars.degree this.scales.%labelTo%) "]"
 
+		Tooltip(conversionLabel)
 		numberValue := this.GetNumber(conversionLabel)
 
 		try {
@@ -220,6 +221,7 @@ Class TemperatureConversion {
 
 	static GetNumber(conversionLabel) {
 		static validator := "v1234567890,.-'" this.chars.minus
+		static expression := "^[1234567890,.'\- " this.chars.minus "]+$"
 
 		numberValue := ""
 
@@ -236,7 +238,9 @@ Class TemperatureConversion {
 			} else if InStr(validator, IH.Input) {
 				if InStr(IH.Input, "v") {
 					ClipWait(0.5, 1)
-					numberValue .= A_Clipboard
+					if RegExMatch(A_Clipboard, expression) {
+						numberValue .= A_Clipboard
+					}
 				} else
 					numberValue .= IH.Input
 			} else break
