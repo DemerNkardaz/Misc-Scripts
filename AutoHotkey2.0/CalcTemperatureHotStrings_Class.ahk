@@ -219,7 +219,7 @@ Class TemperatureConversion {
 	}
 
 	static GetNumber(conversionLabel) {
-		static validator := "1234567890,.-'" this.chars.minus
+		static validator := "v1234567890,.-'" this.chars.minus
 
 		numberValue := ""
 
@@ -233,11 +233,15 @@ Class TemperatureConversion {
 			} else if (IH.EndKey = "Backspace") {
 				if StrLen(numberValue) > 0
 					numberValue := SubStr(numberValue, 1, -1)
-				Tooltip(conversionLabel " " numberValue)
 			} else if InStr(validator, IH.Input) {
-				numberValue .= IH.Input
-				Tooltip(conversionLabel " " numberValue)
+				if InStr(IH.Input, "v") {
+					ClipWait(0.5, 1)
+					numberValue .= A_Clipboard
+				} else
+					numberValue .= IH.Input
 			} else break
+
+			Tooltip(conversionLabel " " numberValue)
 		}
 
 		ToolTip()
