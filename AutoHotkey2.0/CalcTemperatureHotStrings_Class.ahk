@@ -42,7 +42,7 @@ Class TemperatureConversion {
 			'fc', 'fd', 'fk', 'fn', 'fr', ; Fahrenheit
 			'kc', 'kd', 'kf', 'kn', 'kr', ; Kelvin
 			'nc', 'nd', 'nf', 'nk', 'nr', ; Newton
-			'rc', 'rd', 'rf', 'rk', 'rn'  ; Rankine
+			'rc', 'rd', 'rf', 'rk', 'rn',  ; Rankine
 			'dc', 'df', 'dk', 'dn', 'dr', ; Delisle
 		]
 
