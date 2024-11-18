@@ -31,7 +31,7 @@ Class TemperatureConversion {
 
 	static typographyTypes := Map(
 		"Deutsch", [".,", (T) => RegExReplace(T, "\.,", ".")],
-		"Albania", ["..", (T) => RegExReplace(T, "\.\.", ".")],
+		"Canada", ["..", (T) => RegExReplace(T, "\.\.", ".")],
 		"Switzerland-Comma", ["''", (T) => RegExReplace(T, "\'\'", ".")],
 		"Switzerland-Dot", ["'", (T) => RegExReplace(T, "\'", ".")],
 		"Russian", [",", (T) => RegExReplace(T, ",", ".")],
@@ -270,7 +270,7 @@ Class TemperatureConversion {
 				"English", ",",
 				"Deutsch", ".",
 				"Russian", this.chars.numberSpace,
-				"Albania", this.chars.numberSpace,
+				"Canada", this.chars.numberSpace,
 				"Switzerland-Comma", this.chars.apostrophe,
 				"Switzerland-Dot", this.chars.apostrophe,
 			)
