@@ -225,8 +225,10 @@ Class TemperatureConversion {
 
 		numberValue := ""
 
+		PH := InputHook("L0", "{Escape}")
+		PH.Start()
+
 		Loop {
-			HotKey("Backspace", (*) => "")
 			IH := InputHook("L1", "{Escape}{Backspace}")
 			IH.Start(), IH.Wait()
 
@@ -250,7 +252,9 @@ Class TemperatureConversion {
 		}
 
 		ToolTip()
-		HotKey("Backspace", "Off")
+
+		PH.Stop()
+
 		return numberValue
 	}
 
