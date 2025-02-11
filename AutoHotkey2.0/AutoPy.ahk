@@ -12,6 +12,7 @@ PyTray.Add()
 
 SubConvs := Menu()
 SubConvs.Add("Base64 to PDF [Clipboard]", (*) => Run(A_ScriptDir "\..\Python\Base64Clip_to_PDF.py"))
+SubConvs.Add("Base64 to PDF", (*) => Run(A_ScriptDir "\..\Python\Base64_to_PDF.py"))
 
 PyTray.Add("Converters", SubConvs)
 
